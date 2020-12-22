@@ -16,9 +16,7 @@
         If ProgressBar1.Value = 100 Then
             Me.Hide()
             Timer1.Enabled = False
-            frmMain.Show()
-            'MDI.Show()
-            'frmLogin.Show()
+            frmLogin.Show()
 
         End If
 

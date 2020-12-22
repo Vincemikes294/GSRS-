@@ -1,12 +1,10 @@
-﻿
-
-'Option Explicit On
+﻿Option Explicit On
 Imports System.IO
 Public Class frmMain
 
-Dim T_max As Double
-Public Shared Grade() As Double
-Public Shared Length() As Double
+    Public T_max As Double
+    Public Shared Grade() As Double
+    Public Shared Length() As Double
 Public Shared Gradec() As Double
 Public Shared Lengthc() As Double
 Dim i As Integer
@@ -57,14 +55,17 @@ Dim Grades_max As String
 Dim Grades_maxinput As String
 Dim Sections_max As String
 Dim Sections_maxinput As String
-Private Sub cboMaxTemp_SelectedIndexChanged(sender As System.Object, e As System.EventArgs)
-    If cboMaxTemp.Text = "500" Then
-        T_max = 500
-    ElseIf cboMaxTemp.Text = "530" Then
-        T_max = 530
-    End If
-End Sub
-Private Sub butGradeLength_Click(sender As System.Object, e As System.EventArgs) Handles butGradeLength.Click
+    Public Property ExcelReaderFactory As Object
+    Public Property ExcelDataReader As Object
+
+    Private Sub cboMaxTemp_SelectedIndexChanged(sender As System.Object, e As System.EventArgs)
+        If cboMaxTemp.Text = "500" Then
+            T_max = 500
+        ElseIf cboMaxTemp.Text = "530" Then
+            T_max = 530
+        End If
+    End Sub
+    Private Sub butGradeLength_Click(sender As System.Object, e As System.EventArgs) Handles butGradeLength.Click
     If txtNumSections.Text = "" Or IsNumeric(txtNumSections.Text) = False Then
         MsgBox("Please Enter number of segments")
         txtNumSections.Text = ""
@@ -228,10 +229,10 @@ Private Sub butCompute_Click(sender As System.Object, e As System.EventArgs) Han
         T_max = CDbl(T_max_input)
         cboMaxTemp.Text = T_max
     End If
-    Me.lstOutputView.Items.Add("Max Weight" & "    Max Speed" & "     T_Desc" & "    T_Emerg" & "   T_Final" & "            Time" & vbCrLf & vbCrLf)
+        Me.lstOutputView.Items.Add("Max Weight (lb) " & "    Max Speed (mph) " & "     T_Desc (F) " & "           T_Emerg (F) " & "        T_Final (F)" & "                Time (min) " & vbCrLf & vbCrLf)
 
-    'Computations
-    j_max = W_max / 5000
+        'Computations
+        j_max = W_max / 5000
 
     For Me.i = 1 To CInt(txtNumSections.Text)
         TL += Length(i)
@@ -273,8 +274,8 @@ Private Sub butCompute_Click(sender As System.Object, e As System.EventArgs) Han
             T_e_s = CInt(T_e(V, 1))
 
 
-            lstOutputView.Items.Add(W & vbTab & vbTab & Vs & vbTab & T_f_s & vbTab & T_e_s & vbTab & T_lim_s & vbTab & CInt(TL * 60 / Vs) & vbCrLf)
-        Next
+                lstOutputView.Items.Add(W & vbTab & vbTab & Vs & vbTab & vbTab & T_f_s & vbTab & vbTab & T_e_s & vbTab & vbTab & T_lim_s & vbTab & vbTab & CInt(TL * 60 / Vs) & vbCrLf)
+            Next
     Next
     If txtNumSections.Text <> "" And lstGradeLength.Items.Count <> 0 Then
         butTempProfile.Enabled = True
@@ -288,8 +289,9 @@ Private Sub frmGSRS(sender As System.Object, e As System.EventArgs) Handles MyBa
     butSave.Enabled = False
     butFilter.Enabled = False
     butsSave.Enabled = False
-    butsFilter.Enabled = False
-End Sub
+        butsFilter.Enabled = False
+
+    End Sub
 Private Sub butSave_Click(sender As System.Object, e As System.EventArgs)
 
 End Sub
@@ -299,9 +301,9 @@ End Sub
 Private Sub butSave_Click_1(sender As System.Object, e As System.EventArgs) Handles butSave.Click
     Dim SaveFileDialog1 As New SaveFileDialog
     SaveFileDialog1.FileName = ""
-    SaveFileDialog1.Filter = "Text Files (*.txt)|*.txt|All Files (*.*)|*.*"
+        SaveFileDialog1.Filter = "Text Files(*.txt)|*.txt|(*.xls)|*.xls"
 
-    If SaveFileDialog1.ShowDialog() = DialogResult.OK Then
+        If SaveFileDialog1.ShowDialog() = DialogResult.OK Then
         Dim sb As New System.Text.StringBuilder()
 
         For Each o As Object In lstOutputView.Items
@@ -382,8 +384,8 @@ Public Class DataValue
     End Sub
 
     Public Overrides Function ToString() As String
-        Return MaxWeight & vbTab & vbTab & MaxSpeed & vbTab & T_Desc & vbTab & T_Emerg & vbTab & T_Final & vbTab & Time
-    End Function
+            Return MaxWeight & vbTab & vbTab & MaxSpeed & vbTab & vbTab & T_Desc & vbTab & vbTab & T_Emerg & vbTab & vbTab & T_Final & vbTab & vbTab & Time
+        End Function
 
     Public MaxWeight As Integer
     Public MaxSpeed As Integer
@@ -439,80 +441,10 @@ Private Sub ListBox1_SelectedIndexChanged(sender As System.Object, e As System.E
 
 End Sub
 
-Private Sub Button7_Click(sender As System.Object, e As System.EventArgs) Handles butsImport.Click
-    Dim MyFileDialog As New System.Windows.Forms.OpenFileDialog
-
-    ' Configure the dialog to show only text files
-    ' Set its title and set the filename field blank for the moment.
-    MyFileDialog.Filter = "Text File (*.txt)|*.txt"
-    MyFileDialog.Title = "Open a text file"
-    MyFileDialog.FileName = ""
-    ' Show the dialog and see if the user pressed ok.
-
-    If MyFileDialog.ShowDialog() = Windows.Forms.DialogResult.OK Then
-        ' Check to see if they selected a file and that it exists.
-
-        If File.Exists(MyFileDialog.FileName) Then
-
-            Dim strFile As String = MyFileDialog.FileName
-
-            Dim testFile1 As System.IO.FileInfo
-
-            Dim reader As StreamReader
-
-            Try
-                ' Setup a file stream reader to read the text file.
-
-                reader = New StreamReader(New FileStream(strFile, FileMode.Open, FileAccess.Read))
-
-                ' While there is data to be read, read each line into a rich edit box control.
-                testFile1 = My.Computer.FileSystem.GetFileInfo(strFile)
-
-                lblnPath.Text = testFile1.FullName
-
-                While reader.Peek > -1
-
-                    RichTextBox2.Text &= reader.ReadLine() & vbCrLf
-
-                End While
-
-                ' Close the file
-
-                reader.Close()
-
-            Catch ex As FileNotFoundException
-
-                ' If the file was not found, tell the user.
-
-                MessageBox.Show("File was not found. Please try again.")
-            End Try
-
-        End If
-    Else
-        txtsNumSections.Text = ""
-        butsImport.Enabled = True
-        butsGradeLength.Enabled = True
-        butsClear.Enabled = True
-        Exit Sub
-    End If
-    lstsGradeLength.Items.Add("Grade (in Radians)" & vbTab & "   Length (in Miles)")
-    Dim k As Integer
-    For k = 1 To CInt(UBound(RichTextBox2.Lines))
-        ReDim Preserve Gradec(k)
-        ReDim Preserve Lengthc(k)
-        Gradec(k) = RichTextBox2.Lines(k - 1).Split(" ").First
-        Lengthc(k) = RichTextBox2.Lines(k - 1).Split(" ").Last
-        lstsGradeLength.Items.Add(Gradec(k) & vbTab & vbTab & vbTab & Lengthc(k) & vbCrLf)
-        butsGradeLength.Enabled = False
-    Next
-    txtsNumSections.Text = UBound(RichTextBox2.Lines)
-    butsImport.Enabled = False
-    butsCompute.Enabled = True
-End Sub
     Private Sub butsSave_Click(sender As System.Object, e As System.EventArgs) Handles butsSave.Click
         Dim SaveFileDialog1 As New SaveFileDialog
         SaveFileDialog1.FileName = ""
-        SaveFileDialog1.Filter = "Text Files (*.txt)|*.txt|All Files (*.*)|*.*"
+        SaveFileDialog1.Filter = "Text Files(*.txt)|*.txt|(*.xls)|*.xls"
 
         If SaveFileDialog1.ShowDialog() = DialogResult.OK Then
             Dim sb As New System.Text.StringBuilder()
@@ -543,11 +475,11 @@ End Sub
         Dim numgradesoutput As Integer
         If IsNumeric(txtsNumberGrades.Text) And txtsNumberGrades.Text <> "" And txtsNumberGrades.Text > "0" And (Integer.TryParse(txtsNumberGrades.Text, numgradesoutput)) = True Then
             Grades_max = txtsNumberGrades.Text
-        Else : MsgBox("Please Enter a positive integer value for Number of Grades")
-            Grades_maxinput = (InputBox("Enter a positive integer value for Number of Grades"))
-            Do While IsNumeric(Grades_maxinput) = False Or Grades_maxinput < "0" Or (Integer.TryParse(txtsNumberGrades.Text, numgradesoutput)) = False
-                MessageBox.Show("Please enter a positive integer value for Number of Grades")
-                Grades_maxinput = (InputBox("Enter a positive integer value for Number of Grades"))
+        Else : MsgBox("Please Enter a positive integer value for Number of Grades", , "Seperate Slope")
+            Grades_maxinput = (InputBox("Enter a positive integer value for Number of Grades", "Seperate Slope"))
+            Do While IsNumeric(Grades_maxinput) = False Or Grades_maxinput < "0" Or (Integer.TryParse(Grades_maxinput, numgradesoutput)) = False
+                MessageBox.Show("Please enter a positive integer value for Number of Grades", "Seperate Slope")
+                Grades_maxinput = (InputBox("Enter a positive integer value for Number of Grades", "Seperate Slope"))
             Loop
             Grades_max = Grades_maxinput
         End If
@@ -555,22 +487,22 @@ End Sub
 
         If IsNumeric(txtsMaxWeight.Text) And txtsMaxWeight.Text <> "" And txtsMaxWeight.Text > "0" Then
             W_max = txtsMaxWeight.Text
-        Else : MsgBox("Please Enter a positive numeric value for Maximum Weight")
-            W_Maxinput = (InputBox("Enter a positive numeric value for Maximum Weight"))
+        Else : MsgBox("Please Enter a positive numeric value for Maximum Weight", , "Seperate Slope")
+            W_Maxinput = (InputBox("Enter a positive numeric value for Maximum Weight", "Seperate Slope"))
             Do While IsNumeric(W_Maxinput) = False Or W_Maxinput < "0"
-                MessageBox.Show("Please enter a positive numeric Value for Maximum Weight")
-                W_Maxinput = (InputBox("Enter a positive numeric value for Maximum Weight"))
+                MessageBox.Show("Please enter a positive numeric Value for Maximum Weight", "Seperate Slope")
+                W_Maxinput = (InputBox("Enter a positive numeric value for Maximum Weight", "Seperate Slope"))
             Loop
             W_max = CDbl(W_Maxinput)
         End If
         txtsMaxWeight.Text = W_max
         If IsNumeric(txtsMaxSpeed.Text) And txtsMaxSpeed.Text <> "" And txtsMaxSpeed.Text > "0" Then
             V_max = txtsMaxSpeed.Text
-        Else : MsgBox("Please Enter a positive numeric value for Maximum Speed")
-            V_Maxinput = (InputBox("Enter a positive numeric value for Maximum Speed"))
+        Else : MsgBox("Please Enter a positive numeric value for Maximum Speed", , "Seperate Slope")
+            V_Maxinput = (InputBox("Enter a positive numeric value for Maximum Speed", "Seperate Slope"))
             Do While IsNumeric(V_Maxinput) = False Or V_Maxinput < "0"
-                MessageBox.Show("Please enter a positive numeric Value for Maximum Speed")
-                V_Maxinput = (InputBox("Enter a positive numeric value for Maximum Speed"))
+                MessageBox.Show("Please enter a positive numeric Value for Maximum Speed", "Seperate Slope")
+                V_Maxinput = (InputBox("Enter a positive numeric value for Maximum Speed", "Seperate Slope"))
             Loop
             V_max = CDbl(V_Maxinput)
         End If
@@ -583,10 +515,10 @@ End Sub
                 T_0 = "150"
                 txtsinitemp.Text = T_0
             End If
-        Else : MsgBox("Enter a numeric value greater Or equal to 90 for Initial Temperature")
+        Else : MsgBox("Enter a numeric value greater Or equal to 90 for Initial Temperature", , "Seperate Slope")
             T_0_input = (InputBox("Enter a numeric value greater Or equal to 90 for Initial Temperature", "Alert", "150"))
             Do While IsNumeric(T_0_input) = False Or T_0_input = ""
-                MessageBox.Show("Enter a numeric value greater Or equal to 90 for Initial Temperature")
+                MessageBox.Show("Enter a numeric value greater Or equal to 90 for Initial Temperature", "Seperate Slope")
                 T_0_input = (InputBox("Enter a numeric value greater Or equal to 90 for Initial Temperature", "Alert", "150"))
             Loop
             If T_0_input >= 90 Then
@@ -606,10 +538,10 @@ End Sub
                 T_inf = "90"
                 txtsiniambient.Text = T_inf
             End If
-        Else : MsgBox("Enter a value of 90 for the Ambient Temperature")
+        Else : MsgBox("Enter a value of 90 for the Ambient Temperature", , "Seperate Slope")
             T_inf_input = (InputBox("Enter a value of 90 for the Ambient Temperature", "Alert", "90"))
             Do While IsNumeric(T_inf_input) = False Or T_inf_input = ""
-                MessageBox.Show("Enter a value of 90 for the Ambient Temperature")
+                MessageBox.Show("Enter a value of 90 for the Ambient Temperature", "Seperate Slope")
                 T_inf_input = (InputBox("Enter a value of 90 for the Ambient Temperature", "Alert", "90"))
             Loop
             If T_inf_input >= 90 Then
@@ -622,16 +554,16 @@ End Sub
         End If
         If IsNumeric(cbosMaxTemp.Text) And cbosMaxTemp.Text <> "" And cbosMaxTemp.Text = "500" Or cbosMaxTemp.Text = "530" Then
             T_max = cbosMaxTemp.Text
-        Else : MsgBox("Please input " & "500 Or 530 for Maximum Temperature")
-            T_max_input = (InputBox("Input " & "500 Or 530 for Maximum Temperature"))
+        Else : MsgBox("Please input " & "500 Or 530 for Maximum Temperature", , "Seperate Slope")
+            T_max_input = (InputBox("Input " & "500 Or 530 for Maximum Temperature", "Seperate Slope"))
             Do While IsNumeric(T_max_input) = False Or T_max_input <> "500" And T_max_input <> "530"
-                MessageBox.Show("Input " & "500 Or 530 for Maximum Temperature")
-                T_max_input = (InputBox("Input " & "500 Or 530 for Maximum Temperature"))
+                MessageBox.Show("Input " & "500 Or 530 for Maximum Temperature", "Seperate Slope")
+                T_max_input = (InputBox("Input " & "500 Or 530 for Maximum Temperature", "Seperate Slope"))
             Loop
             T_max = CDbl(T_max_input)
         End If
         cbosMaxTemp.Text = T_max
-        lstsOutputView.Items.Add("Group" & "   Max Weight" & "    Max Speed" & "     T_Desc" & "    T_Emerg" & "   T_Final" & "        Time" & vbCrLf & vbCrLf)
+        lstsOutputView.Items.Add("Group" & "        Max Weight (lb)" & "           Max Speed (mph)" & "                         T_Desc (F)" & "               T_Emerg (F)" & "      T_Final (F)" & "          Time (min) " & vbCrLf & vbCrLf)
 
         a = txtsGroupNumber.Text
         Group_Number = a
@@ -683,8 +615,8 @@ End Sub
 
         ' Configure the dialog to show only text files
         ' Set its title and set the filename field blank for the moment.
-        MyFileDialog.Filter = "Text File (*.txt)|*.txt"
-        MyFileDialog.Title = "Open a text file"
+        MyFileDialog.Filter = "Text Files(*.txt)|*.txt|(*.xlsx)|*.xlsx"
+        MyFileDialog.Title = " Open a Text or excel file"
         MyFileDialog.FileName = ""
         ' Show the dialog and see if the user pressed ok.
 
@@ -694,29 +626,77 @@ End Sub
             If File.Exists(MyFileDialog.FileName) Then
 
                 Dim strFile As String = MyFileDialog.FileName
-
+                Dim textextension As String
                 Dim reader As StreamReader
                 Dim testFile As System.IO.FileInfo
-
                 Try
                     ' Setup a file stream reader to read the text file.
 
-                    reader = New StreamReader(New FileStream(strFile, FileMode.Open, FileAccess.Read))
-                    testFile = My.Computer.FileSystem.GetFileInfo(strFile)
+                    textextension = Path.GetExtension(strFile)
+                    If textextension = ".txt" Then
+                        reader = New StreamReader(New FileStream(strFile, FileMode.Open, FileAccess.Read))
+                        testFile = My.Computer.FileSystem.GetFileInfo(strFile)
+                        lblPath.Text = testFile.FullName
 
-                    lblPath.Text = testFile.FullName
+                        ' While there is data to be read, read each line into a rich edit box control.
 
-                    ' While there is data to be read, read each line into a rich edit box control.
+                        While reader.Peek > -1
 
-                    While reader.Peek > -1
+                            RichTextBox1.Text &= reader.ReadLine() & vbCrLf
 
-                        RichTextBox1.Text &= reader.ReadLine() & vbCrLf
+                        End While
 
-                    End While
+                        lstGradeLength.Items.Add("Grade (in Radians)" & vbTab & "   Length (in Miles)")
 
-                    ' Close the file
+                        Dim m As Integer
+                        For m = 1 To CInt(UBound(RichTextBox1.Lines))
+                            ReDim Preserve Grade(m)
+                            ReDim Preserve Length(m)
+                            Grade(m) = RichTextBox1.Lines(m - 1).Split(" ").First
+                            Length(m) = RichTextBox1.Lines(m - 1).Split(" ").Last
+                            lstGradeLength.Items.Add(Grade(m) & vbTab & vbTab & vbTab & Length(m) & vbCrLf)
+                            butGradeLength.Enabled = False
+                        Next
+                        txtNumSections.Text = UBound(RichTextBox1.Lines)
+                    End If
 
-                    reader.Close()
+                    If textextension = ".xlsx" Then
+                        Dim oExcel As Object = CreateObject("Excel.Application")
+                        Dim oBook As Object = oExcel.Workbooks.Open(strFile)
+                        Dim oSheet As Object = oBook.Worksheets(1)
+                        Dim i As Integer
+                        Dim cellA As String
+                        Dim cellB As String
+                        lstGradeLength.Items.Add("Grade (in Radians)" & vbTab & "   Length (in Miles)")
+                        For i = 0 To AscW(lstGradeLength.Items.Count.ToString()(i = i + 1)) - 1
+
+                            cellA = "A" & Convert.ToString(i + 1)
+                            cellB = "B" & Convert.ToString(i + 1)
+                            cellA = oSheet.Range(cellA).Value
+                            cellB = oSheet.Range(cellB).Value
+                            If cellA = "" And cellB = "" Then
+                                Exit For
+                            Else
+                                RichTextBox1.AppendText(cellA & " " & cellB & vbCrLf)
+
+                            End If
+                        Next
+                        oExcel.Quit()
+                        Dim m As Integer
+                        For m = 1 To CInt(UBound(RichTextBox1.Lines))
+                            ReDim Preserve Grade(m)
+                            ReDim Preserve Length(m)
+                            Grade(m) = RichTextBox1.Lines(m - 1).Split(" ").First
+                            Length(m) = RichTextBox1.Lines(m - 1).Split(" ").Last
+                            lstGradeLength.Items.Add(Grade(m) & vbTab & vbTab & vbTab & Length(m) & vbCrLf)
+                            butGradeLength.Enabled = False
+                        Next
+                        testFile = My.Computer.FileSystem.GetFileInfo(strFile)
+
+                        lblPath.Text = testFile.FullName
+
+                        txtNumSections.Text = lstGradeLength.Items.Count - 1
+                    End If
 
                 Catch ex As FileNotFoundException
 
@@ -734,18 +714,7 @@ End Sub
             butClear.Enabled = True
             Exit Sub
         End If
-        lstGradeLength.Items.Add("Grade (in Radians)" & vbTab & "   Length (in Miles)")
-        Dim m As Integer
-        For m = 1 To CInt(UBound(RichTextBox1.Lines))
-            ReDim Preserve Grade(m)
-            ReDim Preserve Length(m)
-            Grade(m) = RichTextBox1.Lines(m - 1).Split(" ").First
-            Length(m) = RichTextBox1.Lines(m - 1).Split(" ").Last
-            lstGradeLength.Items.Add(Grade(m) & vbTab & vbTab & vbTab & Length(m) & vbCrLf)
-            butGradeLength.Enabled = False
-        Next
 
-        txtNumSections.Text = UBound(RichTextBox1.Lines)
         butImport.Enabled = False
         butCompute.Enabled = True
     End Sub
@@ -779,7 +748,7 @@ End Sub
             T_lims = Ts_f + Ts_e 'limiting brake temperature
 
 
-            lstsOutputView.Items.Add(Space & Group_Number & vbTab & W & vbTab & Space & V & vbTab & Space & Ts_f & vbTab & Space & Ts_e & vbTab & Space & T_lims & vbTab & Space & CInt(TLnew * 60 / V) & vbCrLf)
+            lstsOutputView.Items.Add(Space & Group_Number & vbTab & vbTab & W & vbTab & vbTab & Space & V & vbTab & vbTab & Space & vbTab & Ts_f & vbTab & Space & vbTab & Ts_e & vbTab & Space & T_lims & vbTab & vbTab & Space & CInt(TLnew * 60 / V) & vbCrLf)
         Next
         Me.butsFilter.Enabled = True
     End Function
@@ -829,7 +798,7 @@ End Sub
                 T_f_s = CInt(T_f(V, 1))
                 T_e_s = CInt(T_e(V, 1))
                 Dim Space = ("        ")
-                lstsOutputView.Items.Add(Space & Group_Number & vbTab & W & vbTab & Space & V & vbTab & Space & T_f_s & vbTab & Space & T_e_s & vbTab & Space & T_lim_s & vbTab & Space & CInt(TLnew * 60 / V) & vbCrLf)
+                lstsOutputView.Items.Add(Space & Group_Number & vbTab & vbTab & W & vbTab & vbTab & Space & V & vbTab & vbTab & Space & vbTab & Ts_f & vbTab & Space & vbTab & Ts_e & vbTab & Space & T_lims & vbTab & vbTab & Space & CInt(TLnew * 60 / V) & vbCrLf)
             Next
         Next
 
@@ -900,7 +869,7 @@ End Sub
                 End If
             Next
 
-            MsgBox("Select row for maximum weight")
+            MsgBox("Select row for maximum weight",, "Seperate Slope")
             header2 = lstsOutputView.Items(0)
 
             ' Skip the header row by starting at 1:
@@ -970,7 +939,7 @@ End Sub
         Dim Answer As Integer
 
         If a Mod 2 = 0 Then
-            Answer = MsgBox("Enter segments for downgrade of next braking segment", vbYesNoCancel, "Alert")
+            Answer = MsgBox("Enter segments for downgrade of next braking segment?", vbYesNoCancel, "Alert")
             If Answer = vbYes Then
                 btnNext.Enabled = True
                 btnNext.Select()
@@ -978,7 +947,7 @@ End Sub
             End If
         End If
         If a Mod 2 = 1 Then
-            Answer = MsgBox("Enter segments for downgrade of next non-braking segment", vbYesNoCancel, "Alert")
+            Answer = MsgBox("Enter segments for downgrade of next non-braking segment?", vbYesNoCancel, "Alert")
             If Answer = vbYes Then
                 btnNext.Enabled = True
                 btnNext.Select()
@@ -1032,7 +1001,7 @@ End Sub
         Public Overrides Function ToString() As String
             Dim Space = ("        ")
 
-            Return Space & GroupNumber & vbTab & MaxWeight & vbTab & Space & MaxSpeed & vbTab & Space & T_Desc & vbTab & Space & T_Emerg & vbTab & Space & T_Final & vbTab & Space & Time
+            Return Space & GroupNumber & vbTab & vbTab & MaxWeight & vbTab & vbTab & MaxSpeed & vbTab & vbTab & Space & Space & T_Desc & Space & vbTab & vbTab & Space & T_Emerg & vbTab & Space & T_Final & vbTab & Space & vbTab & Time
 
         End Function
         Public GroupNumber As Integer
@@ -1171,12 +1140,12 @@ End Sub
     Dim numsegments As Integer
     If IsNumeric(txtsNumberGrades.Text) And txtsNumberGrades.Text <> "" And txtsNumberGrades.Text > "0" And (Integer.TryParse(txtsNumberGrades.Text, numbergrades)) Then
         Grades_max = txtsNumberGrades.Text
-    Else : MsgBox("Please Enter a positive integer value for Number of Grades")
-        Grades_maxinput = (InputBox("Enter a positive integer value for Number of Grades"))
+        Else : MsgBox("Please Enter a positive integer value for Number of Grades", "Seperate Slope")
+            Grades_maxinput = (InputBox("Enter a positive integer value for Number of Grades"))
         Do While IsNumeric(Grades_maxinput) = False Or Grades_maxinput < "0" Or Grades_maxinput = "" Or (Not Integer.TryParse(Grades_maxinput, numbergrades))
             MessageBox.Show("Please enter a positive integer value for Number of Grades")
-            Grades_maxinput = (InputBox("Enter a positive integer value for Number of Grades"))
-            butsCompute.Enabled = False
+                Grades_maxinput = (InputBox("Enter a positive integer value for Number of Grades", "Seperate Slope"))
+                butsCompute.Enabled = False
             butsGradeLength.Enabled = True
         Loop
         Grades_max = Grades_maxinput
@@ -1267,5 +1236,128 @@ End Sub
             butsCompute.Enabled = True
         End If
         butsImport.Enabled = True
+    End Sub
+
+    Private Interface IExcelDataReader
+        Sub Close()
+        Function ReadLine() As String
+        Function Peek() As Integer
+    End Interface
+
+    Private Sub GroupBox11_Enter(sender As Object, e As EventArgs) Handles GroupBox11.Enter
+
+    End Sub
+
+    Private Sub butsImport_Click(sender As Object, e As EventArgs) Handles butsImport.Click
+        Dim MyFileDialog As New System.Windows.Forms.OpenFileDialog
+
+        ' Configure the dialog to show only text and excel files
+        ' Set its title and set the filename field blank for the moment.
+        MyFileDialog.Filter = "Text Files(*.txt)|*.txt|(*.xlsx)|*.xlsx"
+        MyFileDialog.Title = "Open a Text or excel file"
+        MyFileDialog.FileName = ""
+        ' Show the dialog and see if the user pressed ok.
+
+        If MyFileDialog.ShowDialog() = Windows.Forms.DialogResult.OK Then
+            ' Check to see if they selected a file and that it exists.
+
+            If File.Exists(MyFileDialog.FileName) Then
+
+                Dim strFile As String = MyFileDialog.FileName
+                Dim textextension As String
+                Dim reader As StreamReader
+                Dim testFile As System.IO.FileInfo
+                Try
+                    ' Setup a file stream reader to read the text and excel files.
+
+                    textextension = Path.GetExtension(strFile)
+                    If textextension = ".txt" Then
+                        reader = New StreamReader(New FileStream(strFile, FileMode.Open, FileAccess.Read))
+                        testFile = My.Computer.FileSystem.GetFileInfo(strFile)
+                        lblnPath.Text = testFile.FullName
+
+                        ' While there is data to be read, read each line into a rich edit box control.
+
+                        While reader.Peek > -1
+
+                            RichTextBox2.Text &= reader.ReadLine() & vbCrLf
+
+                        End While
+
+                        lstsGradeLength.Items.Add("Grade (in Radians)" & vbTab & "   Length (in Miles)")
+
+                        Dim m As Integer
+                        For m = 1 To CInt(UBound(RichTextBox2.Lines))
+                            ReDim Preserve Gradec(m)
+                            ReDim Preserve Lengthc(m)
+                            Gradec(m) = RichTextBox2.Lines(m - 1).Split(" ").First
+                            Lengthc(m) = RichTextBox2.Lines(m - 1).Split(" ").Last
+                            lstsGradeLength.Items.Add(Gradec(m) & vbTab & vbTab & vbTab & Lengthc(m) & vbCrLf)
+                            butsGradeLength.Enabled = False
+                        Next
+                        txtsNumSections.Text = UBound(RichTextBox2.Lines)
+                    End If
+
+                    If textextension = ".xlsx" Then
+                        Dim oExcel As Object = CreateObject("Excel.Application")
+                        Dim oBook As Object = oExcel.Workbooks.Open(strFile)
+                        Dim oSheet As Object = oBook.Worksheets(1)
+                        Dim i As Integer
+                        Dim cellA As String
+                        Dim cellB As String
+                        lstsGradeLength.Items.Add("Grade (in Radians)" & vbTab & "   Length (in Miles)")
+                        For i = 0 To AscW(lstsGradeLength.Items.Count.ToString()(i = i + 1)) - 1
+
+                            cellA = "A" & Convert.ToString(i + 1)
+                            cellB = "B" & Convert.ToString(i + 1)
+                            cellA = oSheet.Range(cellA).Value
+                            cellB = oSheet.Range(cellB).Value
+                            If cellA = "" And cellB = "" Then
+                                Exit For
+                            Else
+                                RichTextBox2.AppendText(cellA & " " & cellB & vbCrLf)
+
+                            End If
+                        Next
+                        oExcel.Quit()
+                        Dim m As Integer
+                        For m = 1 To CInt(UBound(RichTextBox2.Lines))
+                            ReDim Preserve Gradec(m)
+                            ReDim Preserve Lengthc(m)
+                            Gradec(m) = RichTextBox2.Lines(m - 1).Split(" ").First
+                            Lengthc(m) = RichTextBox2.Lines(m - 1).Split(" ").Last
+                            lstsGradeLength.Items.Add(Gradec(m) & vbTab & vbTab & vbTab & Lengthc(m) & vbCrLf)
+                            butsGradeLength.Enabled = False
+                        Next
+                        testFile = My.Computer.FileSystem.GetFileInfo(strFile)
+
+                        lblnPath.Text = testFile.FullName
+
+                        txtsNumSections.Text = lstsGradeLength.Items.Count - 1
+                    End If
+
+                Catch ex As FileNotFoundException
+
+                    ' If the file was not found, tell the user.
+
+                    MessageBox.Show("File was Not found. Please try again.")
+
+                End Try
+
+            End If
+        Else
+            txtsNumSections.Text = ""
+            butsImport.Enabled = True
+            butsGradeLength.Enabled = True
+            butsClear.Enabled = True
+            Exit Sub
+        End If
+
+        butsImport.Enabled = False
+        butsCompute.Enabled = True
+    End Sub
+    Private Sub butlogout_Click(sender As Object, e As EventArgs) Handles butlogout.Click
+        Me.Close()
+        frmLogin.Show()
     End Sub
 End Class

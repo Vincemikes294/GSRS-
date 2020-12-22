@@ -78,18 +78,14 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.VisualC" />
-    <Reference Include="skincrafter_.net2.0_vs2005">
-      <HintPath>..\..\..\..\..\..\..\..\Program Files (x86)\SkinCrafter3\SkinCrafterDemo\SkinCrafterDotNet\skincrafter_.net2.0_vs2005.dll</HintPath>
-    </Reference>
-    <Reference Include="skincrafter_.net2.0_vs2008">
-      <HintPath>..\..\..\..\..\..\..\..\Program Files (x86)\SkinCrafter3\SkinCrafterDemo\SkinCrafterDotNet\skincrafter_.net2.0_vs2008.dll</HintPath>
-    </Reference>
+    <Reference Include="SkinSoft.VisualStyler, Version=2.4.0.0, Culture=neutral, PublicKeyToken=0fda9f423e1d9830, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
     <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Windows.Forms.DataVisualization" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -108,10 +104,19 @@
     <Import Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Excel\Application.vb" />
+    <Compile Include="Excel\Workbook.vb" />
+    <Compile Include="Excel\Worksheet.vb" />
     <Compile Include="frmMain.Designer.vb">
       <DependentUpon>frmMain.vb</DependentUpon>
     </Compile>
     <Compile Include="frmMain.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmUserForm.Designer.vb">
+      <DependentUpon>frmUserForm.vb</DependentUpon>
+    </Compile>
+    <Compile Include="frmUserForm.vb">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Login.Designer.vb">
@@ -120,10 +125,10 @@
     <Compile Include="Login.vb">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="MDI.Designer.vb">
-      <DependentUpon>MDI.vb</DependentUpon>
+    <Compile Include="MDIGSRS.Designer.vb">
+      <DependentUpon>MDIGSRS.vb</DependentUpon>
     </Compile>
-    <Compile Include="MDI.vb">
+    <Compile Include="MDIGSRS.vb">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="My Project\AssemblyInfo.vb" />
@@ -154,16 +159,25 @@
     <Compile Include="Temperature Profile.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="TemperaturePlot.Designer.vb">
+      <DependentUpon>TemperaturePlot.vb</DependentUpon>
+    </Compile>
+    <Compile Include="TemperaturePlot.vb">
+      <SubType>Form</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="frmMain.resx">
       <DependentUpon>frmMain.vb</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="frmUserForm.resx">
+      <DependentUpon>frmUserForm.vb</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Login.resx">
       <DependentUpon>Login.vb</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="MDI.resx">
-      <DependentUpon>MDI.vb</DependentUpon>
+    <EmbeddedResource Include="MDIGSRS.resx">
+      <DependentUpon>MDIGSRS.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="My Project\Resources.resx">
       <Generator>VbMyResourcesResXFileCodeGenerator</Generator>
@@ -176,6 +190,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Temperature Profile.resx">
       <DependentUpon>Temperature Profile.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TemperaturePlot.resx">
+      <DependentUpon>TemperaturePlot.vb</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

@@ -22,6 +22,7 @@ Partial Class frmMain
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
+        Me.components = New System.ComponentModel.Container()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(frmMain))
         Me.butCompute = New System.Windows.Forms.Button()
         Me.lstGradeLength = New System.Windows.Forms.ListBox()
@@ -95,6 +96,9 @@ Partial Class frmMain
         Me.txtsMaxWeight = New System.Windows.Forms.TextBox()
         Me.Label14 = New System.Windows.Forms.Label()
         Me.Label15 = New System.Windows.Forms.Label()
+        Me.ToolTip1 = New System.Windows.Forms.ToolTip(Me.components)
+        Me.VisualStyler1 = New SkinSoft.VisualStyler.VisualStyler(Me.components)
+        Me.butlogout = New System.Windows.Forms.Button()
         Me.GroupBox1.SuspendLayout()
         Me.GroupBox2.SuspendLayout()
         Me.GroupContinuousSlope.SuspendLayout()
@@ -110,16 +114,18 @@ Partial Class frmMain
         Me.GroupBox10.SuspendLayout()
         Me.GroupBox11.SuspendLayout()
         Me.GroupBox12.SuspendLayout()
+        CType(Me.VisualStyler1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'butCompute
         '
         Me.butCompute.Enabled = False
-        Me.butCompute.Location = New System.Drawing.Point(370, 461)
+        Me.butCompute.Location = New System.Drawing.Point(369, 467)
         Me.butCompute.Name = "butCompute"
         Me.butCompute.Size = New System.Drawing.Size(84, 33)
         Me.butCompute.TabIndex = 21
         Me.butCompute.Text = "Compute"
+        Me.ToolTip1.SetToolTip(Me.butCompute, "Calculate output")
         Me.butCompute.UseVisualStyleBackColor = True
         '
         'lstGradeLength
@@ -134,26 +140,29 @@ Partial Class frmMain
         '
         'butGradeLength
         '
-        Me.butGradeLength.Location = New System.Drawing.Point(367, 392)
+        Me.butGradeLength.Location = New System.Drawing.Point(369, 395)
         Me.butGradeLength.Name = "butGradeLength"
-        Me.butGradeLength.Size = New System.Drawing.Size(87, 30)
+        Me.butGradeLength.Size = New System.Drawing.Size(84, 30)
         Me.butGradeLength.TabIndex = 19
         Me.butGradeLength.Text = "Enter Grades and Lengths of Segments"
+        Me.ToolTip1.SetToolTip(Me.butGradeLength, "Manually enter grade and length of segment data")
         Me.butGradeLength.UseVisualStyleBackColor = True
         '
         'txtMaxSpeed
         '
-        Me.txtMaxSpeed.Location = New System.Drawing.Point(345, 60)
+        Me.txtMaxSpeed.Location = New System.Drawing.Point(384, 63)
         Me.txtMaxSpeed.Name = "txtMaxSpeed"
         Me.txtMaxSpeed.Size = New System.Drawing.Size(61, 22)
         Me.txtMaxSpeed.TabIndex = 18
+        Me.ToolTip1.SetToolTip(Me.txtMaxSpeed, "Enter maximum descent speed (mph)")
         '
         'txtMaxWeight
         '
-        Me.txtMaxWeight.Location = New System.Drawing.Point(345, 21)
+        Me.txtMaxWeight.Location = New System.Drawing.Point(384, 24)
         Me.txtMaxWeight.Name = "txtMaxWeight"
         Me.txtMaxWeight.Size = New System.Drawing.Size(61, 22)
         Me.txtMaxWeight.TabIndex = 17
+        Me.ToolTip1.SetToolTip(Me.txtMaxWeight, "Enter Maximum Weight of truck for downgrade (lb)")
         '
         'Label4
         '
@@ -175,10 +184,11 @@ Partial Class frmMain
         '
         'txtNumSections
         '
-        Me.txtNumSections.Location = New System.Drawing.Point(345, 21)
+        Me.txtNumSections.Location = New System.Drawing.Point(382, 21)
         Me.txtNumSections.Name = "txtNumSections"
         Me.txtNumSections.Size = New System.Drawing.Size(62, 22)
         Me.txtNumSections.TabIndex = 14
+        Me.ToolTip1.SetToolTip(Me.txtNumSections, "Enter the number of segments")
         '
         'Label2
         '
@@ -202,10 +212,11 @@ Partial Class frmMain
         '
         Me.cboMaxTemp.FormattingEnabled = True
         Me.cboMaxTemp.Items.AddRange(New Object() {"500", "530"})
-        Me.cboMaxTemp.Location = New System.Drawing.Point(345, 59)
+        Me.cboMaxTemp.Location = New System.Drawing.Point(382, 59)
         Me.cboMaxTemp.Name = "cboMaxTemp"
         Me.cboMaxTemp.Size = New System.Drawing.Size(62, 24)
         Me.cboMaxTemp.TabIndex = 11
+        Me.ToolTip1.SetToolTip(Me.cboMaxTemp, "Select the maximum brake temperature in F")
         '
         'GroupBox1
         '
@@ -215,7 +226,7 @@ Partial Class frmMain
         Me.GroupBox1.Controls.Add(Me.cboMaxTemp)
         Me.GroupBox1.Location = New System.Drawing.Point(10, 21)
         Me.GroupBox1.Name = "GroupBox1"
-        Me.GroupBox1.Size = New System.Drawing.Size(445, 104)
+        Me.GroupBox1.Size = New System.Drawing.Size(454, 104)
         Me.GroupBox1.TabIndex = 22
         Me.GroupBox1.TabStop = False
         '
@@ -227,7 +238,7 @@ Partial Class frmMain
         Me.GroupBox2.Controls.Add(Me.Label4)
         Me.GroupBox2.Location = New System.Drawing.Point(9, 131)
         Me.GroupBox2.Name = "GroupBox2"
-        Me.GroupBox2.Size = New System.Drawing.Size(445, 96)
+        Me.GroupBox2.Size = New System.Drawing.Size(455, 96)
         Me.GroupBox2.TabIndex = 23
         Me.GroupBox2.TabStop = False
         '
@@ -235,9 +246,9 @@ Partial Class frmMain
         '
         Me.GroupContinuousSlope.Controls.Add(Me.GroupBox4)
         Me.GroupContinuousSlope.Controls.Add(Me.GroupBox6)
-        Me.GroupContinuousSlope.Location = New System.Drawing.Point(3, 111)
+        Me.GroupContinuousSlope.Location = New System.Drawing.Point(3, 94)
         Me.GroupContinuousSlope.Name = "GroupContinuousSlope"
-        Me.GroupContinuousSlope.Size = New System.Drawing.Size(838, 579)
+        Me.GroupContinuousSlope.Size = New System.Drawing.Size(838, 596)
         Me.GroupContinuousSlope.TabIndex = 24
         Me.GroupContinuousSlope.TabStop = False
         Me.GroupContinuousSlope.Text = "Continuous Slope"
@@ -255,9 +266,9 @@ Partial Class frmMain
         Me.GroupBox4.Controls.Add(Me.butCompute)
         Me.GroupBox4.Controls.Add(Me.butGradeLength)
         Me.GroupBox4.Controls.Add(Me.GroupBox2)
-        Me.GroupBox4.Location = New System.Drawing.Point(0, 21)
+        Me.GroupBox4.Location = New System.Drawing.Point(1, 31)
         Me.GroupBox4.Name = "GroupBox4"
-        Me.GroupBox4.Size = New System.Drawing.Size(464, 558)
+        Me.GroupBox4.Size = New System.Drawing.Size(470, 565)
         Me.GroupBox4.TabIndex = 24
         Me.GroupBox4.TabStop = False
         Me.GroupBox4.Text = "Input"
@@ -265,11 +276,12 @@ Partial Class frmMain
         'butTempProfile
         '
         Me.butTempProfile.Enabled = False
-        Me.butTempProfile.Location = New System.Drawing.Point(369, 503)
+        Me.butTempProfile.Location = New System.Drawing.Point(369, 506)
         Me.butTempProfile.Name = "butTempProfile"
-        Me.butTempProfile.Size = New System.Drawing.Size(85, 25)
+        Me.butTempProfile.Size = New System.Drawing.Size(85, 32)
         Me.butTempProfile.TabIndex = 34
         Me.butTempProfile.Text = "T-Profile"
+        Me.ToolTip1.SetToolTip(Me.butTempProfile, "Explore temperature profile per 0.5 mile on downgrade")
         Me.butTempProfile.UseVisualStyleBackColor = True
         '
         'lblPath
@@ -282,11 +294,12 @@ Partial Class frmMain
         '
         'butClear
         '
-        Me.butClear.Location = New System.Drawing.Point(367, 428)
+        Me.butClear.Location = New System.Drawing.Point(369, 431)
         Me.butClear.Name = "butClear"
-        Me.butClear.Size = New System.Drawing.Size(87, 30)
+        Me.butClear.Size = New System.Drawing.Size(84, 30)
         Me.butClear.TabIndex = 32
         Me.butClear.Text = "Clear"
+        Me.ToolTip1.SetToolTip(Me.butClear, "Clear Grade- Segment Length listbox")
         Me.butClear.UseVisualStyleBackColor = True
         '
         'GroupBox7
@@ -297,23 +310,25 @@ Partial Class frmMain
         Me.GroupBox7.Controls.Add(Me.Label7)
         Me.GroupBox7.Location = New System.Drawing.Point(10, 233)
         Me.GroupBox7.Name = "GroupBox7"
-        Me.GroupBox7.Size = New System.Drawing.Size(445, 96)
+        Me.GroupBox7.Size = New System.Drawing.Size(454, 96)
         Me.GroupBox7.TabIndex = 31
         Me.GroupBox7.TabStop = False
         '
         'txtinitemp
         '
-        Me.txtinitemp.Location = New System.Drawing.Point(344, 21)
+        Me.txtinitemp.Location = New System.Drawing.Point(383, 24)
         Me.txtinitemp.Name = "txtinitemp"
         Me.txtinitemp.Size = New System.Drawing.Size(61, 22)
         Me.txtinitemp.TabIndex = 19
+        Me.ToolTip1.SetToolTip(Me.txtinitemp, "Enter initial temperature in F (>= 90 F)")
         '
         'txtambient
         '
-        Me.txtambient.Location = New System.Drawing.Point(345, 60)
+        Me.txtambient.Location = New System.Drawing.Point(383, 60)
         Me.txtambient.Name = "txtambient"
         Me.txtambient.Size = New System.Drawing.Size(61, 22)
         Me.txtambient.TabIndex = 18
+        Me.ToolTip1.SetToolTip(Me.txtambient, "Enter 90 (F) for ambient temperature")
         '
         'Label5
         '
@@ -344,11 +359,12 @@ Partial Class frmMain
         '
         'butImport
         '
-        Me.butImport.Location = New System.Drawing.Point(367, 355)
+        Me.butImport.Location = New System.Drawing.Point(369, 358)
         Me.butImport.Name = "butImport"
-        Me.butImport.Size = New System.Drawing.Size(87, 31)
+        Me.butImport.Size = New System.Drawing.Size(85, 31)
         Me.butImport.TabIndex = 28
         Me.butImport.Text = "Import"
+        Me.ToolTip1.SetToolTip(Me.butImport, "Import Grade and length of segment data from text or excel file")
         Me.butImport.UseVisualStyleBackColor = True
         '
         'GroupBox6
@@ -359,7 +375,7 @@ Partial Class frmMain
         Me.GroupBox6.Controls.Add(Me.butFilter)
         Me.GroupBox6.Controls.Add(Me.butSave)
         Me.GroupBox6.Controls.Add(Me.lstOutputView)
-        Me.GroupBox6.Location = New System.Drawing.Point(470, 14)
+        Me.GroupBox6.Location = New System.Drawing.Point(471, 31)
         Me.GroupBox6.Name = "GroupBox6"
         Me.GroupBox6.Size = New System.Drawing.Size(367, 565)
         Me.GroupBox6.TabIndex = 30
@@ -386,30 +402,33 @@ Partial Class frmMain
         '
         'butReset
         '
-        Me.butReset.Location = New System.Drawing.Point(273, 264)
+        Me.butReset.Location = New System.Drawing.Point(264, 264)
         Me.butReset.Name = "butReset"
-        Me.butReset.Size = New System.Drawing.Size(63, 35)
+        Me.butReset.Size = New System.Drawing.Size(72, 35)
         Me.butReset.TabIndex = 28
         Me.butReset.Text = "Reset"
+        Me.ToolTip1.SetToolTip(Me.butReset, "Empty all fields and re-input data")
         Me.butReset.UseVisualStyleBackColor = True
         '
         'butFilter
         '
         Me.butFilter.Enabled = False
-        Me.butFilter.Location = New System.Drawing.Point(141, 264)
+        Me.butFilter.Location = New System.Drawing.Point(132, 264)
         Me.butFilter.Name = "butFilter"
-        Me.butFilter.Size = New System.Drawing.Size(63, 35)
+        Me.butFilter.Size = New System.Drawing.Size(77, 35)
         Me.butFilter.TabIndex = 27
         Me.butFilter.Text = "Filter"
+        Me.ToolTip1.SetToolTip(Me.butFilter, "Filter data to obtain final output")
         Me.butFilter.UseVisualStyleBackColor = True
         '
         'butSave
         '
         Me.butSave.Location = New System.Drawing.Point(6, 263)
         Me.butSave.Name = "butSave"
-        Me.butSave.Size = New System.Drawing.Size(77, 36)
+        Me.butSave.Size = New System.Drawing.Size(82, 36)
         Me.butSave.TabIndex = 26
         Me.butSave.Text = "Save"
+        Me.ToolTip1.SetToolTip(Me.butSave, "Save output as text or excel file")
         Me.butSave.UseVisualStyleBackColor = True
         '
         'lstOutputView
@@ -421,36 +440,41 @@ Partial Class frmMain
         Me.lstOutputView.Name = "lstOutputView"
         Me.lstOutputView.Size = New System.Drawing.Size(356, 228)
         Me.lstOutputView.TabIndex = 25
+        Me.ToolTip1.SetToolTip(Me.lstOutputView, "Output")
         '
         'RadioButtonContinuousSlope
         '
         Me.RadioButtonContinuousSlope.AutoSize = True
-        Me.RadioButtonContinuousSlope.Location = New System.Drawing.Point(6, 25)
+        Me.RadioButtonContinuousSlope.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.RadioButtonContinuousSlope.Location = New System.Drawing.Point(17, 27)
         Me.RadioButtonContinuousSlope.Name = "RadioButtonContinuousSlope"
-        Me.RadioButtonContinuousSlope.Size = New System.Drawing.Size(140, 21)
+        Me.RadioButtonContinuousSlope.Size = New System.Drawing.Size(147, 22)
         Me.RadioButtonContinuousSlope.TabIndex = 25
         Me.RadioButtonContinuousSlope.TabStop = True
         Me.RadioButtonContinuousSlope.Text = "Continuous Slope"
+        Me.ToolTip1.SetToolTip(Me.RadioButtonContinuousSlope, "Select this option for ""Continuous Slope"" Analysis")
         Me.RadioButtonContinuousSlope.UseVisualStyleBackColor = True
         '
         'RadioButtonSeperateSlope
         '
         Me.RadioButtonSeperateSlope.AutoSize = True
-        Me.RadioButtonSeperateSlope.Location = New System.Drawing.Point(255, 27)
+        Me.RadioButtonSeperateSlope.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.RadioButtonSeperateSlope.Location = New System.Drawing.Point(335, 27)
         Me.RadioButtonSeperateSlope.Name = "RadioButtonSeperateSlope"
-        Me.RadioButtonSeperateSlope.Size = New System.Drawing.Size(127, 21)
+        Me.RadioButtonSeperateSlope.Size = New System.Drawing.Size(130, 22)
         Me.RadioButtonSeperateSlope.TabIndex = 26
         Me.RadioButtonSeperateSlope.TabStop = True
         Me.RadioButtonSeperateSlope.Text = "Separate Slope"
+        Me.ToolTip1.SetToolTip(Me.RadioButtonSeperateSlope, "Select this option for ""Separate Slope"" Analysis")
         Me.RadioButtonSeperateSlope.UseVisualStyleBackColor = True
         '
         'GroupBox5
         '
         Me.GroupBox5.Controls.Add(Me.RadioButtonSeperateSlope)
         Me.GroupBox5.Controls.Add(Me.RadioButtonContinuousSlope)
-        Me.GroupBox5.Location = New System.Drawing.Point(9, 11)
+        Me.GroupBox5.Location = New System.Drawing.Point(12, 12)
         Me.GroupBox5.Name = "GroupBox5"
-        Me.GroupBox5.Size = New System.Drawing.Size(429, 76)
+        Me.GroupBox5.Size = New System.Drawing.Size(524, 76)
         Me.GroupBox5.TabIndex = 27
         Me.GroupBox5.TabStop = False
         Me.GroupBox5.Text = "Analysis Options"
@@ -459,9 +483,9 @@ Partial Class frmMain
         '
         Me.GroupSeparateSlope.Controls.Add(Me.GroupBox8)
         Me.GroupSeparateSlope.Controls.Add(Me.GroupBox9)
-        Me.GroupSeparateSlope.Location = New System.Drawing.Point(847, 111)
+        Me.GroupSeparateSlope.Location = New System.Drawing.Point(847, 94)
         Me.GroupSeparateSlope.Name = "GroupSeparateSlope"
-        Me.GroupSeparateSlope.Size = New System.Drawing.Size(838, 579)
+        Me.GroupSeparateSlope.Size = New System.Drawing.Size(838, 596)
         Me.GroupSeparateSlope.TabIndex = 31
         Me.GroupSeparateSlope.TabStop = False
         Me.GroupSeparateSlope.Text = "Seperate Slope"
@@ -476,7 +500,7 @@ Partial Class frmMain
         Me.GroupBox8.Controls.Add(Me.butsFilter)
         Me.GroupBox8.Controls.Add(Me.butsSave)
         Me.GroupBox8.Controls.Add(Me.lstsOutputView)
-        Me.GroupBox8.Location = New System.Drawing.Point(470, 14)
+        Me.GroupBox8.Location = New System.Drawing.Point(470, 31)
         Me.GroupBox8.Name = "GroupBox8"
         Me.GroupBox8.Size = New System.Drawing.Size(367, 531)
         Me.GroupBox8.TabIndex = 30
@@ -494,11 +518,12 @@ Partial Class frmMain
         'btnNext
         '
         Me.btnNext.Enabled = False
-        Me.btnNext.Location = New System.Drawing.Point(298, 264)
+        Me.btnNext.Location = New System.Drawing.Point(296, 262)
         Me.btnNext.Name = "btnNext"
         Me.btnNext.Size = New System.Drawing.Size(63, 35)
         Me.btnNext.TabIndex = 32
         Me.btnNext.Text = "Next"
+        Me.ToolTip1.SetToolTip(Me.btnNext, "Enter data for next group of segments")
         Me.btnNext.UseVisualStyleBackColor = True
         '
         'RichTextBox2
@@ -521,30 +546,33 @@ Partial Class frmMain
         '
         'butsReset
         '
-        Me.butsReset.Location = New System.Drawing.Point(208, 264)
+        Me.butsReset.Location = New System.Drawing.Point(208, 262)
         Me.butsReset.Name = "butsReset"
         Me.butsReset.Size = New System.Drawing.Size(63, 35)
         Me.butsReset.TabIndex = 28
         Me.butsReset.Text = "Reset"
+        Me.ToolTip1.SetToolTip(Me.butsReset, "Empty all fields and re-input data")
         Me.butsReset.UseVisualStyleBackColor = True
         '
         'butsFilter
         '
         Me.butsFilter.Enabled = False
-        Me.butsFilter.Location = New System.Drawing.Point(120, 264)
+        Me.butsFilter.Location = New System.Drawing.Point(113, 262)
         Me.butsFilter.Name = "butsFilter"
-        Me.butsFilter.Size = New System.Drawing.Size(63, 35)
+        Me.butsFilter.Size = New System.Drawing.Size(69, 35)
         Me.butsFilter.TabIndex = 27
         Me.butsFilter.Text = "Filter"
+        Me.ToolTip1.SetToolTip(Me.butsFilter, "Filter data to obtain final output")
         Me.butsFilter.UseVisualStyleBackColor = True
         '
         'butsSave
         '
-        Me.butsSave.Location = New System.Drawing.Point(6, 263)
+        Me.butsSave.Location = New System.Drawing.Point(6, 261)
         Me.butsSave.Name = "butsSave"
-        Me.butsSave.Size = New System.Drawing.Size(77, 36)
+        Me.butsSave.Size = New System.Drawing.Size(82, 36)
         Me.butsSave.TabIndex = 26
         Me.butsSave.Text = "Save"
+        Me.ToolTip1.SetToolTip(Me.butsSave, "Save output as text or excel file")
         Me.butsSave.UseVisualStyleBackColor = True
         '
         'lstsOutputView
@@ -556,6 +584,7 @@ Partial Class frmMain
         Me.lstsOutputView.Name = "lstsOutputView"
         Me.lstsOutputView.Size = New System.Drawing.Size(356, 228)
         Me.lstsOutputView.TabIndex = 25
+        Me.ToolTip1.SetToolTip(Me.lstsOutputView, "Output")
         '
         'GroupBox9
         '
@@ -569,9 +598,9 @@ Partial Class frmMain
         Me.GroupBox9.Controls.Add(Me.butsCompute)
         Me.GroupBox9.Controls.Add(Me.butsGradeLength)
         Me.GroupBox9.Controls.Add(Me.GroupBox12)
-        Me.GroupBox9.Location = New System.Drawing.Point(0, 21)
+        Me.GroupBox9.Location = New System.Drawing.Point(0, 31)
         Me.GroupBox9.Name = "GroupBox9"
-        Me.GroupBox9.Size = New System.Drawing.Size(464, 558)
+        Me.GroupBox9.Size = New System.Drawing.Size(470, 565)
         Me.GroupBox9.TabIndex = 24
         Me.GroupBox9.TabStop = False
         Me.GroupBox9.Text = "Input"
@@ -586,11 +615,12 @@ Partial Class frmMain
         '
         'butsClear
         '
-        Me.butsClear.Location = New System.Drawing.Point(368, 428)
+        Me.butsClear.Location = New System.Drawing.Point(361, 431)
         Me.butsClear.Name = "butsClear"
         Me.butsClear.Size = New System.Drawing.Size(87, 30)
         Me.butsClear.TabIndex = 33
         Me.butsClear.Text = "Clear"
+        Me.ToolTip1.SetToolTip(Me.butsClear, "Clear Grade- Segment Length listbox")
         Me.butsClear.UseVisualStyleBackColor = True
         '
         'GroupBox10
@@ -607,17 +637,19 @@ Partial Class frmMain
         '
         'txtsiniambient
         '
-        Me.txtsiniambient.Location = New System.Drawing.Point(345, 60)
+        Me.txtsiniambient.Location = New System.Drawing.Point(378, 58)
         Me.txtsiniambient.Name = "txtsiniambient"
         Me.txtsiniambient.Size = New System.Drawing.Size(61, 22)
         Me.txtsiniambient.TabIndex = 18
+        Me.ToolTip1.SetToolTip(Me.txtsiniambient, "Enter 90 F as ambient temperature")
         '
         'txtsinitemp
         '
-        Me.txtsinitemp.Location = New System.Drawing.Point(345, 21)
+        Me.txtsinitemp.Location = New System.Drawing.Point(378, 21)
         Me.txtsinitemp.Name = "txtsinitemp"
         Me.txtsinitemp.Size = New System.Drawing.Size(61, 22)
         Me.txtsinitemp.TabIndex = 17
+        Me.ToolTip1.SetToolTip(Me.txtsinitemp, "Enter the initial brake temperature in F (>=90F)")
         '
         'Label8
         '
@@ -653,16 +685,17 @@ Partial Class frmMain
         Me.lstsGradeLength.ItemHeight = 16
         Me.lstsGradeLength.Location = New System.Drawing.Point(9, 371)
         Me.lstsGradeLength.Name = "lstsGradeLength"
-        Me.lstsGradeLength.Size = New System.Drawing.Size(305, 164)
+        Me.lstsGradeLength.Size = New System.Drawing.Size(305, 148)
         Me.lstsGradeLength.TabIndex = 20
         '
         'butsImport
         '
-        Me.butsImport.Location = New System.Drawing.Point(367, 355)
+        Me.butsImport.Location = New System.Drawing.Point(362, 358)
         Me.butsImport.Name = "butsImport"
         Me.butsImport.Size = New System.Drawing.Size(87, 31)
         Me.butsImport.TabIndex = 28
         Me.butsImport.Text = "Import"
+        Me.ToolTip1.SetToolTip(Me.butsImport, "Import Grade and length of segment data from text or excel file")
         Me.butsImport.UseVisualStyleBackColor = True
         '
         'GroupBox11
@@ -683,10 +716,11 @@ Partial Class frmMain
         '
         'txtsNumberGrades
         '
-        Me.txtsNumberGrades.Location = New System.Drawing.Point(343, 18)
+        Me.txtsNumberGrades.Location = New System.Drawing.Point(377, 17)
         Me.txtsNumberGrades.Name = "txtsNumberGrades"
         Me.txtsNumberGrades.Size = New System.Drawing.Size(62, 22)
         Me.txtsNumberGrades.TabIndex = 18
+        Me.ToolTip1.SetToolTip(Me.txtsNumberGrades, "Enter number of grades in multigrade")
         '
         'Label11
         '
@@ -699,10 +733,11 @@ Partial Class frmMain
         '
         'txtsGroupNumber
         '
-        Me.txtsGroupNumber.Location = New System.Drawing.Point(343, 45)
+        Me.txtsGroupNumber.Location = New System.Drawing.Point(377, 44)
         Me.txtsGroupNumber.Name = "txtsGroupNumber"
         Me.txtsGroupNumber.Size = New System.Drawing.Size(62, 22)
         Me.txtsGroupNumber.TabIndex = 16
+        Me.ToolTip1.SetToolTip(Me.txtsGroupNumber, "Group Number (Braking/Non-braking interval)")
         '
         'Label16
         '
@@ -715,10 +750,11 @@ Partial Class frmMain
         '
         'txtsNumSections
         '
-        Me.txtsNumSections.Location = New System.Drawing.Point(343, 74)
+        Me.txtsNumSections.Location = New System.Drawing.Point(377, 73)
         Me.txtsNumSections.Name = "txtsNumSections"
         Me.txtsNumSections.Size = New System.Drawing.Size(62, 22)
         Me.txtsNumSections.TabIndex = 14
+        Me.ToolTip1.SetToolTip(Me.txtsNumSections, "Enter number of segments in Group")
         '
         'Label12
         '
@@ -742,28 +778,31 @@ Partial Class frmMain
         '
         Me.cbosMaxTemp.FormattingEnabled = True
         Me.cbosMaxTemp.Items.AddRange(New Object() {"500", "530"})
-        Me.cbosMaxTemp.Location = New System.Drawing.Point(343, 102)
+        Me.cbosMaxTemp.Location = New System.Drawing.Point(377, 101)
         Me.cbosMaxTemp.Name = "cbosMaxTemp"
         Me.cbosMaxTemp.Size = New System.Drawing.Size(62, 24)
         Me.cbosMaxTemp.TabIndex = 11
+        Me.ToolTip1.SetToolTip(Me.cbosMaxTemp, "Select the maximum brake temperature in F")
         '
         'butsCompute
         '
         Me.butsCompute.Enabled = False
-        Me.butsCompute.Location = New System.Drawing.Point(371, 464)
+        Me.butsCompute.Location = New System.Drawing.Point(360, 467)
         Me.butsCompute.Name = "butsCompute"
-        Me.butsCompute.Size = New System.Drawing.Size(84, 33)
+        Me.butsCompute.Size = New System.Drawing.Size(88, 33)
         Me.butsCompute.TabIndex = 21
         Me.butsCompute.Text = "Compute"
+        Me.ToolTip1.SetToolTip(Me.butsCompute, "Calculate output")
         Me.butsCompute.UseVisualStyleBackColor = True
         '
         'butsGradeLength
         '
-        Me.butsGradeLength.Location = New System.Drawing.Point(368, 392)
+        Me.butsGradeLength.Location = New System.Drawing.Point(362, 395)
         Me.butsGradeLength.Name = "butsGradeLength"
         Me.butsGradeLength.Size = New System.Drawing.Size(87, 30)
         Me.butsGradeLength.TabIndex = 19
         Me.butsGradeLength.Text = "Enter "
+        Me.ToolTip1.SetToolTip(Me.butsGradeLength, "Manually enter grade and length of segment data")
         Me.butsGradeLength.UseVisualStyleBackColor = True
         '
         'GroupBox12
@@ -772,25 +811,27 @@ Partial Class frmMain
         Me.GroupBox12.Controls.Add(Me.txtsMaxWeight)
         Me.GroupBox12.Controls.Add(Me.Label14)
         Me.GroupBox12.Controls.Add(Me.Label15)
-        Me.GroupBox12.Location = New System.Drawing.Point(12, 152)
+        Me.GroupBox12.Location = New System.Drawing.Point(9, 152)
         Me.GroupBox12.Name = "GroupBox12"
-        Me.GroupBox12.Size = New System.Drawing.Size(445, 96)
+        Me.GroupBox12.Size = New System.Drawing.Size(448, 96)
         Me.GroupBox12.TabIndex = 23
         Me.GroupBox12.TabStop = False
         '
         'txtsMaxSpeed
         '
-        Me.txtsMaxSpeed.Location = New System.Drawing.Point(345, 60)
+        Me.txtsMaxSpeed.Location = New System.Drawing.Point(378, 63)
         Me.txtsMaxSpeed.Name = "txtsMaxSpeed"
         Me.txtsMaxSpeed.Size = New System.Drawing.Size(61, 22)
         Me.txtsMaxSpeed.TabIndex = 18
+        Me.ToolTip1.SetToolTip(Me.txtsMaxSpeed, "Enter maximum descent speed (mph)")
         '
         'txtsMaxWeight
         '
-        Me.txtsMaxWeight.Location = New System.Drawing.Point(345, 21)
+        Me.txtsMaxWeight.Location = New System.Drawing.Point(378, 24)
         Me.txtsMaxWeight.Name = "txtsMaxWeight"
         Me.txtsMaxWeight.Size = New System.Drawing.Size(61, 22)
         Me.txtsMaxWeight.TabIndex = 17
+        Me.ToolTip1.SetToolTip(Me.txtsMaxWeight, "Enter maximum weight of truck in (lb) for the downgrade")
         '
         'Label14
         '
@@ -810,18 +851,36 @@ Partial Class frmMain
         Me.Label15.TabIndex = 16
         Me.Label15.Text = "Please enter maximum descent speed (mph)"
         '
+        'VisualStyler1
+        '
+        Me.VisualStyler1.HostForm = Me
+        Me.VisualStyler1.License = CType(resources.GetObject("VisualStyler1.License"), SkinSoft.VisualStyler.Licensing.VisualStylerLicense)
+        Me.VisualStyler1.LoadVisualStyle(Nothing, "OSX (Tiger).vssf")
+        '
+        'butlogout
+        '
+        Me.butlogout.Location = New System.Drawing.Point(1590, 26)
+        Me.butlogout.Name = "butlogout"
+        Me.butlogout.Size = New System.Drawing.Size(91, 35)
+        Me.butlogout.TabIndex = 32
+        Me.butlogout.Text = "log out"
+        Me.butlogout.UseVisualStyleBackColor = True
+        '
         'frmMain
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.AutoSize = True
         Me.ClientSize = New System.Drawing.Size(1693, 715)
+        Me.Controls.Add(Me.butlogout)
         Me.Controls.Add(Me.GroupSeparateSlope)
         Me.Controls.Add(Me.GroupBox5)
         Me.Controls.Add(Me.GroupContinuousSlope)
         Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D
         Me.Name = "frmMain"
-        Me.Text = resources.GetString("$this.Text")
+        Me.Text = "                                                                                 " &
+    "                          GSRS Auto 1.0"
+        Me.ToolTip1.SetToolTip(Me, "Select the maximum brake temperature in F" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10))
         Me.GroupBox1.ResumeLayout(False)
         Me.GroupBox1.PerformLayout()
         Me.GroupBox2.ResumeLayout(False)
@@ -847,6 +906,7 @@ Partial Class frmMain
         Me.GroupBox11.PerformLayout()
         Me.GroupBox12.ResumeLayout(False)
         Me.GroupBox12.PerformLayout()
+        CType(Me.VisualStyler1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -922,4 +982,7 @@ Partial Class frmMain
     Friend WithEvents btnNext As Button
     Friend WithEvents txtsNumberGrades As TextBox
     Friend WithEvents Label11 As Label
+    Friend WithEvents ToolTip1 As ToolTip
+    Friend WithEvents VisualStyler1 As SkinSoft.VisualStyler.VisualStyler
+    Friend WithEvents butlogout As Button
 End Class

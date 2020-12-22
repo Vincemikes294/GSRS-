@@ -138,11 +138,15 @@
                     T_e_s = CInt(T_e(V, 1))
 
                     lstTempProfile.Items.Add(W & vbTab & vbTab & Vs & vbTab & i & vbTab & vbTab & Theta & vbTab & vbTab & T_f_s & vbTab & vbTab & T_e_s & vbTab & vbTab & T_lim_s & vbCrLf)
+
+                    frmTemperaturePlot.s.Points.AddXY(i, T_lim_s)
+
+
                 End If
 
             Next
         Loop
-        butfilter.Enabled = True
+        butPlot.Enabled = True
     End Sub
     Private Sub frmTempProfile_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         Me.txttempWeight.Text = frmMain.txtMaxWeight.Text
@@ -153,7 +157,7 @@
     Private Sub buttempSave_Click(sender As Object, e As EventArgs) Handles buttempSave.Click
         Dim SaveFileDialog1 As New SaveFileDialog
         SaveFileDialog1.FileName = ""
-        SaveFileDialog1.Filter = "Text Files (*.txt)|*.txt|All Files (*.*)|*.*"
+        SaveFileDialog1.Filter = "Text Files(*.txt)|*.txt|(*.xls)|*.xls|All Files (*.*)|*.*"
 
         If SaveFileDialog1.ShowDialog() = DialogResult.OK Then
             Dim sb As New System.Text.StringBuilder()
@@ -171,6 +175,7 @@
         txtTempSpeed.Text = ""
         txttempWeight.Text = ""
         txtinibraketemp.Text = ""
+        butPlot.Enabled = False
         butfilter.Enabled = False
     End Sub
 
@@ -195,6 +200,7 @@
             End If
         Next
 
+        butPlot.Enabled = False
 
 
     End Sub
@@ -234,4 +240,12 @@
 
     End Class
 
+    Private Sub lstTempProfile_SelectedIndexChanged(sender As Object, e As EventArgs) Handles lstTempProfile.SelectedIndexChanged
+
+    End Sub
+
+    Private Sub butPlot_Click(sender As Object, e As EventArgs) Handles butPlot.Click
+        butfilter.Enabled = True
+        frmTemperaturePlot.Show()
+    End Sub
 End Class

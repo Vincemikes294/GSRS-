@@ -22,6 +22,7 @@ Partial Class frmTempProfile
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
+        Me.components = New System.ComponentModel.Container()
         Me.lstTempProfile = New System.Windows.Forms.ListBox()
         Me.buttempSave = New System.Windows.Forms.Button()
         Me.Label1 = New System.Windows.Forms.Label()
@@ -33,6 +34,8 @@ Partial Class frmTempProfile
         Me.buttempReset = New System.Windows.Forms.Button()
         Me.buttempCompute = New System.Windows.Forms.Button()
         Me.butfilter = New System.Windows.Forms.Button()
+        Me.ToolTip2 = New System.Windows.Forms.ToolTip(Me.components)
+        Me.butPlot = New System.Windows.Forms.Button()
         Me.SuspendLayout()
         '
         'lstTempProfile
@@ -42,17 +45,18 @@ Partial Class frmTempProfile
         Me.lstTempProfile.ItemHeight = 16
         Me.lstTempProfile.Location = New System.Drawing.Point(12, 44)
         Me.lstTempProfile.Name = "lstTempProfile"
-        Me.lstTempProfile.Size = New System.Drawing.Size(788, 228)
+        Me.lstTempProfile.Size = New System.Drawing.Size(665, 228)
         Me.lstTempProfile.TabIndex = 0
+        Me.ToolTip2.SetToolTip(Me.lstTempProfile, "Display")
         '
         'buttempSave
         '
-        Me.buttempSave.Enabled = False
-        Me.buttempSave.Location = New System.Drawing.Point(529, 278)
+        Me.buttempSave.Location = New System.Drawing.Point(298, 278)
         Me.buttempSave.Name = "buttempSave"
         Me.buttempSave.Size = New System.Drawing.Size(86, 36)
         Me.buttempSave.TabIndex = 1
         Me.buttempSave.Text = "Save"
+        Me.ToolTip2.SetToolTip(Me.buttempSave, "Save output in text or excel format")
         Me.buttempSave.UseVisualStyleBackColor = True
         '
         'Label1
@@ -67,7 +71,7 @@ Partial Class frmTempProfile
         'Label2
         '
         Me.Label2.AutoSize = True
-        Me.Label2.Location = New System.Drawing.Point(287, 9)
+        Me.Label2.Location = New System.Drawing.Point(261, 14)
         Me.Label2.Name = "Label2"
         Me.Label2.Size = New System.Drawing.Size(90, 17)
         Me.Label2.TabIndex = 3
@@ -76,7 +80,7 @@ Partial Class frmTempProfile
         'Label3
         '
         Me.Label3.AutoSize = True
-        Me.Label3.Location = New System.Drawing.Point(568, 10)
+        Me.Label3.Location = New System.Drawing.Point(475, 17)
         Me.Label3.Name = "Label3"
         Me.Label3.Size = New System.Drawing.Size(143, 17)
         Me.Label3.TabIndex = 4
@@ -84,17 +88,19 @@ Partial Class frmTempProfile
         '
         'txtinibraketemp
         '
-        Me.txtinibraketemp.Location = New System.Drawing.Point(735, 12)
+        Me.txtinibraketemp.Location = New System.Drawing.Point(624, 14)
         Me.txtinibraketemp.Name = "txtinibraketemp"
-        Me.txtinibraketemp.Size = New System.Drawing.Size(65, 22)
+        Me.txtinibraketemp.Size = New System.Drawing.Size(53, 22)
         Me.txtinibraketemp.TabIndex = 5
+        Me.ToolTip2.SetToolTip(Me.txtinibraketemp, "Enter initial brake temperature in F")
         '
         'txtTempSpeed
         '
-        Me.txtTempSpeed.Location = New System.Drawing.Point(403, 9)
+        Me.txtTempSpeed.Location = New System.Drawing.Point(357, 12)
         Me.txtTempSpeed.Name = "txtTempSpeed"
-        Me.txtTempSpeed.Size = New System.Drawing.Size(71, 22)
+        Me.txtTempSpeed.Size = New System.Drawing.Size(52, 22)
         Me.txtTempSpeed.TabIndex = 6
+        Me.ToolTip2.SetToolTip(Me.txtTempSpeed, "Enter Truck descent Speed in (mph)")
         '
         'txttempWeight
         '
@@ -102,14 +108,16 @@ Partial Class frmTempProfile
         Me.txttempWeight.Name = "txttempWeight"
         Me.txttempWeight.Size = New System.Drawing.Size(60, 22)
         Me.txttempWeight.TabIndex = 7
+        Me.ToolTip2.SetToolTip(Me.txttempWeight, "Enter Truck Weight in (lb)")
         '
         'buttempReset
         '
-        Me.buttempReset.Location = New System.Drawing.Point(714, 278)
+        Me.buttempReset.Location = New System.Drawing.Point(591, 278)
         Me.buttempReset.Name = "buttempReset"
         Me.buttempReset.Size = New System.Drawing.Size(86, 36)
         Me.buttempReset.TabIndex = 8
         Me.buttempReset.Text = "Reset"
+        Me.ToolTip2.SetToolTip(Me.buttempReset, "Clear all fields and re-input data")
         Me.buttempReset.UseVisualStyleBackColor = True
         '
         'buttempCompute
@@ -119,23 +127,37 @@ Partial Class frmTempProfile
         Me.buttempCompute.Size = New System.Drawing.Size(86, 36)
         Me.buttempCompute.TabIndex = 9
         Me.buttempCompute.Text = "Compute"
+        Me.ToolTip2.SetToolTip(Me.buttempCompute, "Calculate output")
         Me.buttempCompute.UseVisualStyleBackColor = True
         '
         'butfilter
         '
         Me.butfilter.Enabled = False
-        Me.butfilter.Location = New System.Drawing.Point(268, 278)
+        Me.butfilter.Location = New System.Drawing.Point(439, 278)
         Me.butfilter.Name = "butfilter"
         Me.butfilter.Size = New System.Drawing.Size(86, 36)
         Me.butfilter.TabIndex = 10
         Me.butfilter.Text = "Filter"
+        Me.ToolTip2.SetToolTip(Me.butfilter, "Filter output")
         Me.butfilter.UseVisualStyleBackColor = True
+        '
+        'butPlot
+        '
+        Me.butPlot.Enabled = False
+        Me.butPlot.Location = New System.Drawing.Point(158, 278)
+        Me.butPlot.Name = "butPlot"
+        Me.butPlot.Size = New System.Drawing.Size(86, 36)
+        Me.butPlot.TabIndex = 11
+        Me.butPlot.Text = "Plot"
+        Me.ToolTip2.SetToolTip(Me.butPlot, "Save output in text or excel format")
+        Me.butPlot.UseVisualStyleBackColor = True
         '
         'frmTempProfile
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(805, 316)
+        Me.ClientSize = New System.Drawing.Size(685, 316)
+        Me.Controls.Add(Me.butPlot)
         Me.Controls.Add(Me.butfilter)
         Me.Controls.Add(Me.buttempCompute)
         Me.Controls.Add(Me.buttempReset)
@@ -148,7 +170,7 @@ Partial Class frmTempProfile
         Me.Controls.Add(Me.buttempSave)
         Me.Controls.Add(Me.lstTempProfile)
         Me.Name = "frmTempProfile"
-        Me.Text = "Temperature_Profile"
+        Me.Text = "                             Temperature Profile"
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
@@ -165,4 +187,6 @@ Partial Class frmTempProfile
     Friend WithEvents buttempReset As Button
     Friend WithEvents buttempCompute As Button
     Friend WithEvents butfilter As Button
+    Friend WithEvents ToolTip2 As ToolTip
+    Friend WithEvents butPlot As Button
 End Class
