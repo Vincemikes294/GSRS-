@@ -204,9 +204,9 @@ Partial Class frmMain
         Me.Label1.AutoSize = True
         Me.Label1.Location = New System.Drawing.Point(13, 66)
         Me.Label1.Name = "Label1"
-        Me.Label1.Size = New System.Drawing.Size(281, 17)
+        Me.Label1.Size = New System.Drawing.Size(321, 17)
         Me.Label1.TabIndex = 12
-        Me.Label1.Text = "Please select the maximum temperature (F)"
+        Me.Label1.Text = "Please select the maximum brake temperature (F)"
         '
         'cboMaxTemp
         '
@@ -335,9 +335,9 @@ Partial Class frmMain
         Me.Label5.AutoSize = True
         Me.Label5.Location = New System.Drawing.Point(17, 24)
         Me.Label5.Name = "Label5"
-        Me.Label5.Size = New System.Drawing.Size(227, 17)
+        Me.Label5.Size = New System.Drawing.Size(267, 17)
         Me.Label5.TabIndex = 15
-        Me.Label5.Text = "Please enter initial temperature (F)"
+        Me.Label5.Text = "Please enter initial brake temperature (F)"
         '
         'Label7
         '
@@ -353,9 +353,9 @@ Partial Class frmMain
         Me.Label6.AutoSize = True
         Me.Label6.Location = New System.Drawing.Point(9, 346)
         Me.Label6.Name = "Label6"
-        Me.Label6.Size = New System.Drawing.Size(200, 17)
+        Me.Label6.Size = New System.Drawing.Size(252, 17)
         Me.Label6.TabIndex = 30
-        Me.Label6.Text = "Grade and Length of Segment"
+        Me.Label6.Text = "Grade, Length and Radius of Segment"
         '
         'butImport
         '
@@ -656,9 +656,9 @@ Partial Class frmMain
         Me.Label8.AutoSize = True
         Me.Label8.Location = New System.Drawing.Point(17, 24)
         Me.Label8.Name = "Label8"
-        Me.Label8.Size = New System.Drawing.Size(227, 17)
+        Me.Label8.Size = New System.Drawing.Size(267, 17)
         Me.Label8.TabIndex = 15
-        Me.Label8.Text = "Please enter initial temperature (F)"
+        Me.Label8.Text = "Please enter initial brake temperature (F)"
         '
         'Label9
         '
@@ -674,9 +674,9 @@ Partial Class frmMain
         Me.Label10.AutoSize = True
         Me.Label10.Location = New System.Drawing.Point(9, 346)
         Me.Label10.Name = "Label10"
-        Me.Label10.Size = New System.Drawing.Size(200, 17)
+        Me.Label10.Size = New System.Drawing.Size(252, 17)
         Me.Label10.TabIndex = 30
-        Me.Label10.Text = "Grade and Length of Segment"
+        Me.Label10.Text = "Grade, Length and Radius of Segment"
         '
         'lstsGradeLength
         '
@@ -770,9 +770,9 @@ Partial Class frmMain
         Me.Label13.AutoSize = True
         Me.Label13.Location = New System.Drawing.Point(16, 109)
         Me.Label13.Name = "Label13"
-        Me.Label13.Size = New System.Drawing.Size(281, 17)
+        Me.Label13.Size = New System.Drawing.Size(321, 17)
         Me.Label13.TabIndex = 12
-        Me.Label13.Text = "Please select the maximum temperature (F)"
+        Me.Label13.Text = "Please select the maximum brake temperature (F)"
         '
         'cbosMaxTemp
         '

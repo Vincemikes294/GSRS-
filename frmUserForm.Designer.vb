@@ -39,7 +39,6 @@ Partial Class frmUserForm
         Me.cboStatus = New System.Windows.Forms.ComboBox()
         Me.lstViewUsers = New System.Windows.Forms.ListView()
         Me.butLoad = New System.Windows.Forms.Button()
-        Me.Timer1 = New System.Windows.Forms.Timer(Me.components)
         Me.VisualStyler1 = New SkinSoft.VisualStyler.VisualStyler(Me.components)
         Me.ToolTip1 = New System.Windows.Forms.ToolTip(Me.components)
         CType(Me.VisualStyler1, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -75,7 +74,7 @@ Partial Class frmUserForm
         'txtFirstName
         '
         Me.txtFirstName.Location = New System.Drawing.Point(210, 14)
-        Me.txtFirstName.MaxLength = 10
+        Me.txtFirstName.MaxLength = 1000
         Me.txtFirstName.Name = "txtFirstName"
         Me.txtFirstName.Size = New System.Drawing.Size(217, 22)
         Me.txtFirstName.TabIndex = 4
@@ -84,7 +83,7 @@ Partial Class frmUserForm
         'txtUsername
         '
         Me.txtUsername.Location = New System.Drawing.Point(210, 79)
-        Me.txtUsername.MaxLength = 10
+        Me.txtUsername.MaxLength = 1000
         Me.txtUsername.Name = "txtUsername"
         Me.txtUsername.Size = New System.Drawing.Size(217, 22)
         Me.txtUsername.TabIndex = 5
@@ -93,7 +92,7 @@ Partial Class frmUserForm
         'txtPassword
         '
         Me.txtPassword.Location = New System.Drawing.Point(210, 113)
-        Me.txtPassword.MaxLength = 10
+        Me.txtPassword.MaxLength = 1000
         Me.txtPassword.Name = "txtPassword"
         Me.txtPassword.Size = New System.Drawing.Size(217, 22)
         Me.txtPassword.TabIndex = 6
@@ -111,7 +110,7 @@ Partial Class frmUserForm
         '
         'butDelete
         '
-        Me.butDelete.Location = New System.Drawing.Point(126, 209)
+        Me.butDelete.Location = New System.Drawing.Point(122, 209)
         Me.butDelete.Name = "butDelete"
         Me.butDelete.Size = New System.Drawing.Size(75, 27)
         Me.butDelete.TabIndex = 8
@@ -122,7 +121,7 @@ Partial Class frmUserForm
         'txtLastName
         '
         Me.txtLastName.Location = New System.Drawing.Point(210, 45)
-        Me.txtLastName.MaxLength = 10
+        Me.txtLastName.MaxLength = 1000
         Me.txtLastName.Name = "txtLastName"
         Me.txtLastName.Size = New System.Drawing.Size(217, 22)
         Me.txtLastName.TabIndex = 11
@@ -139,7 +138,7 @@ Partial Class frmUserForm
         '
         'butSave
         '
-        Me.butSave.Location = New System.Drawing.Point(234, 209)
+        Me.butSave.Location = New System.Drawing.Point(239, 209)
         Me.butSave.Name = "butSave"
         Me.butSave.Size = New System.Drawing.Size(75, 27)
         Me.butSave.TabIndex = 12
@@ -177,7 +176,8 @@ Partial Class frmUserForm
         '
         'butLoad
         '
-        Me.butLoad.Location = New System.Drawing.Point(339, 209)
+        Me.butLoad.Enabled = False
+        Me.butLoad.Location = New System.Drawing.Point(352, 209)
         Me.butLoad.Name = "butLoad"
         Me.butLoad.Size = New System.Drawing.Size(75, 27)
         Me.butLoad.TabIndex = 16
@@ -233,7 +233,6 @@ Partial Class frmUserForm
     Friend WithEvents cboStatus As ComboBox
     Friend WithEvents lstViewUsers As ListView
     Friend WithEvents butLoad As Button
-    Friend WithEvents Timer1 As Timer
     Friend WithEvents VisualStyler1 As SkinSoft.VisualStyler.VisualStyler
     Friend WithEvents ToolTip1 As ToolTip
 End Class

@@ -142,6 +142,5 @@ Partial Class SplashScreenGSRS
 
     End Sub
     Friend WithEvents ProgressBar1 As System.Windows.Forms.ProgressBar
-    Friend WithEvents Timer1 As System.Windows.Forms.Timer
-
+    Friend WithEvents Timer1 As Timer
 End Class

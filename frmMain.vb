@@ -5,19 +5,23 @@ Public Class frmMain
     Public T_max As Double
     Public Shared Grade() As Double
     Public Shared Length() As Double
-Public Shared Gradec() As Double
-Public Shared Lengthc() As Double
-Dim i As Integer
+    Public Shared Radius() As Double
+    Public Shared Gradec() As Double
+    Public Shared Lengthc() As Double
+    Public Shared Radiusc() As Double
+    Dim i As Integer
 Dim j As Integer
 Dim j_max As Integer
 Dim i_max As Double
 Dim W_max As Double
 Dim Valid As Boolean
 Public Datagrade As String
-Public DataLength As String
-Public Datagradec As String
-Public DataLengthc As String
-Public Res() As Array
+    Public DataLength As String
+    Public DataRadius As String
+    Public Datagradec As String
+    Public DataLengthc As String
+    Public DataRadiusc As String
+    Public Res() As Array
 Dim T_lim(,) As Double
 Public TL As Double
 Public W As Double
@@ -76,13 +80,14 @@ Dim Sections_maxinput As String
             butImport.PerformClick()
             Exit Sub
         Else
-            lstGradeLength.Items.Add("Grade(In Radians)" & vbTab & "Length(In Miles)")
-            For Me.i = 1 To txtNumSections.Text
+                lstGradeLength.Items.Add("Grade(In Radians)" & vbTab & "Length(In Miles)" & vbTab & "    Radius(In Feet)")
+                For Me.i = 1 To txtNumSections.Text
 
-                ReDim Preserve Grade(i)
-                ReDim Preserve Length(i)
+                    ReDim Preserve Grade(i)
+                    ReDim Preserve Length(i)
+                    ReDim Preserve Radius(i)
 
-                Datagrade = (InputBox("Enter Decimal Grade " & i & " in Radians"))
+                    Datagrade = (InputBox("Enter Decimal Grade " & i & " in Radians"))
 
 
                 Do While String.IsNullOrEmpty(Datagrade) Or IsNumeric(Datagrade) = False Or Datagrade >= "1"
@@ -100,24 +105,34 @@ Dim Sections_maxinput As String
                     MessageBox.Show("Please enter a Numeric Value")
                     DataLength = (InputBox("Enter Length " & i & " in Miles"))
                 Loop
-                Length(i) = DataLength
+                    Length(i) = DataLength
 
-                lstGradeLength.Items.Add(Grade(i) & vbTab & vbTab & vbTab & Length(i) & vbCrLf)
 
-            Next
+                    DataRadius = (InputBox("Enter Radius " & i & " in Feet"))
+
+                    Do While String.IsNullOrEmpty(DataRadius) Or IsNumeric(DataRadius) = False
+                        MessageBox.Show("Please enter a Numeric Value")
+                        DataRadius = (InputBox("Enter Radius " & i & " in Feet"))
+                    Loop
+                    Radius(i) = DataRadius
+
+                    lstGradeLength.Items.Add(Grade(i) & vbTab & vbTab & vbTab & Length(i) & vbTab & vbTab & vbTab & Radius(i) & vbCrLf)
+
+                Next
             butCompute.Enabled = True
         End If
         butImport.Enabled = True
 
     ElseIf CInt(txtNumSections.Text) <= 6 Then
 
-        lstGradeLength.Items.Add("Grade(In Radians)" & vbTab & "Length(In Miles)")
-        For Me.i = 1 To txtNumSections.Text
+            lstGradeLength.Items.Add("Grade(In Radians)" & vbTab & "Length(In Miles)" & vbTab & "    Radius(In Feet)")
+            For Me.i = 1 To txtNumSections.Text
 
-            ReDim Preserve Grade(i)
-            ReDim Preserve Length(i)
+                ReDim Preserve Grade(i)
+                ReDim Preserve Length(i)
+                ReDim Preserve Radius(i)
 
-            Datagrade = (InputBox("Enter Decimal Grade " & i & " in Radians"))
+                Datagrade = (InputBox("Enter Decimal Grade " & i & " in Radians"))
 
 
             Do While String.IsNullOrEmpty(Datagrade) Or IsNumeric(Datagrade) = False Or Datagrade >= "1"
@@ -137,9 +152,20 @@ Dim Sections_maxinput As String
             Loop
             Length(i) = DataLength
 
-            lstGradeLength.Items.Add(Grade(i) & vbTab & vbTab & vbTab & Length(i) & vbCrLf)
 
-        Next
+
+                DataRadius = (InputBox("Enter Radius " & i & " in Feet"))
+
+                Do While String.IsNullOrEmpty(DataRadius) Or IsNumeric(DataRadius) = False
+                    MessageBox.Show("Please enter a Numeric Value")
+                    DataRadius = (InputBox("Enter Length " & i & " in Feet"))
+                Loop
+                Radius(i) = DataRadius
+
+
+                lstGradeLength.Items.Add(Grade(i) & vbTab & vbTab & vbTab & Length(i) & vbTab & vbTab & vbTab & Radius(i) & vbCrLf)
+
+            Next
         butCompute.Enabled = True
     End If
     butImport.Enabled = True
@@ -220,12 +246,12 @@ Private Sub butCompute_Click(sender As System.Object, e As System.EventArgs) Han
     End If
     If IsNumeric(cboMaxTemp.Text) And cboMaxTemp.Text <> "" And cboMaxTemp.Text = "500" Or cboMaxTemp.Text = "530" Then
         T_max = cboMaxTemp.Text
-    Else : MsgBox("Please input " & "500 or 530 for Maximum Temperature")
-        T_max_input = (InputBox("Input " & "500 or 530 for Maximum Temperature"))
-        Do While IsNumeric(T_max_input) = False Or T_max_input <> "500" And T_max_input <> "530"
-            MessageBox.Show("Input " & "500 or 530 for Maximum Temperature")
-            T_max_input = (InputBox("Input " & "500 or 530 for Maximum Temperature"))
-        Loop
+        Else : MsgBox("Please input " & "500 or 530 for Maximum Brake Temperature")
+            T_max_input = (InputBox("Input " & "500 or 530 for Maximum Brake Temperature"))
+            Do While IsNumeric(T_max_input) = False Or T_max_input <> "500" And T_max_input <> "530"
+                MessageBox.Show("Input " & "500 or 530 for Maximum Brake Temperature")
+                T_max_input = (InputBox("Input " & "500 or 530 for Maximum Brake Temperature"))
+            Loop
         T_max = CDbl(T_max_input)
         cboMaxTemp.Text = T_max
     End If
@@ -284,15 +310,15 @@ Private Sub butCompute_Click(sender As System.Object, e As System.EventArgs) Han
     End If
 
 End Sub
-Private Sub frmGSRS(sender As System.Object, e As System.EventArgs) Handles MyBase.Load
-    RadioButtonContinuousSlope.Checked = True
-    butSave.Enabled = False
-    butFilter.Enabled = False
-    butsSave.Enabled = False
+    Private Sub frmGSRS(sender As System.Object, e As System.EventArgs) Handles MyBase.Load
+        RadioButtonContinuousSlope.Checked = True
+        butSave.Enabled = False
+        butFilter.Enabled = False
+        butsSave.Enabled = False
         butsFilter.Enabled = False
 
     End Sub
-Private Sub butSave_Click(sender As System.Object, e As System.EventArgs)
+    Private Sub butSave_Click(sender As System.Object, e As System.EventArgs)
 
 End Sub
 Private Sub butFilter_Click(sender As System.Object, e As System.EventArgs)
@@ -613,7 +639,7 @@ End Sub
     Private Sub Button1_Click_1(sender As System.Object, e As System.EventArgs) Handles butImport.Click
         Dim MyFileDialog As New System.Windows.Forms.OpenFileDialog
 
-        ' Configure the dialog to show only text files
+        ' Configure the dialog to show both text and excel files
         ' Set its title and set the filename field blank for the moment.
         MyFileDialog.Filter = "Text Files(*.txt)|*.txt|(*.xlsx)|*.xlsx"
         MyFileDialog.Title = " Open a Text or excel file"
@@ -646,15 +672,16 @@ End Sub
 
                         End While
 
-                        lstGradeLength.Items.Add("Grade (in Radians)" & vbTab & "   Length (in Miles)")
+                        lstGradeLength.Items.Add("Grade (in Radians)" & vbTab & "   Length (in Miles)" & vbTab & "   Radius (in Feet)")
 
                         Dim m As Integer
                         For m = 1 To CInt(UBound(RichTextBox1.Lines))
                             ReDim Preserve Grade(m)
                             ReDim Preserve Length(m)
                             Grade(m) = RichTextBox1.Lines(m - 1).Split(" ").First
-                            Length(m) = RichTextBox1.Lines(m - 1).Split(" ").Last
-                            lstGradeLength.Items.Add(Grade(m) & vbTab & vbTab & vbTab & Length(m) & vbCrLf)
+                            Length(m) = RichTextBox1.Lines(m - 1).Split(" ").First + 1
+                            Radius(m) = RichTextBox1.Lines(m - 1).Split(" ").Last
+                            lstGradeLength.Items.Add(Grade(m) & vbTab & vbTab & vbTab & Length(m) & vbTab & vbTab & vbTab & Radius(m) & vbCrLf)
                             butGradeLength.Enabled = False
                         Next
                         txtNumSections.Text = UBound(RichTextBox1.Lines)
@@ -667,17 +694,20 @@ End Sub
                         Dim i As Integer
                         Dim cellA As String
                         Dim cellB As String
-                        lstGradeLength.Items.Add("Grade (in Radians)" & vbTab & "   Length (in Miles)")
+                        Dim cellC As String
+                        lstGradeLength.Items.Add("Grade (in Radians)" & vbTab & "   Length (in Miles)" & vbTab & "   Radius (in Feet)")
                         For i = 0 To AscW(lstGradeLength.Items.Count.ToString()(i = i + 1)) - 1
 
                             cellA = "A" & Convert.ToString(i + 1)
                             cellB = "B" & Convert.ToString(i + 1)
+                            cellC = "C" & Convert.ToString(i + 1)
                             cellA = oSheet.Range(cellA).Value
                             cellB = oSheet.Range(cellB).Value
-                            If cellA = "" And cellB = "" Then
+                            cellC = oSheet.Range(cellC).Value
+                            If cellA = "" And cellB = "" And cellC = "" Then
                                 Exit For
                             Else
-                                RichTextBox1.AppendText(cellA & " " & cellB & vbCrLf)
+                                RichTextBox1.AppendText(cellA & " " & cellB & " " & cellC & vbCrLf)
 
                             End If
                         Next
@@ -686,9 +716,11 @@ End Sub
                         For m = 1 To CInt(UBound(RichTextBox1.Lines))
                             ReDim Preserve Grade(m)
                             ReDim Preserve Length(m)
+                            ReDim Preserve Radius(m)
                             Grade(m) = RichTextBox1.Lines(m - 1).Split(" ").First
-                            Length(m) = RichTextBox1.Lines(m - 1).Split(" ").Last
-                            lstGradeLength.Items.Add(Grade(m) & vbTab & vbTab & vbTab & Length(m) & vbCrLf)
+                            Length(m) = RichTextBox1.Lines(m - 1).Split(" ").First + 1
+                            Radius(m) = RichTextBox1.Lines(m - 1).Split(" ").Last
+                            lstGradeLength.Items.Add(Grade(m) & vbTab & vbTab & vbTab & Length(m) & vbTab & vbTab & vbTab & Radius(m) & vbCrLf)
                             butGradeLength.Enabled = False
                         Next
                         testFile = My.Computer.FileSystem.GetFileInfo(strFile)
@@ -1169,11 +1201,12 @@ End Sub
                 butsImport.PerformClick()
                 Exit Sub
             Else
-                lstsGradeLength.Items.Add("Grade(In Radians)" & vbTab & "Length(In Miles)")
+                lstsGradeLength.Items.Add("Grade(In Radians)" & vbTab & "Length(In Miles)" & vbTab & "    Radius(In Feet)")
                 For Me.i = 1 To txtsNumSections.Text
 
                     ReDim Preserve Gradec(i)
                     ReDim Preserve Lengthc(i)
+                    ReDim Preserve Radiusc(i)
 
                     Datagradec = (InputBox("Enter Decimal Grade " & i & " in Radians"))
 
@@ -1195,7 +1228,16 @@ End Sub
                     Loop
                     Lengthc(i) = DataLengthc
 
-                    lstsGradeLength.Items.Add(Gradec(i) & vbTab & vbTab & vbTab & Lengthc(i) & vbCrLf)
+
+                    DataRadiusc = (InputBox("Enter Radius " & i & " in Feet"))
+
+                    Do While String.IsNullOrEmpty(DataRadiusc) Or IsNumeric(DataRadiusc) = False
+                        MessageBox.Show("Please enter a Numeric Value")
+                        DataRadiusc = (InputBox("Enter Radius " & i & " in Feet"))
+                    Loop
+                    Radiusc(i) = DataRadiusc
+
+                    lstsGradeLength.Items.Add(Gradec(i) & vbTab & vbTab & vbTab & Lengthc(i) & vbTab & vbTab & vbTab & Radiusc(i) & vbCrLf)
 
                 Next
                 butsCompute.Enabled = True
@@ -1204,11 +1246,12 @@ End Sub
 
         ElseIf CInt(txtsNumSections.Text) <= 6 Then
 
-            lstsGradeLength.Items.Add("Grade(In Radians)" & vbTab & "Length(In Miles)")
+            lstsGradeLength.Items.Add("Grade(In Radians)" & vbTab & "Length(In Miles)" & vbTab & "    Radius(In Feet)")
             For Me.i = 1 To txtsNumSections.Text
 
                 ReDim Preserve Gradec(i)
                 ReDim Preserve Lengthc(i)
+                ReDim Preserve Radiusc(i)
 
                 Datagradec = (InputBox("Enter Decimal Grade " & i & " in Radians"))
 
@@ -1230,7 +1273,16 @@ End Sub
                 Loop
                 Lengthc(i) = DataLengthc
 
-                lstsGradeLength.Items.Add(Gradec(i) & vbTab & vbTab & vbTab & Lengthc(i) & vbCrLf)
+
+                DataRadiusc = (InputBox("Enter Radius " & i & " in Feet"))
+
+                Do While String.IsNullOrEmpty(DataRadiusc) Or IsNumeric(DataRadiusc) = False
+                    MessageBox.Show("Please enter a Numeric Value")
+                    DataRadiusc = (InputBox("Enter Radius " & i & " in Feet"))
+                Loop
+                Radiusc(i) = DataRadiusc
+
+                lstsGradeLength.Items.Add(Gradec(i) & vbTab & vbTab & vbTab & Lengthc(i) & vbTab & vbTab & vbTab & Radiusc(i) & vbCrLf)
 
             Next
             butsCompute.Enabled = True
@@ -1284,15 +1336,17 @@ End Sub
 
                         End While
 
-                        lstsGradeLength.Items.Add("Grade (in Radians)" & vbTab & "   Length (in Miles)")
+                        lstsGradeLength.Items.Add("Grade (in Radians)" & vbTab & "   Length (in Miles)" & vbTab & "   Radius (in Feet)")
 
                         Dim m As Integer
                         For m = 1 To CInt(UBound(RichTextBox2.Lines))
                             ReDim Preserve Gradec(m)
                             ReDim Preserve Lengthc(m)
+                            ReDim Preserve Radiusc(m)
                             Gradec(m) = RichTextBox2.Lines(m - 1).Split(" ").First
-                            Lengthc(m) = RichTextBox2.Lines(m - 1).Split(" ").Last
-                            lstsGradeLength.Items.Add(Gradec(m) & vbTab & vbTab & vbTab & Lengthc(m) & vbCrLf)
+                            Lengthc(m) = RichTextBox2.Lines(m - 1).Split(" ").First + 1
+                            Radiusc(m) = RichTextBox2.Lines(m - 1).Split(" ").Last
+                            lstsGradeLength.Items.Add(Gradec(m) & vbTab & vbTab & vbTab & Lengthc(m) & vbTab & vbTab & vbTab & Radiusc(m) & vbCrLf)
                             butsGradeLength.Enabled = False
                         Next
                         txtsNumSections.Text = UBound(RichTextBox2.Lines)
@@ -1305,17 +1359,20 @@ End Sub
                         Dim i As Integer
                         Dim cellA As String
                         Dim cellB As String
-                        lstsGradeLength.Items.Add("Grade (in Radians)" & vbTab & "   Length (in Miles)")
+                        Dim cellC As String
+                        lstsGradeLength.Items.Add("Grade (in Radians)" & vbTab & "   Length (in Miles)" & vbTab & "   Radius (in Feet)")
                         For i = 0 To AscW(lstsGradeLength.Items.Count.ToString()(i = i + 1)) - 1
 
                             cellA = "A" & Convert.ToString(i + 1)
                             cellB = "B" & Convert.ToString(i + 1)
+                            cellC = "C" & Convert.ToString(i + 1)
                             cellA = oSheet.Range(cellA).Value
                             cellB = oSheet.Range(cellB).Value
-                            If cellA = "" And cellB = "" Then
+                            cellC = oSheet.Range(cellC).Value
+                            If cellA = "" And cellB = "" And cellC = "" Then
                                 Exit For
                             Else
-                                RichTextBox2.AppendText(cellA & " " & cellB & vbCrLf)
+                                RichTextBox2.AppendText(cellA & " " & cellB & " " & cellC & vbCrLf)
 
                             End If
                         Next
@@ -1324,9 +1381,11 @@ End Sub
                         For m = 1 To CInt(UBound(RichTextBox2.Lines))
                             ReDim Preserve Gradec(m)
                             ReDim Preserve Lengthc(m)
+                            ReDim Preserve Radiusc(m)
                             Gradec(m) = RichTextBox2.Lines(m - 1).Split(" ").First
-                            Lengthc(m) = RichTextBox2.Lines(m - 1).Split(" ").Last
-                            lstsGradeLength.Items.Add(Gradec(m) & vbTab & vbTab & vbTab & Lengthc(m) & vbCrLf)
+                            Lengthc(m) = RichTextBox2.Lines(m - 1).Split(" ").First + 1
+                            Radiusc(m) = RichTextBox2.Lines(m - 1).Split(" ").Last
+                            lstsGradeLength.Items.Add(Gradec(m) & vbTab & vbTab & vbTab & Lengthc(m) & vbTab & vbTab & vbTab & Radiusc(m) & vbCrLf)
                             butsGradeLength.Enabled = False
                         Next
                         testFile = My.Computer.FileSystem.GetFileInfo(strFile)
@@ -1359,5 +1418,7 @@ End Sub
     Private Sub butlogout_Click(sender As Object, e As EventArgs) Handles butlogout.Click
         Me.Close()
         frmLogin.Show()
+        frmLogin.txtusername.Text = ""
+        frmLogin.txtpassword.Text = ""
     End Sub
 End Class

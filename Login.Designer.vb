@@ -58,6 +58,7 @@ Partial Class frmLogin
         '
         Me.txtpassword.Location = New System.Drawing.Point(153, 62)
         Me.txtpassword.Name = "txtpassword"
+        Me.txtpassword.PasswordChar = Global.Microsoft.VisualBasic.ChrW(42)
         Me.txtpassword.Size = New System.Drawing.Size(118, 22)
         Me.txtpassword.TabIndex = 2
         Me.ToolTip1.SetToolTip(Me.txtpassword, "Enter password")
