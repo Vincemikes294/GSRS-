@@ -23,6 +23,7 @@ Partial Class frmTempProfile
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
         Me.components = New System.ComponentModel.Container()
+        Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(frmTempProfile))
         Me.lstTempProfile = New System.Windows.Forms.ListBox()
         Me.buttempSave = New System.Windows.Forms.Button()
         Me.Label1 = New System.Windows.Forms.Label()
@@ -36,6 +37,8 @@ Partial Class frmTempProfile
         Me.butfilter = New System.Windows.Forms.Button()
         Me.ToolTip2 = New System.Windows.Forms.ToolTip(Me.components)
         Me.butPlot = New System.Windows.Forms.Button()
+        Me.VisualStyler1 = New SkinSoft.VisualStyler.VisualStyler(Me.components)
+        CType(Me.VisualStyler1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'lstTempProfile
@@ -152,6 +155,12 @@ Partial Class frmTempProfile
         Me.ToolTip2.SetToolTip(Me.butPlot, "Save output in text or excel format")
         Me.butPlot.UseVisualStyleBackColor = True
         '
+        'VisualStyler1
+        '
+        Me.VisualStyler1.HostForm = Me
+        Me.VisualStyler1.License = CType(resources.GetObject("VisualStyler1.License"), SkinSoft.VisualStyler.Licensing.VisualStylerLicense)
+        Me.VisualStyler1.LoadVisualStyle(Nothing, "OSX (Tiger).vssf")
+        '
         'frmTempProfile
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
@@ -171,6 +180,7 @@ Partial Class frmTempProfile
         Me.Controls.Add(Me.lstTempProfile)
         Me.Name = "frmTempProfile"
         Me.Text = "                             Temperature Profile"
+        CType(Me.VisualStyler1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
@@ -189,4 +199,5 @@ Partial Class frmTempProfile
     Friend WithEvents butfilter As Button
     Friend WithEvents ToolTip2 As ToolTip
     Friend WithEvents butPlot As Button
+    Friend WithEvents VisualStyler1 As SkinSoft.VisualStyler.VisualStyler
 End Class

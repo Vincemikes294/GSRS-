@@ -50,7 +50,7 @@ Public Class frmUserForm
         oExcel = CreateObject("Excel.Application")
         oBook = oExcel.Workbooks.Add
         oSheet = oBook.Worksheets(1)
-        Dim Path As String = "C:\Users\Vince\Desktop\Research\Current Research\Automating the GSRS\Usernames.xlsx"
+        Dim Path As String = "C:\Users\Vince\Desktop\Research\Current Research\Automating the GSRS\GSRS with horizontal curve v 1.0\bin\Debug\Usernames.xlsx"
         oSheet.Cells(1, 1) = "First Name"
         oSheet.Cells(1, 2) = "Last Name"
         oSheet.Cells(1, 3) = "Username"
@@ -73,15 +73,15 @@ Public Class frmUserForm
             proc(i).Dispose()
         Next i
 
-        oSheet.SaveAs("C:\Users\Vince\Desktop\Research\Current Research\Automating the GSRS\Usernames.xlsx")
+        oSheet.SaveAs(Path)
         oExcel.Quit
         MsgBox("Data has been successfully exported to" & " C:\Users\Vince\Desktop\Research\Current Research\Automating the GSRS\Usernames.xlsx", MsgBoxStyle.Information)
 
     End Sub
     Private Sub butLoad_Click(sender As Object, e As EventArgs) Handles butLoad.Click
         Dim MyFileDialog As New System.Windows.Forms.OpenFileDialog
-        Dim Path As String = "C:\Users\Vince\Desktop\Research\Current Research\Automating the GSRS\Usernames.xlsx"
-        MyFileDialog.Filter = "(*.xlsx)|*.xlsx"
+        Dim Path As String = "C:\Users\Vince\Desktop\Research\Current Research\Automating the GSRS\GSRS with horizontal curve v 1.0\bin\Debug\Usernames.xlsx"
+        MyFileDialog.Filter = "(*.xlsx)|*.xlsx)"
         MyFileDialog.Title = "Open excel file"
         If File.Exists(Path) Then
             Dim con As New OleDbConnection
@@ -101,11 +101,12 @@ Public Class frmUserForm
             Next
             con.Close()
             System.Threading.Thread.Sleep(1000)
-            Dim proc = Process.GetProcessesByName("excel")
-            For i As Integer = 0 To proc.Count - 1
-                proc(i).CloseMainWindow()
-                proc(i).Dispose()
-            Next i
+            Dim processes() As Process = Process.GetProcesses
+            For p As Integer = processes.Count - 1 To 0 Step -1
+                If processes(p).ProcessName = "EXCEL" Then
+                    processes(p).Kill()
+                End If
+            Next
         Else MessageBox.Show("File was Not found. Please try again.", "Alert!!")
             Exit Sub
         End If

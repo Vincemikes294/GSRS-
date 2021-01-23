@@ -6,62 +6,76 @@ Public Class frmMain
     Public Shared Grade() As Double
     Public Shared Length() As Double
     Public Shared Radius() As Double
+    Public Shared Superelevation() As Double
+    Public Shared Angle() As Double
+    Public Shared Anglec() As Double
     Public Shared Gradec() As Double
     Public Shared Lengthc() As Double
     Public Shared Radiusc() As Double
-    Dim i As Integer
-Dim j As Integer
-Dim j_max As Integer
-Dim i_max As Double
-Dim W_max As Double
-Dim Valid As Boolean
-Public Datagrade As String
+    Public Shared Superelevationc() As Double
+    Public i As Integer
+    Public j As Integer
+    Public k As Integer
+    Public j_max As Integer
+    Public i_max As Double
+    Public W_max As Double
+    Public Valid As Boolean
+    Public Datagrade As String
     Public DataLength As String
     Public DataRadius As String
+    Public DataSuperelevation As String
+    Public DataAngle As String
     Public Datagradec As String
     Public DataLengthc As String
     Public DataRadiusc As String
+    Public DataSuperelevationc As String
+    Public DataAnglec As String
     Public Res() As Array
-Dim T_lim(,) As Double
-Public TL As Double
-Public W As Double
-Public V_max As Double
-Dim V As Integer
-Dim T_0 As Double
-Dim T_inf As Double
-Dim T_e(,) As Double
-Dim HP_eng As Double
-Dim K2 As Double
-Dim K1 As Double
-Dim F_drag As Double
-Dim Theta As Double
-Dim L As Double
-Dim HP_b As Double
-Dim T_f(,) As Double
-Public Vs As Double
-Public T_lim_s As Integer
-Public T_f_s As Double
-Public T_e_s As Double
-Dim T_lims As Double
-Dim W_Maxinput As String
-Dim V_Maxinput As String
-Dim T_0_input As String
-Dim T_inf_input As String
-Dim T_max_input As String
-Dim Ts_e As Integer
-Dim Ts_f As Integer
-Dim p As Integer
-Dim Group_Number As String
-Dim N_secteion As String
-Dim TLnew As Double
-Dim a As Integer
-Dim Grades_max As String
-Dim Grades_maxinput As String
-Dim Sections_max As String
-Dim Sections_maxinput As String
+    Public T_lim(,) As Double
+    Public TL As Double
+    Public W As Double
+    Public V_max As Double
+    Public V As Integer
+    Public T_0 As Double
+    Public T_inf As Double
+    Public T_e(,) As Long
+    Public HP_eng As Double
+    Public K2 As Double
+    Public K1 As Double
+    Public F_drag As Double
+    Public Theta As Double
+    Public L As Double
+    Public HP_b As Double
+    Public T_f(,) As Double
+    Public Vs As Double
+    Public T_lim_s As Integer
+    Public T_f_s As Double
+    Public T_e_s As Double
+    Public T_lims As Double
+    Public W_Maxinput As String
+    Public V_Maxinput As String
+    Public T_0_input As String
+    Public T_inf_input As String
+    Public T_max_input As String
+    Public Ts_e As Integer
+    Public Ts_f As Integer
+    Public p As Integer
+    Public Group_Number As String
+    Public N_secteion As String
+    Public TLnew As Double
+    Public a As Integer
+    Public Grades_max As String
+    Public Grades_maxinput As String
+    Public Sections_max As String
+    Public Sections_maxinput As String
+    Public Vsf() As Double
+    Public Vro() As Double
+    Public Vmin() As Double
+    Public Vfinmin As Integer
+    Public Sidefrictionfactor As Integer = 0
+    Public rolloverthreshold As Integer = 0
     Public Property ExcelReaderFactory As Object
     Public Property ExcelDataReader As Object
-
     Private Sub cboMaxTemp_SelectedIndexChanged(sender As System.Object, e As System.EventArgs)
         If cboMaxTemp.Text = "500" Then
             T_max = 500
@@ -70,28 +84,92 @@ Dim Sections_maxinput As String
         End If
     End Sub
     Private Sub butGradeLength_Click(sender As System.Object, e As System.EventArgs) Handles butGradeLength.Click
-    If txtNumSections.Text = "" Or IsNumeric(txtNumSections.Text) = False Then
-        MsgBox("Please Enter number of segments")
-        txtNumSections.Text = ""
-        butCompute.Enabled = False
-        butGradeLength.Enabled = True
-    ElseIf CInt(txtNumSections.Text) > 6 Then
-        If MsgBox("Would you like to import segment data?", vbYesNo) = MsgBoxResult.Yes Then
-            butImport.PerformClick()
-            Exit Sub
-        Else
-                lstGradeLength.Items.Add("Grade(In Radians)" & vbTab & "Length(In Miles)" & vbTab & "    Radius(In Feet)")
+        If txtNumSections.Text = "" Or IsNumeric(txtNumSections.Text) = False Then
+            MsgBox("Please Enter number of segments")
+            txtNumSections.Text = ""
+            butCompute.Enabled = False
+            butGradeLength.Enabled = True
+        ElseIf CInt(txtNumSections.Text) > 6 Then
+            If MsgBox("Would you like to import segment data?", vbYesNo) = MsgBoxResult.Yes Then
+                butImport.PerformClick()
+                Exit Sub
+            Else
+                lstGradeLength.Items.Add("Grade(In Radians)" & vbTab & "Length(In Miles)" & vbTab & vbTab & "Radius(In Feet)" & vbTab & vbTab & "Super-elevation(In Decimal)" & vbTab & vbTab & "Angle (In Degrees)")
                 For Me.i = 1 To txtNumSections.Text
 
                     ReDim Preserve Grade(i)
                     ReDim Preserve Length(i)
                     ReDim Preserve Radius(i)
+                    ReDim Preserve Superelevation(i)
+                    ReDim Preserve Angle(i)
 
                     Datagrade = (InputBox("Enter Decimal Grade " & i & " in Radians"))
 
 
-                Do While String.IsNullOrEmpty(Datagrade) Or IsNumeric(Datagrade) = False Or Datagrade >= "1"
-                    MessageBox.Show("Please enter a Numeric Value less than 1")
+                    Do While String.IsNullOrEmpty(Datagrade) Or IsNumeric(Datagrade) = False Or Datagrade >= "1" Or Datagrade < "0"
+                        MessageBox.Show("Please enter a positive Numeric Value less than 1")
+                        Datagrade = (InputBox("Enter Decimal Grade " & i & " in Radians"))
+                    Loop
+                    Grade(i) = Datagrade
+
+
+                    DataLength = (InputBox("Enter Length " & i & " in Miles"))
+
+                    Do While String.IsNullOrEmpty(DataLength) Or IsNumeric(DataLength) = False Or DataLength <= "0"
+                        MessageBox.Show("Please enter a Numeric Value greater than 0")
+                        DataLength = (InputBox("Enter Length " & i & " in Miles"))
+                    Loop
+                    Length(i) = DataLength
+
+
+                    DataRadius = (InputBox("Enter Radius " & i & " in Feet"))
+
+                    Do While String.IsNullOrEmpty(DataRadius) Or IsNumeric(DataRadius) = False Or DataRadius <= "0"
+                        MessageBox.Show("Please enter a Numeric Value greater than 0")
+                        DataRadius = (InputBox("Enter Radius " & i & " in Feet"))
+                    Loop
+                    Radius(i) = DataRadius
+
+
+                    DataSuperelevation = (InputBox("Enter Decimal Super-elevation " & i))
+
+                    Do While String.IsNullOrEmpty(DataSuperelevation) Or IsNumeric(DataSuperelevation) = False Or DataSuperelevation >= "1" Or DataSuperelevation < "0"
+                        MessageBox.Show("Please enter a non-negative Numeric Value less than 1")
+                        DataSuperelevation = (InputBox("Enter Decimal Super-elevation " & i))
+                    Loop
+                    Superelevation(i) = DataSuperelevation
+
+                    DataAngle = (InputBox("Enter Radius Angle " & i))
+
+                    Do While String.IsNullOrEmpty(DataAngle) Or IsNumeric(DataAngle) = False Or DataAngle <= "0"
+                        MessageBox.Show("Please enter a Numeric Value greater than 0")
+                        DataAngle = (InputBox("Enter Radius Angle in Degrees " & i))
+                    Loop
+                    Angle(i) = DataAngle
+
+                    lstGradeLength.Items.Add(Grade(i) & vbTab & vbTab & vbTab & Length(i) & vbTab & vbTab & vbTab & Radius(i) & vbTab & vbTab & vbTab & Superelevation(i) & vbTab & vbTab & vbTab & Angle(i) & vbCrLf)
+
+                Next
+                butCompute.Enabled = True
+            End If
+            butImport.Enabled = True
+
+        ElseIf CInt(txtNumSections.Text) <= 6 Then
+
+            lstGradeLength.Items.Add("Grade(In Radians)" & vbTab & "Length(In Miles)" & vbTab & vbTab & "Radius(In Feet)" & vbTab & vbTab & "Super-elevation(In Decimal)" & vbTab & vbTab & "Angle of Radius (In Degrees)")
+            For Me.i = 1 To txtNumSections.Text
+
+                ReDim Preserve Grade(i)
+                ReDim Preserve Length(i)
+                ReDim Preserve Radius(i)
+                ReDim Preserve Superelevation(i)
+                ReDim Preserve Angle(i)
+
+                Datagrade = (InputBox("Enter Decimal Grade " & i & " in Radians"))
+
+
+                Do While String.IsNullOrEmpty(Datagrade) Or IsNumeric(Datagrade) = False Or Datagrade >= "1" Or Datagrade < "0"
+                    MessageBox.Show("Please enter a positive Numeric Value less than 1")
                     Datagrade = (InputBox("Enter Decimal Grade " & i & " in Radians"))
                 Loop
                 Grade(i) = Datagrade
@@ -101,215 +179,185 @@ Dim Sections_maxinput As String
 
                 DataLength = (InputBox("Enter Length " & i & " in Miles"))
 
-                Do While String.IsNullOrEmpty(DataLength) Or IsNumeric(DataLength) = False
-                    MessageBox.Show("Please enter a Numeric Value")
+                Do While String.IsNullOrEmpty(DataLength) Or IsNumeric(DataLength) = False Or DataLength <= "0"
+                    MessageBox.Show("Please enter a positive Numeric Value")
                     DataLength = (InputBox("Enter Length " & i & " in Miles"))
                 Loop
-                    Length(i) = DataLength
-
-
-                    DataRadius = (InputBox("Enter Radius " & i & " in Feet"))
-
-                    Do While String.IsNullOrEmpty(DataRadius) Or IsNumeric(DataRadius) = False
-                        MessageBox.Show("Please enter a Numeric Value")
-                        DataRadius = (InputBox("Enter Radius " & i & " in Feet"))
-                    Loop
-                    Radius(i) = DataRadius
-
-                    lstGradeLength.Items.Add(Grade(i) & vbTab & vbTab & vbTab & Length(i) & vbTab & vbTab & vbTab & Radius(i) & vbCrLf)
-
-                Next
-            butCompute.Enabled = True
-        End If
-        butImport.Enabled = True
-
-    ElseIf CInt(txtNumSections.Text) <= 6 Then
-
-            lstGradeLength.Items.Add("Grade(In Radians)" & vbTab & "Length(In Miles)" & vbTab & "    Radius(In Feet)")
-            For Me.i = 1 To txtNumSections.Text
-
-                ReDim Preserve Grade(i)
-                ReDim Preserve Length(i)
-                ReDim Preserve Radius(i)
-
-                Datagrade = (InputBox("Enter Decimal Grade " & i & " in Radians"))
-
-
-            Do While String.IsNullOrEmpty(Datagrade) Or IsNumeric(Datagrade) = False Or Datagrade >= "1"
-                MessageBox.Show("Please enter a Numeric Value less than 1")
-                Datagrade = (InputBox("Enter Decimal Grade " & i & " in Radians"))
-            Loop
-            Grade(i) = Datagrade
-
-
-
-
-            DataLength = (InputBox("Enter Length " & i & " in Miles"))
-
-            Do While String.IsNullOrEmpty(DataLength) Or IsNumeric(DataLength) = False
-                MessageBox.Show("Please enter a Numeric Value")
-                DataLength = (InputBox("Enter Length " & i & " in Miles"))
-            Loop
-            Length(i) = DataLength
-
+                Length(i) = DataLength
 
 
                 DataRadius = (InputBox("Enter Radius " & i & " in Feet"))
 
-                Do While String.IsNullOrEmpty(DataRadius) Or IsNumeric(DataRadius) = False
-                    MessageBox.Show("Please enter a Numeric Value")
-                    DataRadius = (InputBox("Enter Length " & i & " in Feet"))
+                Do While String.IsNullOrEmpty(DataRadius) Or IsNumeric(DataRadius) = False Or DataRadius <= "0"
+                    MessageBox.Show("Please enter a positive Numeric Value")
+                    DataRadius = (InputBox("Enter Radius " & i & " in Feet"))
                 Loop
                 Radius(i) = DataRadius
 
 
-                lstGradeLength.Items.Add(Grade(i) & vbTab & vbTab & vbTab & Length(i) & vbTab & vbTab & vbTab & Radius(i) & vbCrLf)
+                DataSuperelevation = (InputBox("Enter Decimal Super-elevation " & i))
+
+                Do While String.IsNullOrEmpty(DataSuperelevation) Or IsNumeric(DataSuperelevation) = False Or DataSuperelevation >= "1" Or DataSuperelevation < "0"
+                    MessageBox.Show("Please enter a positive Numeric Value less than 1")
+                    DataSuperelevation = (InputBox("Enter Decimal Super-elevation " & i))
+                Loop
+                Superelevation(i) = DataSuperelevation
+
+                DataAngle = (InputBox("Enter Radius Angle in Degrees " & i))
+
+                Do While String.IsNullOrEmpty(DataAngle) Or IsNumeric(DataAngle) = False Or DataAngle <= "0"
+                    MessageBox.Show("Please enter a Numeric Value greater than 0")
+                    DataAngle = (InputBox("Enter Radius Angle in Degrees" & i))
+                Loop
+                Angle(i) = DataAngle
+
+                lstGradeLength.Items.Add(Grade(i) & vbTab & vbTab & vbTab & Length(i) & vbTab & vbTab & vbTab & Radius(i) & vbTab & vbTab & vbTab & Superelevation(i) & vbTab & vbTab & vbTab & Angle(i) & vbCrLf)
 
             Next
-        butCompute.Enabled = True
-    End If
-    butImport.Enabled = True
-End Sub
-Private Sub butCompute_Click(sender As System.Object, e As System.EventArgs) Handles butCompute.Click
-    butSave.Enabled = True
-    butFilter.Enabled = True
-    butCompute.Enabled = False
-    butGradeLength.Enabled = False
+            butCompute.Enabled = True
+        End If
+        butImport.Enabled = True
+    End Sub
+    Private Sub butCompute_Click(sender As System.Object, e As System.EventArgs) Handles butCompute.Click
+        butSave.Enabled = True
+        butFilter.Enabled = True
+        butCompute.Enabled = False
+        butGradeLength.Enabled = False
 
-    If IsNumeric(txtMaxWeight.Text) And txtMaxWeight.Text <> "" And txtMaxWeight.Text > "0" Then
-        W_max = txtMaxWeight.Text
-    Else : MsgBox("Please Enter a positive numeric value for Maximum Weight")
-        W_Maxinput = (InputBox("Enter a positive numeric value for Maximum Weight"))
-        Do While IsNumeric(W_Maxinput) = False Or W_Maxinput < "0"
-            MessageBox.Show("Please enter a positive numeric Value for Maximum Weight")
+        If IsNumeric(txtMaxWeight.Text) And txtMaxWeight.Text <> "" And txtMaxWeight.Text > "0" Then
+            W_max = txtMaxWeight.Text
+        Else : MsgBox("Please Enter a positive numeric value for Maximum Weight")
             W_Maxinput = (InputBox("Enter a positive numeric value for Maximum Weight"))
-        Loop
-        W_max = CDbl(W_Maxinput)
-        txtMaxWeight.Text = W_max
-    End If
-    If IsNumeric(txtMaxSpeed.Text) And txtMaxSpeed.Text <> "" And txtMaxSpeed.Text > "0" Then
-        V_max = txtMaxSpeed.Text
-    Else : MsgBox("Please Enter a positive numeric value for Maximum Speed")
-        V_Maxinput = (InputBox("Enter a positive numeric value for Maximum Speed"))
-        Do While IsNumeric(V_Maxinput) = False Or V_Maxinput < "0"
-            MessageBox.Show("Please enter a positive numeric Value for Maximum Speed")
+            Do While IsNumeric(W_Maxinput) = False Or W_Maxinput < "0"
+                MessageBox.Show("Please enter a positive numeric Value for Maximum Weight")
+                W_Maxinput = (InputBox("Enter a positive numeric value for Maximum Weight"))
+            Loop
+            W_max = CDbl(W_Maxinput)
+            txtMaxWeight.Text = W_max
+        End If
+        If IsNumeric(txtMaxSpeed.Text) And txtMaxSpeed.Text <> "" And txtMaxSpeed.Text > "0" Then
+            V_max = txtMaxSpeed.Text
+        Else : MsgBox("Please Enter a positive numeric value for Maximum Speed")
             V_Maxinput = (InputBox("Enter a positive numeric value for Maximum Speed"))
-        Loop
-        V_max = CDbl(V_Maxinput)
-        txtMaxSpeed.Text = V_max
-    End If
-
-    If IsNumeric(txtinitemp.Text) Then
-        If txtinitemp.Text >= 90 Then
-            T_0 = txtinitemp.Text
-            txtinitemp.Text = T_0
-        ElseIf txtinitemp.Text < 90 Then
-            T_0 = "150"
-            txtinitemp.Text = T_0
+            Do While IsNumeric(V_Maxinput) = False Or V_Maxinput < "0"
+                MessageBox.Show("Please enter a positive numeric Value for Maximum Speed")
+                V_Maxinput = (InputBox("Enter a positive numeric value for Maximum Speed"))
+            Loop
+            V_max = CDbl(V_Maxinput)
+            txtMaxSpeed.Text = V_max
         End If
-    Else : MsgBox("Enter a numeric value greater or equal to 90 for Initial Temperature")
-        T_0_input = (InputBox("Enter a numeric value greater or equal to 90 for Initial Temperature", "Alert", "150"))
-        Do While IsNumeric(T_0_input) = False Or T_0_input = ""
-            MessageBox.Show("Enter a numeric value greater or equal to 90 for Initial Temperature")
+
+        If IsNumeric(txtinitemp.Text) Then
+            If txtinitemp.Text >= 90 Then
+                T_0 = txtinitemp.Text
+                txtinitemp.Text = T_0
+            ElseIf txtinitemp.Text < 90 Then
+                T_0 = "150"
+                txtinitemp.Text = T_0
+            End If
+        Else : MsgBox("Enter a numeric value greater or equal to 90 for Initial Temperature")
             T_0_input = (InputBox("Enter a numeric value greater or equal to 90 for Initial Temperature", "Alert", "150"))
-        Loop
-        If T_0_input >= 90 Then
-            T_0 = T_0_input
-            txtinitemp.Text = T_0
-        ElseIf T_0_input < 90 Then
-            T_0 = "150"
-            txtinitemp.Text = T_0
+            Do While IsNumeric(T_0_input) = False Or T_0_input = ""
+                MessageBox.Show("Enter a numeric value greater or equal to 90 for Initial Temperature")
+                T_0_input = (InputBox("Enter a numeric value greater or equal to 90 for Initial Temperature", "Alert", "150"))
+            Loop
+            If T_0_input >= 90 Then
+                T_0 = T_0_input
+                txtinitemp.Text = T_0
+            ElseIf T_0_input < 90 Then
+                T_0 = "150"
+                txtinitemp.Text = T_0
+            End If
         End If
-    End If
 
-    If IsNumeric(txtambient.Text) Then
-        If txtambient.Text >= 90 Then
-            T_inf = "90"
-            txtambient.Text = T_inf
-        ElseIf txtambient.Text < 90 Then
-            T_inf = "90"
-            txtambient.Text = T_inf
-        End If
-    Else : MsgBox("Enter a value of 90 for the Ambient Temperature")
-        T_inf_input = (InputBox("Enter a value of 90 for the Ambient Temperature", "Alert", "90"))
-        Do While IsNumeric(T_inf_input) = False Or T_inf_input = ""
-            MessageBox.Show("Enter a value of 90 for the Ambient Temperature")
+        If IsNumeric(txtambient.Text) Then
+            If txtambient.Text >= 90 Then
+                T_inf = "90"
+                txtambient.Text = T_inf
+            ElseIf txtambient.Text < 90 Then
+                T_inf = "90"
+                txtambient.Text = T_inf
+            End If
+        Else : MsgBox("Enter a value of 90 for the Ambient Temperature")
             T_inf_input = (InputBox("Enter a value of 90 for the Ambient Temperature", "Alert", "90"))
-        Loop
-        If T_inf_input >= 90 Then
-            T_inf = "90"
-            txtambient.Text = T_inf
-        ElseIf T_inf_input < 90 Then
-            T_inf = "90"
-            txtambient.Text = T_inf
+            Do While IsNumeric(T_inf_input) = False Or T_inf_input = ""
+                MessageBox.Show("Enter a value of 90 for the Ambient Temperature")
+                T_inf_input = (InputBox("Enter a value of 90 for the Ambient Temperature", "Alert", "90"))
+            Loop
+            If T_inf_input >= 90 Then
+                T_inf = "90"
+                txtambient.Text = T_inf
+            ElseIf T_inf_input < 90 Then
+                T_inf = "90"
+                txtambient.Text = T_inf
+            End If
         End If
-    End If
-    If IsNumeric(cboMaxTemp.Text) And cboMaxTemp.Text <> "" And cboMaxTemp.Text = "500" Or cboMaxTemp.Text = "530" Then
-        T_max = cboMaxTemp.Text
+        If IsNumeric(cboMaxTemp.Text) And cboMaxTemp.Text <> "" And cboMaxTemp.Text = "500" Or cboMaxTemp.Text = "530" Then
+            T_max = cboMaxTemp.Text
         Else : MsgBox("Please input " & "500 or 530 for Maximum Brake Temperature")
             T_max_input = (InputBox("Input " & "500 or 530 for Maximum Brake Temperature"))
             Do While IsNumeric(T_max_input) = False Or T_max_input <> "500" And T_max_input <> "530"
                 MessageBox.Show("Input " & "500 or 530 for Maximum Brake Temperature")
                 T_max_input = (InputBox("Input " & "500 or 530 for Maximum Brake Temperature"))
             Loop
-        T_max = CDbl(T_max_input)
-        cboMaxTemp.Text = T_max
-    End If
+            T_max = CDbl(T_max_input)
+            cboMaxTemp.Text = T_max
+        End If
         Me.lstOutputView.Items.Add("Max Weight (lb) " & "    Max Speed (mph) " & "     T_Desc (F) " & "           T_Emerg (F) " & "        T_Final (F)" & "                Time (min) " & vbCrLf & vbCrLf)
 
         'Computations
         j_max = W_max / 5000
 
-    For Me.i = 1 To CInt(txtNumSections.Text)
-        TL += Length(i)
-    Next
+        For Me.i = 1 To CInt(txtNumSections.Text)
+            TL += Length(i)
+        Next
 
-    For Me.j = 0 To j_max
-        W = W_max - j * 5000
+        For Me.j = 0 To j_max
+            W = W_max - j * 5000
 
-        For Me.V = 1 To V_max
+            For Me.V = 1 To V_max
 
-            T_0 = CDbl(txtinitemp.Text) 'initial brake temperature
-            T_inf = CDbl(txtambient.Text) 'ambient temperature
+                T_0 = CDbl(txtinitemp.Text) 'initial brake temperature
+                T_inf = CDbl(txtambient.Text) 'ambient temperature
 
-            ReDim T_e(V, 1)
-            T_e(V, 1) = (0.000000311) * W * (V ^ 2) 'temperature from emergency stopping
-            HP_eng = 63.3 'Engine brake force
-            K2 = 1 / (0.1602 + 0.0078 * V) 'Heat transfer parameter
-            K1 = 1.5 * (1.1852 + 0.0331 * V) 'Diffusivity constant
-            F_drag = 459.35 + 0.132 * (V ^ 2) 'Drag forces
+                ReDim T_e(V, 1)
+                T_e(V, 1) = (0.000000311) * W * (V ^ 2) 'temperature from emergency stopping
+                HP_eng = 63.3 'Engine brake force
+                K2 = 1 / (0.1602 + 0.0078 * V) 'Heat transfer parameter
+                K1 = 1.5 * (1.1852 + 0.0331 * V) 'Diffusivity constant
+                F_drag = 459.35 + 0.132 * (V ^ 2) 'Drag forces
 
-            For Me.i = 1 To txtNumSections.Text
+                For Me.i = 1 To txtNumSections.Text
 
-                Theta = Grade(i)
-                L = Length(i)
-                HP_b = (W * Theta - F_drag) * (V / 375) - 63.3 'power into brakes
-                ReDim T_f(V, 1)
-                T_f(V, 1) = T_0 + (T_inf - T_0 + K2 * HP_b) * (1 - Math.Exp(-K1 * (L / V)))
-                T_0 = T_f(V, 1)
+                    Theta = Grade(i)
+                    L = Length(i)
+                    HP_b = (W * Theta - F_drag) * (V / 375) - 63.3 'power into brakes
+                    ReDim T_f(V, 1)
+                    T_f(V, 1) = T_0 + (T_inf - T_0 + K2 * HP_b) * (1 - Math.Exp(-K1 * (L / V)))
+                    T_0 = T_f(V, 1)
 
-            Next
+                Next
 
-            ReDim T_lim(V, 1)
-            T_lim(V, 1) = T_f(V, 1) + T_e(V, 1)    'limiting brake temperature
+                ReDim T_lim(V, 1)
+                T_lim(V, 1) = T_f(V, 1) + T_e(V, 1)    'limiting brake temperature
 
 
-            Vs = V
-            T_lim_s = CInt(T_lim(V, 1))
-            T_f_s = CInt(T_f(V, 1))
-            T_e_s = CInt(T_e(V, 1))
+                Vs = V
+                T_lim_s = CInt(T_lim(V, 1))
+                T_f_s = CInt(T_f(V, 1))
+                T_e_s = CInt(T_e(V, 1))
 
 
                 lstOutputView.Items.Add(W & vbTab & vbTab & Vs & vbTab & vbTab & T_f_s & vbTab & vbTab & T_e_s & vbTab & vbTab & T_lim_s & vbTab & vbTab & CInt(TL * 60 / Vs) & vbCrLf)
             Next
-    Next
-    If txtNumSections.Text <> "" And lstGradeLength.Items.Count <> 0 Then
-        butTempProfile.Enabled = True
-    Else
-        butTempProfile.Enabled = False
-    End If
+        Next
+        If txtNumSections.Text <> "" And lstGradeLength.Items.Count <> 0 Then
+            butTempProfile.Enabled = True
+        Else
+            butTempProfile.Enabled = False
+        End If
 
-End Sub
+    End Sub
     Private Sub frmGSRS(sender As System.Object, e As System.EventArgs) Handles MyBase.Load
         RadioButtonContinuousSlope.Checked = True
         butSave.Enabled = False
@@ -320,152 +368,152 @@ End Sub
     End Sub
     Private Sub butSave_Click(sender As System.Object, e As System.EventArgs)
 
-End Sub
-Private Sub butFilter_Click(sender As System.Object, e As System.EventArgs)
+    End Sub
+    Private Sub butFilter_Click(sender As System.Object, e As System.EventArgs)
 
-End Sub
-Private Sub butSave_Click_1(sender As System.Object, e As System.EventArgs) Handles butSave.Click
-    Dim SaveFileDialog1 As New SaveFileDialog
-    SaveFileDialog1.FileName = ""
+    End Sub
+    Private Sub butSave_Click_1(sender As System.Object, e As System.EventArgs) Handles butSave.Click
+        Dim SaveFileDialog1 As New SaveFileDialog
+        SaveFileDialog1.FileName = ""
         SaveFileDialog1.Filter = "Text Files(*.txt)|*.txt|(*.xls)|*.xls"
 
         If SaveFileDialog1.ShowDialog() = DialogResult.OK Then
-        Dim sb As New System.Text.StringBuilder()
+            Dim sb As New System.Text.StringBuilder()
 
-        For Each o As Object In lstOutputView.Items
-            sb.AppendLine(o)
-        Next
+            For Each o As Object In lstOutputView.Items
+                sb.AppendLine(o)
+            Next
 
-        System.IO.File.WriteAllText(SaveFileDialog1.FileName, sb.ToString())
-    End If
-End Sub
-Private Sub butFilter_Click_1(sender As System.Object, e As System.EventArgs) Handles butFilter.Click
-    Dim header As String = lstOutputView.Items(0)
-
-    Dim data As New List(Of DataValue)
-    ' Skip the header row by starting at 1:
-    For i As Integer = 1 To lstOutputView.Items.Count - 1
-        data.Add(New DataValue(lstOutputView.Items(i)))
-    Next
-
-    Dim results = From dv In data
-    lstOutputView.Items.Clear()
-    lstOutputView.Items.Add(header)
-
-
-    For Each row In results
-        If row.T_Final < T_max Then
-            lstOutputView.Items.Add(row.ToString)
-
-        End If
-    Next
-
-
-    Dim header1 As String = lstOutputView.Items(0)
-
-    Dim data1 As New List(Of DataValue)
-    ' Skip the header row by starting at 1:
-    For i As Integer = 1 To lstOutputView.Items.Count - 1
-        data1.Add(New DataValue(lstOutputView.Items(i)))
-    Next
-
-    Dim finalresults = From dv In data1
-                       Order By dv.MaxWeight Descending, dv.MaxSpeed Descending
-                       Group dv By dv.MaxWeight Into g = Group
-                       Select g.First
-
-    Dim V_max = CInt(Me.txtMaxSpeed.Text)
-    lstOutputView.Items.Clear()
-    lstOutputView.Items.Add(header)
-
-
-    For Each row In finalresults
-        lstOutputView.Items.Add(row.ToString)
-        If row.MaxSpeed = V_max Then
-            Exit For
-        End If
-    Next
-
-
-
-End Sub
-Public Class DataValue
-
-    Public Sub New(ByVal strInput As String)
-        Dim values() As String = strInput.Split({" ", vbTab}, StringSplitOptions.RemoveEmptyEntries)
-        If values.Length >= 6 Then
-            Try
-                MaxWeight = Integer.Parse(values(0))
-                MaxSpeed = Integer.Parse(values(1))
-                T_Desc = Integer.Parse(values(2))
-                T_Emerg = Integer.Parse(values(3))
-                T_Final = Integer.Parse(values(4))
-                Time = Integer.Parse(values(5))
-            Catch ex As Exception
-                MessageBox.Show("Invalid Input: Value failed to convert to Integer.")
-            End Try
-        Else
-            MessageBox.Show("Invalid Input: Not enough values.")
+            System.IO.File.WriteAllText(SaveFileDialog1.FileName, sb.ToString())
         End If
     End Sub
+    Private Sub butFilter_Click_1(sender As System.Object, e As System.EventArgs) Handles butFilter.Click
+        Dim header As String = lstOutputView.Items(0)
 
-    Public Overrides Function ToString() As String
+        Dim data As New List(Of DataValue)
+        ' Skip the header row by starting at 1:
+        For i As Integer = 1 To lstOutputView.Items.Count - 1
+            data.Add(New DataValue(lstOutputView.Items(i)))
+        Next
+
+        Dim results = From dv In data
+        lstOutputView.Items.Clear()
+        lstOutputView.Items.Add(header)
+
+
+        For Each row In results
+            If row.T_Final < T_max Then
+                lstOutputView.Items.Add(row.ToString)
+
+            End If
+        Next
+
+
+        Dim header1 As String = lstOutputView.Items(0)
+
+        Dim data1 As New List(Of DataValue)
+        ' Skip the header row by starting at 1:
+        For i As Integer = 1 To lstOutputView.Items.Count - 1
+            data1.Add(New DataValue(lstOutputView.Items(i)))
+        Next
+
+        Dim finalresults = From dv In data1
+                           Order By dv.MaxWeight Descending, dv.MaxSpeed Descending
+                           Group dv By dv.MaxWeight Into g = Group
+                           Select g.First
+
+        Dim V_max = CInt(Me.txtMaxSpeed.Text)
+        lstOutputView.Items.Clear()
+        lstOutputView.Items.Add(header)
+
+
+        For Each row In finalresults
+            lstOutputView.Items.Add(row.ToString)
+            If row.MaxSpeed = V_max Then
+                Exit For
+            End If
+        Next
+
+
+
+    End Sub
+    Public Class DataValue
+
+        Public Sub New(ByVal strInput As String)
+            Dim values() As String = strInput.Split({" ", vbTab}, StringSplitOptions.RemoveEmptyEntries)
+            If values.Length >= 6 Then
+                Try
+                    MaxWeight = Integer.Parse(values(0))
+                    MaxSpeed = Integer.Parse(values(1))
+                    T_Desc = Integer.Parse(values(2))
+                    T_Emerg = Integer.Parse(values(3))
+                    T_Final = Integer.Parse(values(4))
+                    Time = Integer.Parse(values(5))
+                Catch ex As Exception
+                    MessageBox.Show("Invalid Input: Value failed to convert to Integer.")
+                End Try
+            Else
+                MessageBox.Show("Invalid Input: Not enough values.")
+            End If
+        End Sub
+
+        Public Overrides Function ToString() As String
             Return MaxWeight & vbTab & vbTab & MaxSpeed & vbTab & vbTab & T_Desc & vbTab & vbTab & T_Emerg & vbTab & vbTab & T_Final & vbTab & vbTab & Time
         End Function
 
-    Public MaxWeight As Integer
-    Public MaxSpeed As Integer
-    Public Time As Integer
-    Public T_Emerg As Integer
-    Public T_Final As Integer
-    Public T_Desc As Integer
+        Public MaxWeight As Integer
+        Public MaxSpeed As Integer
+        Public Time As Integer
+        Public T_Emerg As Integer
+        Public T_Final As Integer
+        Public T_Desc As Integer
 
-End Class
+    End Class
 
-Private Sub RadioButtonContinuousSlope_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles RadioButtonContinuousSlope.CheckedChanged
-    GroupContinuousSlope.Enabled = True
-    GroupSeparateSlope.Enabled = True
-    butsReset.PerformClick()
-    GroupSeparateSlope.Enabled = False
+    Private Sub RadioButtonContinuousSlope_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles RadioButtonContinuousSlope.CheckedChanged
+        GroupContinuousSlope.Enabled = True
+        GroupSeparateSlope.Enabled = True
+        butsReset.PerformClick()
+        GroupSeparateSlope.Enabled = False
 
-End Sub
+    End Sub
 
-Private Sub RadioButtonSeperateSlope_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles RadioButtonSeperateSlope.CheckedChanged
-    GroupSeparateSlope.Enabled = True
-    GroupContinuousSlope.Enabled = True
-    butReset.PerformClick()
-    GroupContinuousSlope.Enabled = False
-    Group_Number = "1"
-    txtsGroupNumber.Text = Group_Number
-    a = txtsGroupNumber.Text
-End Sub
-Private Sub butReset_Click(sender As System.Object, e As System.EventArgs) Handles butReset.Click
-    txtNumSections.Text = ""
-    txtambient.Text = ""
-    txtMaxSpeed.Text = ""
-    txtMaxWeight.Text = ""
-    txtinitemp.Text = ""
-    cboMaxTemp.Text = ""
-    butImport.Enabled = True
-    butGradeLength.Enabled = True
-    butClear.Enabled = True
-    butCompute.Enabled = False
-    butTempProfile.Enabled = False
-    lstGradeLength.Items.Clear()
-    lstOutputView.Items.Clear()
-    RichTextBox1.Clear()
-    lblPath.Text = ""
-    TL = 0
+    Private Sub RadioButtonSeperateSlope_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles RadioButtonSeperateSlope.CheckedChanged
+        GroupSeparateSlope.Enabled = True
+        GroupContinuousSlope.Enabled = True
+        butReset.PerformClick()
+        GroupContinuousSlope.Enabled = False
+        Group_Number = "1"
+        txtsGroupNumber.Text = Group_Number
+        a = txtsGroupNumber.Text
+    End Sub
+    Private Sub butReset_Click(sender As System.Object, e As System.EventArgs) Handles butReset.Click
+        txtNumSections.Text = ""
+        txtambient.Text = ""
+        txtMaxSpeed.Text = ""
+        txtMaxWeight.Text = ""
+        txtinitemp.Text = ""
+        cboMaxTemp.Text = ""
+        butImport.Enabled = True
+        butGradeLength.Enabled = True
+        butClear.Enabled = True
+        butCompute.Enabled = False
+        butTempProfile.Enabled = False
+        lstGradeLength.Items.Clear()
+        lstOutputView.Items.Clear()
+        RichTextBox1.Clear()
+        lblPath.Text = ""
+        TL = 0
 
-End Sub
+    End Sub
 
-Private Sub GroupBox10_Enter(sender As System.Object, e As System.EventArgs) Handles GroupBox10.Enter
+    Private Sub GroupBox10_Enter(sender As System.Object, e As System.EventArgs) Handles GroupBox10.Enter
 
-End Sub
+    End Sub
 
-Private Sub ListBox1_SelectedIndexChanged(sender As System.Object, e As System.EventArgs)
+    Private Sub ListBox1_SelectedIndexChanged(sender As System.Object, e As System.EventArgs)
 
-End Sub
+    End Sub
 
     Private Sub butsSave_Click(sender As System.Object, e As System.EventArgs) Handles butsSave.Click
         Dim SaveFileDialog1 As New SaveFileDialog
@@ -672,16 +720,23 @@ End Sub
 
                         End While
 
-                        lstGradeLength.Items.Add("Grade (in Radians)" & vbTab & "   Length (in Miles)" & vbTab & "   Radius (in Feet)")
+                        lstGradeLength.Items.Add("Grade (in Radians)" & vbTab & "   Length (in Miles)" & vbTab & vbTab & "Radius (in Feet)" & vbTab & vbTab & "Super-elevation (in Decimal)" & vbTab & vbTab & "Angle (in Degrees)")
 
                         Dim m As Integer
                         For m = 1 To CInt(UBound(RichTextBox1.Lines))
                             ReDim Preserve Grade(m)
                             ReDim Preserve Length(m)
+                            ReDim Preserve Radius(m)
+                            ReDim Preserve Superelevation(m)
+                            ReDim Preserve Angle(m)
+
                             Grade(m) = RichTextBox1.Lines(m - 1).Split(" ").First
-                            Length(m) = RichTextBox1.Lines(m - 1).Split(" ").First + 1
-                            Radius(m) = RichTextBox1.Lines(m - 1).Split(" ").Last
-                            lstGradeLength.Items.Add(Grade(m) & vbTab & vbTab & vbTab & Length(m) & vbTab & vbTab & vbTab & Radius(m) & vbCrLf)
+                            Length(m) = RichTextBox1.Lines(m - 1).Split(" "c)(1)
+                            Radius(m) = RichTextBox1.Lines(m - 1).Split(" "c)(2)
+                            Superelevation(m) = RichTextBox1.Lines(m - 1).Split(" "c)(3)
+                            Angle(m) = RichTextBox1.Lines(m - 1).Split(" "c)(4)
+
+                            lstGradeLength.Items.Add(Grade(m) & vbTab & vbTab & vbTab & Length(m) & vbTab & vbTab & vbTab & Radius(m) & vbTab & vbTab & vbTab & Superelevation(m) & vbTab & vbTab & vbTab & Angle(m) & vbCrLf)
                             butGradeLength.Enabled = False
                         Next
                         txtNumSections.Text = UBound(RichTextBox1.Lines)
@@ -695,19 +750,25 @@ End Sub
                         Dim cellA As String
                         Dim cellB As String
                         Dim cellC As String
-                        lstGradeLength.Items.Add("Grade (in Radians)" & vbTab & "   Length (in Miles)" & vbTab & "   Radius (in Feet)")
+                        Dim cellD As String
+                        Dim cellE As String
+                        lstGradeLength.Items.Add("Grade (in Radians)" & vbTab & "   Length (in Miles)" & vbTab & vbTab & "Radius (in Feet)" & vbTab & vbTab & "Super-elevation (in Decimal)" & vbTab & vbTab & "Angle (in Degrees)")
                         For i = 0 To AscW(lstGradeLength.Items.Count.ToString()(i = i + 1)) - 1
 
                             cellA = "A" & Convert.ToString(i + 1)
                             cellB = "B" & Convert.ToString(i + 1)
                             cellC = "C" & Convert.ToString(i + 1)
+                            cellD = "D" & Convert.ToString(i + 1)
+                            cellE = "E" & Convert.ToString(i + 1)
                             cellA = oSheet.Range(cellA).Value
                             cellB = oSheet.Range(cellB).Value
                             cellC = oSheet.Range(cellC).Value
-                            If cellA = "" And cellB = "" And cellC = "" Then
+                            cellD = oSheet.Range(cellD).Value
+                            cellE = oSheet.Range(cellE).Value
+                            If cellA = "" And cellB = "" And cellC = "" And cellD = "" And cellE = "" Then
                                 Exit For
                             Else
-                                RichTextBox1.AppendText(cellA & " " & cellB & " " & cellC & vbCrLf)
+                                RichTextBox1.AppendText(cellA & " " & cellB & " " & cellC & " " & cellD & " " & cellE & vbCrLf)
 
                             End If
                         Next
@@ -717,10 +778,14 @@ End Sub
                             ReDim Preserve Grade(m)
                             ReDim Preserve Length(m)
                             ReDim Preserve Radius(m)
+                            ReDim Preserve Superelevation(m)
+                            ReDim Preserve Angle(m)
                             Grade(m) = RichTextBox1.Lines(m - 1).Split(" ").First
-                            Length(m) = RichTextBox1.Lines(m - 1).Split(" ").First + 1
-                            Radius(m) = RichTextBox1.Lines(m - 1).Split(" ").Last
-                            lstGradeLength.Items.Add(Grade(m) & vbTab & vbTab & vbTab & Length(m) & vbTab & vbTab & vbTab & Radius(m) & vbCrLf)
+                            Length(m) = RichTextBox1.Lines(m - 1).Split(" "c)(1)
+                            Radius(m) = RichTextBox1.Lines(m - 1).Split(" "c)(2)
+                            Superelevation(m) = RichTextBox1.Lines(m - 1).Split(" ")(3)
+                            Angle(m) = RichTextBox1.Lines(m - 1).Split(" ")(4)
+                            lstGradeLength.Items.Add(Grade(m) & vbTab & vbTab & vbTab & Length(m) & vbTab & vbTab & vbTab & Radius(m) & vbTab & vbTab & vbTab & Superelevation(m) & vbTab & vbTab & vbTab & Angle(m) & vbCrLf)
                             butGradeLength.Enabled = False
                         Next
                         testFile = My.Computer.FileSystem.GetFileInfo(strFile)
@@ -927,45 +992,45 @@ End Sub
         End If
 
         If a Mod 2 = 1 Then
-                ' Skip the header row by starting at 1:
+            ' Skip the header row by starting at 1:
 
-                header = lstsOutputView.Items(0)
-                For i As Integer = 1 To lstsOutputView.Items.Count - 1
-                    data.Add(New DataValue1(lstsOutputView.Items(i)))
-                Next
+            header = lstsOutputView.Items(0)
+            For i As Integer = 1 To lstsOutputView.Items.Count - 1
+                data.Add(New DataValue1(lstsOutputView.Items(i)))
+            Next
 
-                lstsOutputView.Items.Clear()
-                lstsOutputView.Items.Add(header)
-
-
-                For Each row In results
-                    If row.T_Final < T_max Then
-                        lstsOutputView.Items.Add(row.ToString)
-
-                    End If
-                Next
-
-                ' Skip the header row by starting at 1:
-                For i As Integer = 1 To lstsOutputView.Items.Count - 1
-                    data1.Add(New DataValue1(lstsOutputView.Items(i)))
-                Next
-
-                finalresults = From dv In data1
-                               Order By dv.MaxWeight Descending, dv.Time Ascending
-                               Group dv By dv.MaxWeight Into g = Group
-                               Select g.First
-
-                lstsOutputView.Items.Clear()
-                lstsOutputView.Items.Add(header)
+            lstsOutputView.Items.Clear()
+            lstsOutputView.Items.Add(header)
 
 
-                For Each row In finalresults
-
+            For Each row In results
+                If row.T_Final < T_max Then
                     lstsOutputView.Items.Add(row.ToString)
-                    txtNewTemp.Text = row.T_Final
 
-                Next
-            End If
+                End If
+            Next
+
+            ' Skip the header row by starting at 1:
+            For i As Integer = 1 To lstsOutputView.Items.Count - 1
+                data1.Add(New DataValue1(lstsOutputView.Items(i)))
+            Next
+
+            finalresults = From dv In data1
+                           Order By dv.MaxWeight Descending, dv.Time Ascending
+                           Group dv By dv.MaxWeight Into g = Group
+                           Select g.First
+
+            lstsOutputView.Items.Clear()
+            lstsOutputView.Items.Add(header)
+
+
+            For Each row In finalresults
+
+                lstsOutputView.Items.Add(row.ToString)
+                txtNewTemp.Text = row.T_Final
+
+            Next
+        End If
 
 
         Dim Answer As Integer
@@ -1166,25 +1231,24 @@ End Sub
             End If
         End If
     End Sub
-
     Private Sub butsGradeLength_Click(sender As Object, e As EventArgs) Handles butsGradeLength.Click
         Dim numbergrades As Integer
-    Dim numsegments As Integer
-    If IsNumeric(txtsNumberGrades.Text) And txtsNumberGrades.Text <> "" And txtsNumberGrades.Text > "0" And (Integer.TryParse(txtsNumberGrades.Text, numbergrades)) Then
-        Grades_max = txtsNumberGrades.Text
-        Else : MsgBox("Please Enter a positive integer value for Number of Grades", "Seperate Slope")
+        Dim numsegments As Integer
+        If IsNumeric(txtsNumberGrades.Text) And txtsNumberGrades.Text <> "" And txtsNumberGrades.Text > "0" And (Integer.TryParse(txtsNumberGrades.Text, numbergrades)) Then
+            Grades_max = txtsNumberGrades.Text
+        Else : MsgBox("Please Enter a positive integer value for Number of Grades",, "Seperate Slope")
             Grades_maxinput = (InputBox("Enter a positive integer value for Number of Grades"))
-        Do While IsNumeric(Grades_maxinput) = False Or Grades_maxinput < "0" Or Grades_maxinput = "" Or (Not Integer.TryParse(Grades_maxinput, numbergrades))
-            MessageBox.Show("Please enter a positive integer value for Number of Grades")
+            Do While IsNumeric(Grades_maxinput) = False Or Grades_maxinput < "0" Or Grades_maxinput = "" Or (Not Integer.TryParse(Grades_maxinput, numbergrades))
+                MessageBox.Show("Please enter a positive integer value for Number of Grades")
                 Grades_maxinput = (InputBox("Enter a positive integer value for Number of Grades", "Seperate Slope"))
                 butsCompute.Enabled = False
-            butsGradeLength.Enabled = True
-        Loop
-        Grades_max = Grades_maxinput
-    End If
-    txtsNumberGrades.Text = Grades_max
-    If IsNumeric(txtsNumSections.Text) And txtsNumSections.Text <> "" And txtNumSections.Text > "0" And (Integer.TryParse(txtsNumSections.Text, numsegments)) Then
-        Sections_max = txtsNumSections.Text
+                butsGradeLength.Enabled = True
+            Loop
+            Grades_max = Grades_maxinput
+        End If
+        txtsNumberGrades.Text = Grades_max
+        If IsNumeric(txtsNumSections.Text) And txtsNumSections.Text <> "" And txtNumSections.Text > "0" And (Integer.TryParse(txtsNumSections.Text, numsegments)) Then
+            Sections_max = txtsNumSections.Text
         Else : MsgBox("Please Enter a positive integer value for Number of Segments for Group(" & a & ")")
             Sections_maxinput = (InputBox("Please Enter a positive integer value for Number of Segments for Group(" & a & ")"))
             Do While IsNumeric(Sections_maxinput) = False Or Sections_maxinput < "0" Or Sections_maxinput = "" Or (Not Integer.TryParse(Sections_maxinput, numsegments))
@@ -1194,25 +1258,27 @@ End Sub
                 butsGradeLength.Enabled = True
             Loop
             Sections_max = Sections_maxinput
-     End If
+        End If
         txtsNumSections.Text = Sections_max
-     If txtsNumSections.Text > 6 Then
+        If txtsNumSections.Text > 6 Then
             If MsgBox("Would you Like to import segment data?", vbYesNo) = MsgBoxResult.Yes Then
                 butsImport.PerformClick()
                 Exit Sub
             Else
-                lstsGradeLength.Items.Add("Grade(In Radians)" & vbTab & "Length(In Miles)" & vbTab & "    Radius(In Feet)")
+                lstsGradeLength.Items.Add("Grade(In Radians)" & vbTab & "Length(In Miles)" & vbTab & vbTab & "Radius(In Feet)" & vbTab & vbTab & "Super-elevation (In Decimal)" & vbTab & vbTab & "Angle (In Degrees)")
                 For Me.i = 1 To txtsNumSections.Text
 
                     ReDim Preserve Gradec(i)
                     ReDim Preserve Lengthc(i)
                     ReDim Preserve Radiusc(i)
+                    ReDim Preserve Superelevationc(i)
+                    ReDim Preserve Anglec(i)
 
                     Datagradec = (InputBox("Enter Decimal Grade " & i & " in Radians"))
 
 
-                    Do While String.IsNullOrEmpty(Datagradec) Or IsNumeric(Datagradec) = False Or Datagradec >= "1"
-                        MessageBox.Show("Please enter a Numeric Value less than 1")
+                    Do While String.IsNullOrEmpty(Datagradec) Or IsNumeric(Datagradec) = False Or Datagradec >= "1" Or Datagradec < "0"
+                        MessageBox.Show("Please enter a positive Numeric Value less than 1")
                         Datagradec = (InputBox("Enter Decimal Grade " & i & " in Radians"))
                     Loop
                     Gradec(i) = Datagradec
@@ -1222,8 +1288,9 @@ End Sub
 
                     DataLengthc = (InputBox("Enter Length " & i & " in Miles"))
 
-                    Do While String.IsNullOrEmpty(DataLengthc) Or IsNumeric(DataLengthc) = False
-                        MessageBox.Show("Please enter a Numeric Value")
+
+                    Do While String.IsNullOrEmpty(DataLengthc) Or IsNumeric(DataLengthc) = False Or DataLengthc <= "0"
+                        MessageBox.Show("Please enter a positive Numeric Value")
                         DataLengthc = (InputBox("Enter Length " & i & " in Miles"))
                     Loop
                     Lengthc(i) = DataLengthc
@@ -1231,13 +1298,30 @@ End Sub
 
                     DataRadiusc = (InputBox("Enter Radius " & i & " in Feet"))
 
-                    Do While String.IsNullOrEmpty(DataRadiusc) Or IsNumeric(DataRadiusc) = False
-                        MessageBox.Show("Please enter a Numeric Value")
+                    Do While String.IsNullOrEmpty(DataRadiusc) Or IsNumeric(DataRadiusc) = False Or DataRadiusc <= "0"
+                        MessageBox.Show("Please enter a positive Numeric Value")
                         DataRadiusc = (InputBox("Enter Radius " & i & " in Feet"))
                     Loop
                     Radiusc(i) = DataRadiusc
 
-                    lstsGradeLength.Items.Add(Gradec(i) & vbTab & vbTab & vbTab & Lengthc(i) & vbTab & vbTab & vbTab & Radiusc(i) & vbCrLf)
+
+                    DataSuperelevationc = (InputBox("Enter Decimal Super-elevation " & i))
+
+                    Do While String.IsNullOrEmpty(DataSuperelevationc) Or IsNumeric(DataSuperelevationc) = False Or DataSuperelevationc >= "1" Or DataSuperelevationc < "0"
+                        MessageBox.Show("Please enter a positive Numeric Value less than 1")
+                        DataSuperelevationc = (InputBox("Enter Decimal Super-elevation " & i))
+                    Loop
+                    Superelevationc(i) = DataSuperelevationc
+
+                    DataAnglec = (InputBox("Enter Radius Angle " & i))
+
+                    Do While String.IsNullOrEmpty(DataAnglec) Or IsNumeric(DataAnglec) = False Or DataAnglec <= "0"
+                        MessageBox.Show("Please enter a positive Numeric Value in Degrees")
+                        DataAnglec = (InputBox("Enter Decimal Super-elevation " & i))
+                    Loop
+                    Anglec(i) = DataAnglec
+
+                    lstsGradeLength.Items.Add(Gradec(i) & vbTab & vbTab & vbTab & Lengthc(i) & vbTab & vbTab & vbTab & Radiusc(i) & vbTab & vbTab & vbTab & Superelevationc(i) & vbTab & vbTab & vbTab & Anglec(i) & vbCrLf)
 
                 Next
                 butsCompute.Enabled = True
@@ -1246,18 +1330,20 @@ End Sub
 
         ElseIf CInt(txtsNumSections.Text) <= 6 Then
 
-            lstsGradeLength.Items.Add("Grade(In Radians)" & vbTab & "Length(In Miles)" & vbTab & "    Radius(In Feet)")
+            lstsGradeLength.Items.Add("Grade(In Radians)" & vbTab & "Length(In Miles)" & vbTab & vbTab & "Radius(In Feet)" & vbTab & vbTab & "Super-elevation(In Decimal)" & vbTab & vbTab & "Angle (In Degrees)")
             For Me.i = 1 To txtsNumSections.Text
 
                 ReDim Preserve Gradec(i)
                 ReDim Preserve Lengthc(i)
                 ReDim Preserve Radiusc(i)
+                ReDim Preserve Superelevationc(i)
+                ReDim Preserve Anglec(i)
 
                 Datagradec = (InputBox("Enter Decimal Grade " & i & " in Radians"))
 
 
-                Do While String.IsNullOrEmpty(Datagradec) Or IsNumeric(Datagradec) = False Or Datagradec >= "1"
-                    MessageBox.Show("Please enter a Numeric Value less than 1")
+                Do While String.IsNullOrEmpty(Datagradec) Or IsNumeric(Datagradec) = False Or Datagradec >= "1" Or Datagradec < "0"
+                    MessageBox.Show("Please enter a positive Numeric Value less than 1")
                     Datagradec = (InputBox("Enter Decimal Grade " & i & " in Radians"))
                 Loop
                 Gradec(i) = Datagradec
@@ -1267,8 +1353,8 @@ End Sub
 
                 DataLengthc = (InputBox("Enter Length " & i & " in Miles"))
 
-                Do While String.IsNullOrEmpty(DataLengthc) Or IsNumeric(DataLengthc) = False
-                    MessageBox.Show("Please enter a Numeric Value")
+                Do While String.IsNullOrEmpty(DataLengthc) Or IsNumeric(DataLengthc) = False Or DataLengthc <= "0"
+                    MessageBox.Show("Please enter a positive Numeric Value")
                     DataLengthc = (InputBox("Enter Length " & i & " in Miles"))
                 Loop
                 Lengthc(i) = DataLengthc
@@ -1276,20 +1362,35 @@ End Sub
 
                 DataRadiusc = (InputBox("Enter Radius " & i & " in Feet"))
 
-                Do While String.IsNullOrEmpty(DataRadiusc) Or IsNumeric(DataRadiusc) = False
-                    MessageBox.Show("Please enter a Numeric Value")
+                Do While String.IsNullOrEmpty(DataRadiusc) Or IsNumeric(DataRadiusc) = False Or DataRadiusc <= "0"
+                    MessageBox.Show("Please enter a positive Numeric Value")
                     DataRadiusc = (InputBox("Enter Radius " & i & " in Feet"))
                 Loop
                 Radiusc(i) = DataRadiusc
 
-                lstsGradeLength.Items.Add(Gradec(i) & vbTab & vbTab & vbTab & Lengthc(i) & vbTab & vbTab & vbTab & Radiusc(i) & vbCrLf)
+
+                DataSuperelevationc = (InputBox("Enter Decimal Super-elevation " & i))
+
+                Do While String.IsNullOrEmpty(DataSuperelevationc) Or IsNumeric(DataSuperelevationc) = False Or DataSuperelevationc >= "1" Or DataSuperelevation < "0"
+                    MessageBox.Show("Please enter a positive Numeric Value less than 1")
+                    DataSuperelevationc = (InputBox("Enter Decimal Super-elevation " & i))
+                Loop
+                Superelevationc(i) = DataSuperelevationc
+
+                Do While String.IsNullOrEmpty(DataAnglec) Or IsNumeric(DataAnglec) = False Or DataAnglec <= "0"
+                    MessageBox.Show("Please enter a positive Numeric Value greater than 0")
+                    DataAnglec = (InputBox("Enter Angle in Degrees " & i))
+                Loop
+                Anglec(i) = DataAnglec
+
+                lstsGradeLength.Items.Add(Gradec(i) & vbTab & vbTab & vbTab & Lengthc(i) & vbTab & vbTab & vbTab & Radiusc(i) & vbTab & vbTab & vbTab & Superelevationc(i) & vbTab & vbTab & vbTab & Anglec(i) & vbCrLf)
+
 
             Next
             butsCompute.Enabled = True
         End If
         butsImport.Enabled = True
     End Sub
-
     Private Interface IExcelDataReader
         Sub Close()
         Function ReadLine() As String
@@ -1336,17 +1437,21 @@ End Sub
 
                         End While
 
-                        lstsGradeLength.Items.Add("Grade (in Radians)" & vbTab & "   Length (in Miles)" & vbTab & "   Radius (in Feet)")
+                        lstsGradeLength.Items.Add("Grade (in Radians)" & vbTab & "   Length (in Miles)" & vbTab & vbTab & "Radius (in Feet)" & vbTab & vbTab & "Super-elevation (in Decimal)" & vbTab & vbTab & "Angle (in Degrees)")
 
                         Dim m As Integer
                         For m = 1 To CInt(UBound(RichTextBox2.Lines))
                             ReDim Preserve Gradec(m)
                             ReDim Preserve Lengthc(m)
                             ReDim Preserve Radiusc(m)
+                            ReDim Preserve Superelevationc(m)
+                            ReDim Preserve Anglec(m)
                             Gradec(m) = RichTextBox2.Lines(m - 1).Split(" ").First
-                            Lengthc(m) = RichTextBox2.Lines(m - 1).Split(" ").First + 1
-                            Radiusc(m) = RichTextBox2.Lines(m - 1).Split(" ").Last
-                            lstsGradeLength.Items.Add(Gradec(m) & vbTab & vbTab & vbTab & Lengthc(m) & vbTab & vbTab & vbTab & Radiusc(m) & vbCrLf)
+                            Lengthc(m) = RichTextBox2.Lines(m - 1).Split(" "c)(1)
+                            Radiusc(m) = RichTextBox2.Lines(m - 1).Split(" "c)(2)
+                            Superelevationc(m) = RichTextBox2.Lines(m - 1).Split(" "c)(3)
+                            Anglec(m) = RichTextBox2.Lines(m - 1).Split(" "c)(4)
+                            lstsGradeLength.Items.Add(Gradec(m) & vbTab & vbTab & vbTab & Lengthc(m) & vbTab & vbTab & vbTab & Radiusc(m) & vbTab & vbTab & vbTab & Superelevationc(m) & vbTab & vbTab & vbTab & Anglec(m) & vbCrLf)
                             butsGradeLength.Enabled = False
                         Next
                         txtsNumSections.Text = UBound(RichTextBox2.Lines)
@@ -1360,19 +1465,25 @@ End Sub
                         Dim cellA As String
                         Dim cellB As String
                         Dim cellC As String
-                        lstsGradeLength.Items.Add("Grade (in Radians)" & vbTab & "   Length (in Miles)" & vbTab & "   Radius (in Feet)")
+                        Dim cellD As String
+                        Dim cellE As String
+                        lstsGradeLength.Items.Add("Grade (in Radians)" & vbTab & "   Length (in Miles)" & vbTab & vbTab & "Radius (in Feet)" & vbTab & vbTab & "Super-elevation (in Decimal)" & vbTab & vbTab & "Angle (in Radians)")
                         For i = 0 To AscW(lstsGradeLength.Items.Count.ToString()(i = i + 1)) - 1
 
                             cellA = "A" & Convert.ToString(i + 1)
                             cellB = "B" & Convert.ToString(i + 1)
                             cellC = "C" & Convert.ToString(i + 1)
+                            cellD = "D" & Convert.ToString(i + 1)
+                            cellE = "E" & Convert.ToString(i + 1)
                             cellA = oSheet.Range(cellA).Value
                             cellB = oSheet.Range(cellB).Value
                             cellC = oSheet.Range(cellC).Value
-                            If cellA = "" And cellB = "" And cellC = "" Then
+                            cellD = oSheet.Range(cellD).Value
+                            cellE = oSheet.Range(cellE).Value
+                            If cellA = "" And cellB = "" And cellC = "" And cellD = "" And cellE = "" Then
                                 Exit For
                             Else
-                                RichTextBox2.AppendText(cellA & " " & cellB & " " & cellC & vbCrLf)
+                                RichTextBox2.AppendText(cellA & " " & cellB & " " & cellC & " " & cellD & " " & cellE & vbCrLf)
 
                             End If
                         Next
@@ -1382,10 +1493,14 @@ End Sub
                             ReDim Preserve Gradec(m)
                             ReDim Preserve Lengthc(m)
                             ReDim Preserve Radiusc(m)
+                            ReDim Preserve Superelevationc(m)
+                            ReDim Preserve Anglec(m)
                             Gradec(m) = RichTextBox2.Lines(m - 1).Split(" ").First
-                            Lengthc(m) = RichTextBox2.Lines(m - 1).Split(" ").First + 1
-                            Radiusc(m) = RichTextBox2.Lines(m - 1).Split(" ").Last
-                            lstsGradeLength.Items.Add(Gradec(m) & vbTab & vbTab & vbTab & Lengthc(m) & vbTab & vbTab & vbTab & Radiusc(m) & vbCrLf)
+                            Lengthc(m) = RichTextBox2.Lines(m - 1).Split(" "c)(1)
+                            Radiusc(m) = RichTextBox2.Lines(m - 1).Split(" "c)(2)
+                            Superelevationc(m) = RichTextBox2.Lines(m - 1).Split(" "c)(3)
+                            Anglec(m) = RichTextBox2.Lines(m - 1).Split(" "c)(4)
+                            lstsGradeLength.Items.Add(Gradec(m) & vbTab & vbTab & vbTab & Lengthc(m) & vbTab & vbTab & vbTab & Radiusc(m) & vbTab & vbTab & vbTab & Superelevationc(m) & vbTab & vbTab & vbTab & Anglec(m) & vbCrLf)
                             butsGradeLength.Enabled = False
                         Next
                         testFile = My.Computer.FileSystem.GetFileInfo(strFile)
@@ -1420,5 +1535,161 @@ End Sub
         frmLogin.Show()
         frmLogin.txtusername.Text = ""
         frmLogin.txtpassword.Text = ""
+    End Sub
+    Private Sub butsCurve_Click(sender As Object, e As EventArgs) Handles butsCurve.Click
+
+    End Sub
+
+    Private Sub GroupBox1_Enter(sender As Object, e As EventArgs) Handles GroupBox1.Enter
+
+    End Sub
+    Private Sub butCurve_Click(sender As Object, e As EventArgs) Handles butCurve.Click
+        butSave.Enabled = True
+        butFilter.Enabled = True
+        butCompute.Enabled = False
+        butGradeLength.Enabled = False
+
+        If IsNumeric(txtMaxWeight.Text) And txtMaxWeight.Text <> "" And txtMaxWeight.Text > "0" Then
+            W_max = txtMaxWeight.Text
+        Else : MsgBox("Please Enter a positive numeric value for Maximum Weight")
+            W_Maxinput = (InputBox("Enter a positive numeric value for Maximum Weight"))
+            Do While IsNumeric(W_Maxinput) = False Or W_Maxinput < "0"
+                MessageBox.Show("Please enter a positive numeric Value for Maximum Weight")
+                W_Maxinput = (InputBox("Enter a positive numeric value for Maximum Weight"))
+            Loop
+            W_max = CDbl(W_Maxinput)
+            txtMaxWeight.Text = W_max
+        End If
+        If IsNumeric(txtMaxSpeed.Text) And txtMaxSpeed.Text <> "" And txtMaxSpeed.Text > "0" Then
+            V_max = txtMaxSpeed.Text
+        Else : MsgBox("Please Enter a positive numeric value for Maximum Speed")
+            V_Maxinput = (InputBox("Enter a positive numeric value for Maximum Speed"))
+            Do While IsNumeric(V_Maxinput) = False Or V_Maxinput < "0"
+                MessageBox.Show("Please enter a positive numeric Value for Maximum Speed")
+                V_Maxinput = (InputBox("Enter a positive numeric value for Maximum Speed"))
+            Loop
+            V_max = CDbl(V_Maxinput)
+            txtMaxSpeed.Text = V_max
+        End If
+
+        If IsNumeric(txtinitemp.Text) Then
+            If txtinitemp.Text >= 90 Then
+                T_0 = txtinitemp.Text
+                txtinitemp.Text = T_0
+            ElseIf txtinitemp.Text < 90 Then
+                T_0 = "150"
+                txtinitemp.Text = T_0
+            End If
+        Else : MsgBox("Enter a numeric value greater or equal to 90 for Initial Temperature")
+            T_0_input = (InputBox("Enter a numeric value greater or equal to 90 for Initial Temperature", "Alert", "150"))
+            Do While IsNumeric(T_0_input) = False Or T_0_input = ""
+                MessageBox.Show("Enter a numeric value greater or equal to 90 for Initial Temperature")
+                T_0_input = (InputBox("Enter a numeric value greater or equal to 90 for Initial Temperature", "Alert", "150"))
+            Loop
+            If T_0_input >= 90 Then
+                T_0 = T_0_input
+                txtinitemp.Text = T_0
+            ElseIf T_0_input < 90 Then
+                T_0 = "150"
+                txtinitemp.Text = T_0
+            End If
+        End If
+
+        If IsNumeric(txtambient.Text) Then
+            If txtambient.Text >= 90 Then
+                T_inf = "90"
+                txtambient.Text = T_inf
+            ElseIf txtambient.Text < 90 Then
+                T_inf = "90"
+                txtambient.Text = T_inf
+            End If
+        Else : MsgBox("Enter a value of 90 for the Ambient Temperature")
+            T_inf_input = (InputBox("Enter a value of 90 for the Ambient Temperature", "Alert", "90"))
+            Do While IsNumeric(T_inf_input) = False Or T_inf_input = ""
+                MessageBox.Show("Enter a value of 90 for the Ambient Temperature")
+                T_inf_input = (InputBox("Enter a value of 90 for the Ambient Temperature", "Alert", "90"))
+            Loop
+            If T_inf_input >= 90 Then
+                T_inf = "90"
+                txtambient.Text = T_inf
+            ElseIf T_inf_input < 90 Then
+                T_inf = "90"
+                txtambient.Text = T_inf
+            End If
+        End If
+        If IsNumeric(cboMaxTemp.Text) And cboMaxTemp.Text <> "" And cboMaxTemp.Text = "500" Or cboMaxTemp.Text = "530" Then
+            T_max = cboMaxTemp.Text
+        Else : MsgBox("Please input " & "500 or 530 for Maximum Brake Temperature")
+            T_max_input = (InputBox("Input " & "500 or 530 for Maximum Brake Temperature"))
+            Do While IsNumeric(T_max_input) = False Or T_max_input <> "500" And T_max_input <> "530"
+                MessageBox.Show("Input " & "500 or 530 for Maximum Brake Temperature")
+                T_max_input = (InputBox("Input " & "500 or 530 for Maximum Brake Temperature"))
+            Loop
+            T_max = CDbl(T_max_input)
+            cboMaxTemp.Text = T_max
+        End If
+        Me.lstOutputView.Items.Add("Max Weight (lb) " & "    Max Speed (mph) " & "     T_Desc (F) " & "           T_Emerg (F) " & "        T_Final (F)" & "                Time (min) " & vbCrLf & vbCrLf)
+
+        'Computations
+        j_max = W_max / 5000
+
+        For Me.i = 1 To CInt(txtNumSections.Text)
+            TL += Length(i)
+        Next
+
+        For Me.j = 0 To j_max
+            W = W_max - j * 5000
+
+            For Me.V = 1 To V_max
+
+                T_0 = CDbl(txtinitemp.Text) 'initial brake temperature
+                T_inf = CDbl(txtambient.Text) 'ambient temperature
+
+                ReDim T_e(V, 1)
+                T_e(V, 1) = (0.000000311) * W * (V ^ 2) 'temperature from emergency stopping
+                HP_eng = 63.3 'Engine brake force
+                K2 = 1 / (0.1602 + 0.0078 * V) 'Heat transfer parameter
+                K1 = 1.5 * (1.1852 + 0.0331 * V) 'Diffusivity constant
+                F_drag = 459.35 + 0.132 * (V ^ 2) 'Drag forces
+
+                For Me.i = 1 To txtNumSections.Text
+
+                    Theta = Grade(i)
+                    L = Length(i)
+                    HP_b = (W * Theta - F_drag) * (V / 375) - 63.3 'power into brakes
+                    ReDim T_f(V, 1)
+                    T_f(V, 1) = T_0 + (T_inf - T_0 + K2 * HP_b) * (1 - Math.Exp(-K1 * (L / V)))
+                    T_0 = T_f(V, 1)
+
+                Next
+
+                ReDim T_lim(V, 1)
+                T_lim(V, 1) = T_f(V, 1) + T_e(V, 1)    'limiting brake temperature
+
+                For i = 0 To txtNumSections.Text
+                    ReDim Preserve Vsf(i)
+                    ReDim Preserve Vro(i)
+                    ReDim Preserve Vmin(i)
+                    Vsf(i) = (0.952663 + 0.0000831 * Radius(i) - 0.00454 * Angle(i) - 0.0000022 * W - 0.08554 * Grade(i) - Sidefrictionfactor) / (0.00696)
+                    Vro(i) = (0.952663 + 0.0000831 * Radius(i) - 0.00454 * Angle(i) - 0.0000022 * W - 0.08554 * Grade(i) - rolloverthreshold) / (0.00696)
+                    Vmin(i) = Math.Min(Vsf(i), Vro(i))
+                Next
+                Vfinmin = Vmin.Min
+
+                If V < Vfinmin Then
+                    T_lim_s = CInt(T_lim(V, 1))
+                    T_f_s = CInt(T_f(V, 1))
+                    T_e_s = CInt(T_e(V, 1))
+                    lstOutputView.Items.Add(W & vbTab & vbTab & V & vbTab & vbTab & T_f_s & vbTab & vbTab & T_e_s & vbTab & vbTab & T_lim_s & vbTab & vbTab & CInt(TL * 60 / V) & vbCrLf)
+                ElseIf V >= Vfinmin Then
+                    V = Vfinmin
+                    T_lim_s = CInt(T_lim(V, 1))
+                    T_f_s = CInt(T_f(V, 1))
+                    T_e_s = CInt(T_e(V, 1))
+                    lstOutputView.Items.Add(W & vbTab & vbTab & V & vbTab & vbTab & T_f_s & vbTab & vbTab & T_e_s & vbTab & vbTab & T_lim_s & vbTab & vbTab & CInt(TL * 60 / V) & vbCrLf)
+                End If
+            Next
+        Next
+
     End Sub
 End Class

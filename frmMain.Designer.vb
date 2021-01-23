@@ -50,6 +50,7 @@ Partial Class frmMain
         Me.Label6 = New System.Windows.Forms.Label()
         Me.butImport = New System.Windows.Forms.Button()
         Me.GroupBox6 = New System.Windows.Forms.GroupBox()
+        Me.butCurve = New System.Windows.Forms.Button()
         Me.RichTextBox1 = New System.Windows.Forms.RichTextBox()
         Me.PictureBox1 = New System.Windows.Forms.PictureBox()
         Me.butReset = New System.Windows.Forms.Button()
@@ -61,6 +62,7 @@ Partial Class frmMain
         Me.GroupBox5 = New System.Windows.Forms.GroupBox()
         Me.GroupSeparateSlope = New System.Windows.Forms.GroupBox()
         Me.GroupBox8 = New System.Windows.Forms.GroupBox()
+        Me.butsCurve = New System.Windows.Forms.Button()
         Me.txtNewTemp = New System.Windows.Forms.TextBox()
         Me.btnNext = New System.Windows.Forms.Button()
         Me.RichTextBox2 = New System.Windows.Forms.RichTextBox()
@@ -133,7 +135,7 @@ Partial Class frmMain
         Me.lstGradeLength.FormattingEnabled = True
         Me.lstGradeLength.HorizontalScrollbar = True
         Me.lstGradeLength.ItemHeight = 16
-        Me.lstGradeLength.Location = New System.Drawing.Point(10, 379)
+        Me.lstGradeLength.Location = New System.Drawing.Point(12, 358)
         Me.lstGradeLength.Name = "lstGradeLength"
         Me.lstGradeLength.Size = New System.Drawing.Size(305, 148)
         Me.lstGradeLength.TabIndex = 20
@@ -351,11 +353,11 @@ Partial Class frmMain
         'Label6
         '
         Me.Label6.AutoSize = True
-        Me.Label6.Location = New System.Drawing.Point(9, 346)
+        Me.Label6.Location = New System.Drawing.Point(9, 332)
         Me.Label6.Name = "Label6"
-        Me.Label6.Size = New System.Drawing.Size(252, 17)
+        Me.Label6.Size = New System.Drawing.Size(404, 17)
         Me.Label6.TabIndex = 30
-        Me.Label6.Text = "Grade, Length and Radius of Segment"
+        Me.Label6.Text = "Grade, Length, Radius, Super-elevation and Angle of Segment"
         '
         'butImport
         '
@@ -369,6 +371,7 @@ Partial Class frmMain
         '
         'GroupBox6
         '
+        Me.GroupBox6.Controls.Add(Me.butCurve)
         Me.GroupBox6.Controls.Add(Me.RichTextBox1)
         Me.GroupBox6.Controls.Add(Me.PictureBox1)
         Me.GroupBox6.Controls.Add(Me.butReset)
@@ -381,6 +384,17 @@ Partial Class frmMain
         Me.GroupBox6.TabIndex = 30
         Me.GroupBox6.TabStop = False
         Me.GroupBox6.Text = "Output"
+        '
+        'butCurve
+        '
+        Me.butCurve.Location = New System.Drawing.Point(179, 264)
+        Me.butCurve.Name = "butCurve"
+        Me.butCurve.Size = New System.Drawing.Size(77, 35)
+        Me.butCurve.TabIndex = 32
+        Me.butCurve.Text = "Curve"
+        Me.ToolTip1.SetToolTip(Me.butCurve, "Click to filter results satifying vehicle skidding and roll-over due to simple ho" &
+        "rizontal curve(s) on segment(s)")
+        Me.butCurve.UseVisualStyleBackColor = True
         '
         'RichTextBox1
         '
@@ -413,7 +427,7 @@ Partial Class frmMain
         'butFilter
         '
         Me.butFilter.Enabled = False
-        Me.butFilter.Location = New System.Drawing.Point(132, 264)
+        Me.butFilter.Location = New System.Drawing.Point(96, 264)
         Me.butFilter.Name = "butFilter"
         Me.butFilter.Size = New System.Drawing.Size(77, 35)
         Me.butFilter.TabIndex = 27
@@ -492,6 +506,7 @@ Partial Class frmMain
         '
         'GroupBox8
         '
+        Me.GroupBox8.Controls.Add(Me.butsCurve)
         Me.GroupBox8.Controls.Add(Me.txtNewTemp)
         Me.GroupBox8.Controls.Add(Me.btnNext)
         Me.GroupBox8.Controls.Add(Me.RichTextBox2)
@@ -506,6 +521,18 @@ Partial Class frmMain
         Me.GroupBox8.TabIndex = 30
         Me.GroupBox8.TabStop = False
         Me.GroupBox8.Text = "Output"
+        '
+        'butsCurve
+        '
+        Me.butsCurve.Enabled = False
+        Me.butsCurve.Location = New System.Drawing.Point(157, 262)
+        Me.butsCurve.Name = "butsCurve"
+        Me.butsCurve.Size = New System.Drawing.Size(64, 35)
+        Me.butsCurve.TabIndex = 34
+        Me.butsCurve.Text = "Curve"
+        Me.ToolTip1.SetToolTip(Me.butsCurve, "Click to filter results satifying vehicle skidding and roll-over due to simple ho" &
+        "rizontal curve(s) on segment(s)")
+        Me.butsCurve.UseVisualStyleBackColor = True
         '
         'txtNewTemp
         '
@@ -546,7 +573,7 @@ Partial Class frmMain
         '
         'butsReset
         '
-        Me.butsReset.Location = New System.Drawing.Point(208, 262)
+        Me.butsReset.Location = New System.Drawing.Point(227, 263)
         Me.butsReset.Name = "butsReset"
         Me.butsReset.Size = New System.Drawing.Size(63, 35)
         Me.butsReset.TabIndex = 28
@@ -557,7 +584,7 @@ Partial Class frmMain
         'butsFilter
         '
         Me.butsFilter.Enabled = False
-        Me.butsFilter.Location = New System.Drawing.Point(113, 262)
+        Me.butsFilter.Location = New System.Drawing.Point(82, 261)
         Me.butsFilter.Name = "butsFilter"
         Me.butsFilter.Size = New System.Drawing.Size(69, 35)
         Me.butsFilter.TabIndex = 27
@@ -569,7 +596,7 @@ Partial Class frmMain
         '
         Me.butsSave.Location = New System.Drawing.Point(6, 261)
         Me.butsSave.Name = "butsSave"
-        Me.butsSave.Size = New System.Drawing.Size(82, 36)
+        Me.butsSave.Size = New System.Drawing.Size(70, 36)
         Me.butsSave.TabIndex = 26
         Me.butsSave.Text = "Save"
         Me.ToolTip1.SetToolTip(Me.butsSave, "Save output as text or excel file")
@@ -615,7 +642,7 @@ Partial Class frmMain
         '
         'butsClear
         '
-        Me.butsClear.Location = New System.Drawing.Point(361, 431)
+        Me.butsClear.Location = New System.Drawing.Point(361, 437)
         Me.butsClear.Name = "butsClear"
         Me.butsClear.Size = New System.Drawing.Size(87, 30)
         Me.butsClear.TabIndex = 33
@@ -674,9 +701,9 @@ Partial Class frmMain
         Me.Label10.AutoSize = True
         Me.Label10.Location = New System.Drawing.Point(9, 346)
         Me.Label10.Name = "Label10"
-        Me.Label10.Size = New System.Drawing.Size(252, 17)
+        Me.Label10.Size = New System.Drawing.Size(404, 17)
         Me.Label10.TabIndex = 30
-        Me.Label10.Text = "Grade, Length and Radius of Segment"
+        Me.Label10.Text = "Grade, Length, Radius, Super-elevation and Angle of Segment"
         '
         'lstsGradeLength
         '
@@ -690,7 +717,7 @@ Partial Class frmMain
         '
         'butsImport
         '
-        Me.butsImport.Location = New System.Drawing.Point(362, 358)
+        Me.butsImport.Location = New System.Drawing.Point(362, 364)
         Me.butsImport.Name = "butsImport"
         Me.butsImport.Size = New System.Drawing.Size(87, 31)
         Me.butsImport.TabIndex = 28
@@ -787,7 +814,7 @@ Partial Class frmMain
         'butsCompute
         '
         Me.butsCompute.Enabled = False
-        Me.butsCompute.Location = New System.Drawing.Point(360, 467)
+        Me.butsCompute.Location = New System.Drawing.Point(360, 473)
         Me.butsCompute.Name = "butsCompute"
         Me.butsCompute.Size = New System.Drawing.Size(88, 33)
         Me.butsCompute.TabIndex = 21
@@ -797,7 +824,7 @@ Partial Class frmMain
         '
         'butsGradeLength
         '
-        Me.butsGradeLength.Location = New System.Drawing.Point(362, 395)
+        Me.butsGradeLength.Location = New System.Drawing.Point(362, 401)
         Me.butsGradeLength.Name = "butsGradeLength"
         Me.butsGradeLength.Size = New System.Drawing.Size(87, 30)
         Me.butsGradeLength.TabIndex = 19
@@ -985,4 +1012,6 @@ Partial Class frmMain
     Friend WithEvents ToolTip1 As ToolTip
     Friend WithEvents VisualStyler1 As SkinSoft.VisualStyler.VisualStyler
     Friend WithEvents butlogout As Button
+    Friend WithEvents butCurve As Button
+    Friend WithEvents butsCurve As Button
 End Class

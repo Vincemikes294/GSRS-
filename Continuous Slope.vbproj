@@ -111,6 +111,12 @@
     <Compile Include="Excel\Application.vb" />
     <Compile Include="Excel\Workbook.vb" />
     <Compile Include="Excel\Worksheet.vb" />
+    <Compile Include="frmHorizontalcontinuousoutput.Designer.vb">
+      <DependentUpon>frmHorizontalcontinuousoutput.vb</DependentUpon>
+    </Compile>
+    <Compile Include="frmHorizontalcontinuousoutput.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="frmMain.Designer.vb">
       <DependentUpon>frmMain.vb</DependentUpon>
     </Compile>
@@ -171,6 +177,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="frmHorizontalcontinuousoutput.resx">
+      <DependentUpon>frmHorizontalcontinuousoutput.vb</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="frmMain.resx">
       <DependentUpon>frmMain.vb</DependentUpon>
     </EmbeddedResource>
