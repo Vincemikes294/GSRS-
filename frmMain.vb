@@ -72,6 +72,7 @@ Public Class frmMain
     Public Vro() As Double
     Public Vmin() As Double
     Public Vfinmin As Integer
+    Public Vi As Integer
     Public Sidefrictionfactor As Integer = 0
     Public rolloverthreshold As Integer = 0
     Public Property ExcelReaderFactory As Object
@@ -1675,21 +1676,46 @@ Public Class frmMain
                     Vmin(i) = Math.Min(Vsf(i), Vro(i))
                 Next
                 Vfinmin = Vmin.Min
-
-                If V < Vfinmin Then
-                    T_lim_s = CInt(T_lim(V, 1))
-                    T_f_s = CInt(T_f(V, 1))
-                    T_e_s = CInt(T_e(V, 1))
-                    lstOutputView.Items.Add(W & vbTab & vbTab & V & vbTab & vbTab & T_f_s & vbTab & vbTab & T_e_s & vbTab & vbTab & T_lim_s & vbTab & vbTab & CInt(TL * 60 / V) & vbCrLf)
-                ElseIf V >= Vfinmin Then
-                    V = Vfinmin
-                    T_lim_s = CInt(T_lim(V, 1))
-                    T_f_s = CInt(T_f(V, 1))
-                    T_e_s = CInt(T_e(V, 1))
-                    lstOutputView.Items.Add(W & vbTab & vbTab & V & vbTab & vbTab & T_f_s & vbTab & vbTab & T_e_s & vbTab & vbTab & T_lim_s & vbTab & vbTab & CInt(TL * 60 / V) & vbCrLf)
+                If Vfinmin <= "0" Then
+                    Vfinmin = "1"
                 End If
-            Next
-        Next
+                Vi = Vfinmin
 
+                If V < Vi Then
+                    T_lim_s = CInt(T_lim(V, 1))
+                    T_f_s = CInt(T_f(V, 1))
+                    T_e_s = CInt(T_e(V, 1))
+                    lstOutputView.Items.Add(W & vbTab & vbTab & V & vbTab & vbTab & T_f_s & vbTab & vbTab & T_e_s & vbTab & vbTab & T_lim_s & vbTab & vbTab & CInt(TL * 60 / V) & vbCrLf)
+                Else
+                    T_0 = CDbl(txtinitemp.Text) 'initial brake temperature
+                    T_inf = CDbl(txtambient.Text) 'ambient temperature
+
+                    ReDim T_e(Vi, 1)
+                    T_e(Vi, 1) = (0.000000311) * W * (Vi ^ 2) 'temperature from emergency stopping
+                    HP_eng = 63.3 'Engine brake force
+                    K2 = 1 / (0.1602 + 0.0078 * Vi) 'Heat transfer parameter
+                    K1 = 1.5 * (1.1852 + 0.0331 * Vi) 'Diffusivity constant
+                    F_drag = 459.35 + 0.132 * (Vi ^ 2) 'Drag forces
+
+                    For Me.i = 1 To txtNumSections.Text
+                        Theta = Grade(i)
+                        L = Length(i)
+                        HP_b = (W * Theta - F_drag) * (Vi / 375) - 63.3 'power into brakes
+                        ReDim T_f(Vi, 1)
+                        T_f(Vi, 1) = T_0 + (T_inf - T_0 + K2 * HP_b) * (1 - Math.Exp(-K1 * (L / Vi)))
+                        T_0 = T_f(Vi, 1)
+                    Next
+
+                    ReDim T_lim(Vi, 1)
+                    T_lim(Vi, 1) = T_f(Vi, 1) + T_e(Vi, 1)    'limiting brake temperature
+
+                    T_lim_s = CInt(T_lim(Vi, 1))
+                    T_f_s = CInt(T_f(Vi, 1))
+                    T_e_s = CInt(T_e(Vi, 1))
+
+                    lstOutputView.Items.Add(W & vbTab & vbTab & Vi & vbTab & vbTab & T_f_s & vbTab & vbTab & T_e_s & vbTab & vbTab & T_lim_s & vbTab & vbTab & CInt(TL * 60 / Vi) & vbCrLf)
+                    End If
+                Next
+            Next
     End Sub
 End Class
