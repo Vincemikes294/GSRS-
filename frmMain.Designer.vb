@@ -387,6 +387,7 @@ Partial Class frmMain
         '
         'butCurve
         '
+        Me.butCurve.Enabled = False
         Me.butCurve.Location = New System.Drawing.Point(179, 264)
         Me.butCurve.Name = "butCurve"
         Me.butCurve.Size = New System.Drawing.Size(77, 35)
@@ -906,7 +907,7 @@ Partial Class frmMain
         Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D
         Me.Name = "frmMain"
         Me.Text = "                                                                                 " &
-    "                          GSRS Auto 1.0"
+    "                                                         GSRS Auto 1.0"
         Me.ToolTip1.SetToolTip(Me, "Select the maximum brake temperature in F" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10))
         Me.GroupBox1.ResumeLayout(False)
         Me.GroupBox1.PerformLayout()

@@ -1,7 +1,6 @@
 ﻿Option Explicit On
 Imports System.IO
 Public Class frmMain
-
     Public T_max As Double
     Public Shared Grade() As Double
     Public Shared Length() As Double
@@ -71,6 +70,9 @@ Public Class frmMain
     Public Vsf() As Double
     Public Vro() As Double
     Public Vmin() As Double
+    Public Vsfs() As Double
+    Public Vros() As Double
+    Public Vmins() As Double
     Public Vfinmin As Integer
     Public Vi As Integer
     Public Sidefrictionfactor As Integer = 0
@@ -222,6 +224,7 @@ Public Class frmMain
     Private Sub butCompute_Click(sender As System.Object, e As System.EventArgs) Handles butCompute.Click
         butSave.Enabled = True
         butFilter.Enabled = True
+        butCurve.Enabled = True
         butCompute.Enabled = False
         butGradeLength.Enabled = False
 
@@ -253,7 +256,7 @@ Public Class frmMain
                 T_0 = txtinitemp.Text
                 txtinitemp.Text = T_0
             ElseIf txtinitemp.Text < 90 Then
-                T_0 = "150"
+                T_0 = 150
                 txtinitemp.Text = T_0
             End If
         Else : MsgBox("Enter a numeric value greater or equal to 90 for Initial Temperature")
@@ -266,17 +269,17 @@ Public Class frmMain
                 T_0 = T_0_input
                 txtinitemp.Text = T_0
             ElseIf T_0_input < 90 Then
-                T_0 = "150"
+                T_0 = 150
                 txtinitemp.Text = T_0
             End If
         End If
 
         If IsNumeric(txtambient.Text) Then
             If txtambient.Text >= 90 Then
-                T_inf = "90"
+                T_inf = 90
                 txtambient.Text = T_inf
             ElseIf txtambient.Text < 90 Then
-                T_inf = "90"
+                T_inf = 90
                 txtambient.Text = T_inf
             End If
         Else : MsgBox("Enter a value of 90 for the Ambient Temperature")
@@ -286,10 +289,10 @@ Public Class frmMain
                 T_inf_input = (InputBox("Enter a value of 90 for the Ambient Temperature", "Alert", "90"))
             Loop
             If T_inf_input >= 90 Then
-                T_inf = "90"
+                T_inf = 90
                 txtambient.Text = T_inf
             ElseIf T_inf_input < 90 Then
-                T_inf = "90"
+                T_inf = 90
                 txtambient.Text = T_inf
             End If
         End If
@@ -545,6 +548,7 @@ Public Class frmMain
     Private Sub butsCompute_Click(sender As System.Object, e As System.EventArgs) Handles butsCompute.Click
         butsSave.Enabled = True
         butsFilter.Enabled = True
+        butsCurve.Enabled = True
         butsCompute.Enabled = False
         butsGradeLength.Enabled = False
         Dim numgradesoutput As Integer
@@ -644,7 +648,7 @@ Public Class frmMain
         Group_Number = a
         p = txtsNumberGrades.Text
         'Computations
-        'm = 0
+
         i_max = W_max / 5000
         N_secteion = txtsNumSections.Text
         Dim input_info(,) As Double = New Double(CInt(N_secteion - 1), 1) {}
@@ -661,12 +665,9 @@ Public Class frmMain
             Next
         Next
 
-
         If a Mod 2 = 1 Then
             T_lim_s = Group1(input_info, V_max, W_max, T_0, Group_Number)
         End If
-
-
 
         If a Mod 2 = 0 Then
             T_lim_s = CalVel(input_info, W_max, i_max, V_max, T_max, T_0, Group_Number)
@@ -841,10 +842,8 @@ Public Class frmMain
                 HP_b = (W * Theta - F_drag) * (V / 375) - 63.3 'power into brakes
                 Ts_f = T_0 + (T_inf - T_0 + K2 * HP_b) * (1 - Math.Exp(-K1 * (L / V)))
                 T_0 = Ts_f
-
             Next
             T_lims = Ts_f + Ts_e 'limiting brake temperature
-
 
             lstsOutputView.Items.Add(Space & Group_Number & vbTab & vbTab & W & vbTab & vbTab & Space & V & vbTab & vbTab & Space & vbTab & Ts_f & vbTab & Space & vbTab & Ts_e & vbTab & Space & T_lims & vbTab & vbTab & Space & CInt(TLnew * 60 / V) & vbCrLf)
         Next
@@ -889,14 +888,11 @@ Public Class frmMain
 
                 T_lim(V, 1) = T_f(V, 1) + T_e(V, 1)    'limiting brake temperature
 
-
-
-                Vs = V
                 T_lim_s = CInt(T_lim(V, 1))
                 T_f_s = CInt(T_f(V, 1))
                 T_e_s = CInt(T_e(V, 1))
                 Dim Space = ("        ")
-                lstsOutputView.Items.Add(Space & Group_Number & vbTab & vbTab & W & vbTab & vbTab & Space & V & vbTab & vbTab & Space & vbTab & Ts_f & vbTab & Space & vbTab & Ts_e & vbTab & Space & T_lims & vbTab & vbTab & Space & CInt(TLnew * 60 / V) & vbCrLf)
+                lstsOutputView.Items.Add(Space & Group_Number & vbTab & vbTab & W & vbTab & vbTab & Space & V & vbTab & vbTab & Space & vbTab & T_f_s & vbTab & Space & vbTab & T_e_s & vbTab & Space & T_lim_s & vbTab & vbTab & Space & CInt(TLnew * 60 / V) & vbCrLf)
             Next
         Next
 
@@ -910,7 +906,6 @@ Public Class frmMain
 
         End If
     End Sub
-
     Private Sub butsFilter_Click(sender As System.Object, e As System.EventArgs) Handles butsFilter.Click
         Dim header As String
         Dim data As New List(Of DataValue1)
@@ -1074,7 +1069,6 @@ Public Class frmMain
         lblnPath.Text = ""
         TLnew = 0
     End Sub
-
     Public Class DataValue1
 
         Public Sub New(ByVal strInput As String)
@@ -1144,11 +1138,9 @@ Public Class frmMain
             butTempProfile.Enabled = False
         End If
     End Sub
-
     Private Sub GroupSeparateSlope_Enter(sender As Object, e As EventArgs) Handles GroupSeparateSlope.Enter
 
     End Sub
-
     Private Sub txtsNumSections_TextChanged(sender As Object, e As EventArgs) Handles txtsNumSections.TextChanged
         If txtsNumberGrades.Text <> "" And txtsNumSections.Text <> "" And lstsGradeLength.Items.Count <> 0 Then
             butsCompute.Enabled = True
@@ -1156,7 +1148,6 @@ Public Class frmMain
             butsCompute.Enabled = False
         End If
     End Sub
-
     Private Sub cboMaxTemp_SelectedIndexChanged_1(sender As Object, e As EventArgs) Handles cboMaxTemp.SelectedIndexChanged
         If cboMaxTemp.Text = "500" Then
             T_max = 500
@@ -1165,43 +1156,33 @@ Public Class frmMain
 
         End If
     End Sub
-
     Private Sub txtMaxWeight_TextChanged(sender As Object, e As EventArgs) Handles txtMaxWeight.TextChanged
 
     End Sub
-
     Private Sub txtsMaxWeight_TextChanged(sender As Object, e As EventArgs) Handles txtsMaxWeight.TextChanged
 
     End Sub
-
     Private Sub txtMaxSpeed_TextChanged(sender As Object, e As EventArgs) Handles txtMaxSpeed.TextChanged
 
     End Sub
-
     Private Sub txtsMaxSpeed_TextChanged(sender As Object, e As EventArgs) Handles txtsMaxSpeed.TextChanged
 
     End Sub
-
     Private Sub txtinitemp_TextChanged(sender As Object, e As EventArgs) Handles txtinitemp.TextChanged
 
     End Sub
-
     Private Sub txtsinitemp_TextChanged(sender As Object, e As EventArgs) Handles txtsinitemp.TextChanged
 
     End Sub
-
     Private Sub txtambient_TextChanged(sender As Object, e As EventArgs) Handles txtambient.TextChanged
 
     End Sub
-
     Private Sub txtsiniambient_TextChanged(sender As Object, e As EventArgs) Handles txtsiniambient.TextChanged
 
     End Sub
-
     Private Sub GroupBox4_Enter(sender As Object, e As EventArgs) Handles GroupBox4.Enter
 
     End Sub
-
     Private Sub btnNext_Click(sender As Object, e As EventArgs) Handles btnNext.Click
         Group_Number = Group_Number + 1
         a = Group_Number
@@ -1397,11 +1378,9 @@ Public Class frmMain
         Function ReadLine() As String
         Function Peek() As Integer
     End Interface
-
     Private Sub GroupBox11_Enter(sender As Object, e As EventArgs) Handles GroupBox11.Enter
 
     End Sub
-
     Private Sub butsImport_Click(sender As Object, e As EventArgs) Handles butsImport.Click
         Dim MyFileDialog As New System.Windows.Forms.OpenFileDialog
 
@@ -1538,18 +1517,293 @@ Public Class frmMain
         frmLogin.txtpassword.Text = ""
     End Sub
     Private Sub butsCurve_Click(sender As Object, e As EventArgs) Handles butsCurve.Click
+        frmHorizontalseparate.Show()
+        butsCompute.Enabled = False
+        butsGradeLength.Enabled = False
+        Dim numgradesoutput As Integer
+        If IsNumeric(txtsNumberGrades.Text) And txtsNumberGrades.Text <> "" And txtsNumberGrades.Text > "0" And (Integer.TryParse(txtsNumberGrades.Text, numgradesoutput)) = True Then
+            Grades_max = txtsNumberGrades.Text
+        Else : MsgBox("Please Enter a positive integer value for Number of Grades", , "Seperate Slope")
+            Grades_maxinput = (InputBox("Enter a positive integer value for Number of Grades", "Seperate Slope"))
+            Do While IsNumeric(Grades_maxinput) = False Or Grades_maxinput < "0" Or (Integer.TryParse(Grades_maxinput, numgradesoutput)) = False
+                MessageBox.Show("Please enter a positive integer value for Number of Grades", "Seperate Slope")
+                Grades_maxinput = (InputBox("Enter a positive integer value for Number of Grades", "Seperate Slope"))
+            Loop
+            Grades_max = Grades_maxinput
+        End If
+        txtsNumberGrades.Text = Grades_max
+
+        If IsNumeric(txtsMaxWeight.Text) And txtsMaxWeight.Text <> "" And txtsMaxWeight.Text > "0" Then
+            W_max = txtsMaxWeight.Text
+        Else : MsgBox("Please Enter a positive numeric value for Maximum Weight", , "Seperate Slope")
+            W_Maxinput = (InputBox("Enter a positive numeric value for Maximum Weight", "Seperate Slope"))
+            Do While IsNumeric(W_Maxinput) = False Or W_Maxinput < "0"
+                MessageBox.Show("Please enter a positive numeric Value for Maximum Weight", "Seperate Slope")
+                W_Maxinput = (InputBox("Enter a positive numeric value for Maximum Weight", "Seperate Slope"))
+            Loop
+            W_max = CDbl(W_Maxinput)
+        End If
+        txtsMaxWeight.Text = W_max
+        If IsNumeric(txtsMaxSpeed.Text) And txtsMaxSpeed.Text <> "" And txtsMaxSpeed.Text > "0" Then
+            V_max = txtsMaxSpeed.Text
+        Else : MsgBox("Please Enter a positive numeric value for Maximum Speed", , "Seperate Slope")
+            V_Maxinput = (InputBox("Enter a positive numeric value for Maximum Speed", "Seperate Slope"))
+            Do While IsNumeric(V_Maxinput) = False Or V_Maxinput < "0"
+                MessageBox.Show("Please enter a positive numeric Value for Maximum Speed", "Seperate Slope")
+                V_Maxinput = (InputBox("Enter a positive numeric value for Maximum Speed", "Seperate Slope"))
+            Loop
+            V_max = CDbl(V_Maxinput)
+        End If
+        txtsMaxSpeed.Text = V_max
+        If IsNumeric(txtsinitemp.Text) Then
+            If txtsinitemp.Text >= 90 Then
+                T_0 = txtsinitemp.Text
+                txtsinitemp.Text = T_0
+            ElseIf txtsinitemp.Text < 90 Then
+                T_0 = "150"
+                txtsinitemp.Text = T_0
+            End If
+        Else : MsgBox("Enter a numeric value greater Or equal to 90 for Initial Temperature", , "Seperate Slope")
+            T_0_input = (InputBox("Enter a numeric value greater Or equal to 90 for Initial Temperature", "Alert", "150"))
+            Do While IsNumeric(T_0_input) = False Or T_0_input = ""
+                MessageBox.Show("Enter a numeric value greater Or equal to 90 for Initial Temperature", "Seperate Slope")
+                T_0_input = (InputBox("Enter a numeric value greater Or equal to 90 for Initial Temperature", "Alert", "150"))
+            Loop
+            If T_0_input >= 90 Then
+                T_0 = T_0_input
+                txtsinitemp.Text = T_0
+            ElseIf T_0_input < 90 Then
+                T_0 = "150"
+                txtsinitemp.Text = T_0
+            End If
+        End If
+        If IsNumeric(txtsiniambient.Text) Then
+            If txtsiniambient.Text >= 90 Then
+                T_inf = "90"
+                txtsiniambient.Text = T_inf
+            ElseIf txtsiniambient.Text < 90 Then
+                T_inf = "90"
+                txtsiniambient.Text = T_inf
+            End If
+        Else : MsgBox("Enter a value of 90 for the Ambient Temperature", , "Seperate Slope")
+            T_inf_input = (InputBox("Enter a value of 90 for the Ambient Temperature", "Alert", "90"))
+            Do While IsNumeric(T_inf_input) = False Or T_inf_input = ""
+                MessageBox.Show("Enter a value of 90 for the Ambient Temperature", "Seperate Slope")
+                T_inf_input = (InputBox("Enter a value of 90 for the Ambient Temperature", "Alert", "90"))
+            Loop
+            If T_inf_input >= 90 Then
+                T_inf = "90"
+                txtsiniambient.Text = T_inf
+            ElseIf T_inf_input < 90 Then
+                T_inf = "90"
+                txtsiniambient.Text = T_inf
+            End If
+        End If
+        If IsNumeric(cbosMaxTemp.Text) And cbosMaxTemp.Text <> "" And cbosMaxTemp.Text = "500" Or cbosMaxTemp.Text = "530" Then
+            T_max = cbosMaxTemp.Text
+        Else : MsgBox("Please input " & "500 Or 530 for Maximum Temperature", , "Seperate Slope")
+            T_max_input = (InputBox("Input " & "500 Or 530 for Maximum Temperature", "Seperate Slope"))
+            Do While IsNumeric(T_max_input) = False Or T_max_input <> "500" And T_max_input <> "530"
+                MessageBox.Show("Input " & "500 Or 530 for Maximum Temperature", "Seperate Slope")
+                T_max_input = (InputBox("Input " & "500 Or 530 for Maximum Temperature", "Seperate Slope"))
+            Loop
+            T_max = CDbl(T_max_input)
+        End If
+        cbosMaxTemp.Text = T_max
+        frmHorizontalseparate.lstFinalOutputView.Items.Add("Group" & "        Max Weight (lb)" & "           Max Speed (mph)" & "                         T_Desc (F)" & "               T_Emerg (F)" & "      T_Final (F)" & "          Time (min) " & vbCrLf & vbCrLf)
+
+        a = txtsGroupNumber.Text
+        Group_Number = a
+        p = txtsNumberGrades.Text
+
+        'Computations
+
+        i_max = W_max / 5000
+        N_secteion = txtsNumSections.Text
+        Dim input_info(,) As Double = New Double(CInt(N_secteion - 1), 1) {}
+        For Me.i = 1 To N_secteion
+            Dim intIndexGrade As New Integer
+            Dim intIndexLength As New Integer
+
+            For intIndexGrade = 1 To N_secteion
+                input_info(intIndexGrade - 1, 0) = Gradec(intIndexGrade)
+            Next
+            For intIndexLength = 1 To N_secteion
+                input_info(intIndexLength - 1, 1) = Lengthc(intIndexLength)
+            Next
+        Next
+
+        If a Mod 2 = 1 Then
+            T_lim_s = Group1curve(input_info, V_max, W_max, T_0, Group_Number)
+        End If
+
+        If a Mod 2 = 0 Then
+            T_lim_s = CalVelcurve(input_info, W_max, i_max, V_max, T_max, T_0, Group_Number)
+        End If
 
     End Sub
+    Function CalVelcurve(input_info, W_max, i_max, V_max, T_max, T_0, Group_Number)
+        Dim T_f(,) As Double
+        Dim T_e(,) As Double
+        Dim Space = ("        ")
+        Dim j_max As Integer
+        j_max = W_max / 5000
+        For Me.i = 1 To txtsNumSections.Text
+            TLnew += Lengthc(i)
+        Next
 
-    Private Sub GroupBox1_Enter(sender As Object, e As EventArgs) Handles GroupBox1.Enter
+        For Me.j = 0 To j_max
+            W = W_max - j * 5000
 
-    End Sub
+            For Me.V = 1 To V_max
+
+                T_0 = txtsinitemp.Text 'initial brake temperature
+                T_inf = txtsiniambient.Text 'ambient temperature
+
+                ReDim T_e(V, 1)
+                T_e(V, 1) = (0.000000311) * W * (V ^ 2) 'temperature from emergency stopping
+                HP_eng = 63.3 'Engine brake force
+                K2 = 1 / (0.1602 + 0.0078 * V) 'Heat transfer parameter
+                K1 = 1.5 * (1.1852 + 0.0331 * V) 'Diffusivity constant
+                F_drag = 459.35 + 0.132 * (V ^ 2) 'Drag forces
+
+                For Me.i = 1 To txtsNumSections.Text
+                    Theta = Gradec(i)
+                    L = Lengthc(i)
+                    HP_b = (W * Theta - F_drag) * (V / 375) - 63.3 'power into brakes
+                    ReDim T_f(V, 1)
+                    T_f(V, 1) = T_0 + (T_inf - T_0 + K2 * HP_b) * (1 - Math.Exp(-K1 * (L / V)))
+                    T_0 = T_f(V, 1)
+                Next
+
+                ReDim T_lim(V, 1)
+
+                T_lim(V, 1) = T_f(V, 1) + T_e(V, 1)    'limiting brake temperature
+
+                For i = 0 To CInt(txtsNumSections.Text)
+                    ReDim Preserve Vsfs(i)
+                    ReDim Preserve Vros(i)
+                    ReDim Preserve Vmins(i)
+                    Vsfs(i) = (0.952663 + 0.0000831 * Radiusc(i) - 0.00454 * Anglec(i) - 0.0000022 * W - 0.08554 * Gradec(i) - Sidefrictionfactor) / (0.00696)
+                    Vros(i) = (0.952663 + 0.0000831 * Radiusc(i) - 0.00454 * Anglec(i) - 0.0000022 * W - 0.08554 * Gradec(i) - rolloverthreshold) / (0.00696)
+                    Vmins(i) = Math.Min(Vsfs(i), Vros(i))
+                Next
+                Vfinmin = Vmins.Min
+                If Vfinmin <= "0" Then
+                    Vfinmin = "1"
+                End If
+                Vi = Vfinmin
+
+                If V < Vi Then
+                    T_lim_s = CInt(T_lim(V, 1))
+                    T_f_s = CInt(T_f(V, 1))
+                    T_e_s = CInt(T_e(V, 1))
+                    frmHorizontalseparate.lstFinalOutputView.Items.Add(Space & Group_Number & vbTab & vbTab & W & vbTab & vbTab & Space & V & vbTab & vbTab & Space & vbTab & T_f_s & vbTab & Space & vbTab & T_e_s & vbTab & Space & T_lim_s & vbTab & vbTab & Space & CInt(TLnew * 60 / V) & vbCrLf)
+                Else
+                    T_0 = CDbl(txtsinitemp.Text) 'initial brake temperature
+                    T_inf = CDbl(txtsiniambient.Text) 'ambient temperature
+
+                    ReDim T_e(Vi, 1)
+                    T_e(Vi, 1) = (0.000000311) * W * (Vi ^ 2) 'temperature from emergency stopping
+                    HP_eng = 63.3 'Engine brake force
+                    K2 = 1 / (0.1602 + 0.0078 * Vi) 'Heat transfer parameter
+                    K1 = 1.5 * (1.1852 + 0.0331 * Vi) 'Diffusivity constant
+                    F_drag = 459.35 + 0.132 * (Vi ^ 2) 'Drag forces
+
+                    For Me.i = 1 To txtsNumSections.Text
+                        Theta = Gradec(i)
+                        L = Lengthc(i)
+                        HP_b = (W * Theta - F_drag) * (Vi / 375) - 63.3 'power into brakes
+                        ReDim T_f(Vi, 1)
+                        T_f(Vi, 1) = T_0 + (T_inf - T_0 + K2 * HP_b) * (1 - Math.Exp(-K1 * (L / Vi)))
+                        T_0 = T_f(Vi, 1)
+                    Next
+
+                    ReDim T_lim(Vi, 1)
+                    T_lim(Vi, 1) = T_f(Vi, 1) + T_e(Vi, 1)    'limiting brake temperature
+
+                    T_lim_s = CInt(T_lim(Vi, 1))
+                    T_f_s = CInt(T_f(Vi, 1))
+                    T_e_s = CInt(T_e(Vi, 1))
+                    frmHorizontalseparate.lstFinalOutputView.Items.Add(Space & Group_Number & vbTab & vbTab & W & vbTab & vbTab & Space & Vi & vbTab & vbTab & Space & vbTab & T_f_s & vbTab & Space & vbTab & T_e_s & vbTab & Space & T_lim_s & vbTab & vbTab & Space & CInt(TLnew * 60 / Vi) & vbCrLf)
+                End If
+            Next
+        Next
+        Me.butsFilter.Enabled = True
+    End Function
+    ' Function to calculate V
+    Function Group1curve(input_info, V_max, W_max, T_0, Group_Number)
+        Dim Space = ("        ")
+        W = W_max
+        V = V_max
+        For Me.i = 1 To txtsNumSections.Text
+            TLnew += Lengthc(i)
+        Next
+        For Me.j = 0 To (V_max - 15) / 5
+            V = V_max - 5 * j
+            T_0 = txtsinitemp.Text
+            T_inf = txtsiniambient.Text  'ambient temperature
+
+            Ts_e = (0.000000311) * W * (V ^ 2) ' temperature from emergency stopping
+            HP_eng = 63.3 'engine brake force
+            K2 = 1 / (0.1602 + 0.0078 * V) 'heat transfer parameter
+            K1 = 1.5 * (1.1852 + 0.0331 * V) 'diffusivity constant
+            F_drag = 459.35 + 0.132 * (V ^ 2) 'drag forces
+
+            For Me.i = 1 To txtsNumSections.Text
+                Theta = Gradec(i)
+                L = Lengthc(i)
+                HP_b = (W * Theta - F_drag) * (V / 375) - 63.3 'power into brakes
+                Ts_f = T_0 + (T_inf - T_0 + K2 * HP_b) * (1 - Math.Exp(-K1 * (L / V)))
+                T_0 = Ts_f
+            Next
+
+            T_lims = Ts_f + Ts_e 'limiting brake temperature
+
+            For i = 0 To CInt(txtsNumSections.Text)
+                ReDim Preserve Vsfs(i)
+                ReDim Preserve Vros(i)
+                ReDim Preserve Vmins(i)
+                Vsfs(i) = (0.952663 + 0.0000831 * Radiusc(i) - 0.00454 * Anglec(i) - 0.0000022 * W - 0.08554 * Gradec(i) - Sidefrictionfactor) / 0.00696
+                Vros(i) = (0.952663 + 0.0000831 * Radiusc(i) - 0.00454 * Anglec(i) - 0.0000022 * W - 0.08554 * Gradec(i) - rolloverthreshold) / 0.00696
+                Vmins(i) = Math.Min(Vsfs(i), Vros(i))
+            Next
+
+            Vfinmin = Vmins.Min
+
+            If Vfinmin <= "0" Then
+                Vfinmin = "1"
+            End If
+
+            Vi = Vfinmin
+
+            If V < Vi Then
+                frmHorizontalseparate.lstFinalOutputView.Items.Add(Space & Group_Number & vbTab & vbTab & W & vbTab & vbTab & Space & V & vbTab & vbTab & Space & vbTab & Ts_f & vbTab & Space & vbTab & Ts_e & vbTab & Space & T_lims & vbTab & vbTab & Space & CInt(TLnew * 60 / V) & vbCrLf)
+            Else
+                T_0 = CDbl(txtsinitemp.Text) 'initial brake temperature
+                T_inf = CDbl(txtsiniambient.Text) 'ambient temperature
+                Ts_e = (0.000000311) * W * (Vi ^ 2) 'temperature from emergency stopping
+                HP_eng = 63.3 'Engine brake force
+                K2 = 1 / (0.1602 + 0.0078 * Vi) 'Heat transfer parameter
+                K1 = 1.5 * (1.1852 + 0.0331 * Vi) 'Diffusivity constant
+                F_drag = 459.35 + 0.132 * (Vi ^ 2) 'Drag forces
+                For Me.i = 1 To txtsNumSections.Text
+                    Theta = Gradec(i)
+                    L = Lengthc(i)
+                    HP_b = (W * Theta - F_drag) * (Vi / 375) - 63.3 'power into brakes
+                    Ts_f = T_0 + (T_inf - T_0 + K2 * HP_b) * (1 - Math.Exp(-K1 * (L / Vi)))
+                    T_0 = Ts_f
+                Next
+                T_lims = Ts_f + Ts_e  'limiting brake temperature
+                frmHorizontalseparate.lstFinalOutputView.Items.Add(Space & Group_Number & vbTab & vbTab & W & vbTab & vbTab & Space & Vi & vbTab & vbTab & Space & vbTab & Ts_f & vbTab & Space & vbTab & Ts_e & vbTab & Space & T_lims & vbTab & vbTab & Space & CInt(TLnew * 60 / Vi) & vbCrLf)
+            End If
+        Next
+        Me.butsFilter.Enabled = True
+    End Function
     Private Sub butCurve_Click(sender As Object, e As EventArgs) Handles butCurve.Click
-        butSave.Enabled = True
-        butFilter.Enabled = True
+        frmHorizontal.Show()
         butCompute.Enabled = False
         butGradeLength.Enabled = False
-
         If IsNumeric(txtMaxWeight.Text) And txtMaxWeight.Text <> "" And txtMaxWeight.Text > "0" Then
             W_max = txtMaxWeight.Text
         Else : MsgBox("Please Enter a positive numeric value for Maximum Weight")
@@ -1572,7 +1826,6 @@ Public Class frmMain
             V_max = CDbl(V_Maxinput)
             txtMaxSpeed.Text = V_max
         End If
-
         If IsNumeric(txtinitemp.Text) Then
             If txtinitemp.Text >= 90 Then
                 T_0 = txtinitemp.Text
@@ -1595,7 +1848,6 @@ Public Class frmMain
                 txtinitemp.Text = T_0
             End If
         End If
-
         If IsNumeric(txtambient.Text) Then
             If txtambient.Text >= 90 Then
                 T_inf = "90"
@@ -1629,12 +1881,13 @@ Public Class frmMain
             T_max = CDbl(T_max_input)
             cboMaxTemp.Text = T_max
         End If
-        Me.lstOutputView.Items.Add("Max Weight (lb) " & "    Max Speed (mph) " & "     T_Desc (F) " & "           T_Emerg (F) " & "        T_Final (F)" & "                Time (min) " & vbCrLf & vbCrLf)
+
+        frmHorizontal.lstFinalOutputView.Items.Add("Max Weight (lb) " & "    Max Speed (mph) " & "     T_Desc (F) " & "           T_Emerg (F) " & "        T_Final (F)" & "                Time (min) " & vbCrLf & vbCrLf)
 
         'Computations
         j_max = W_max / 5000
 
-        For Me.i = 1 To CInt(txtNumSections.Text)
+        For i = 1 To CInt(txtNumSections.Text)
             TL += Length(i)
         Next
 
@@ -1667,7 +1920,7 @@ Public Class frmMain
                 ReDim T_lim(V, 1)
                 T_lim(V, 1) = T_f(V, 1) + T_e(V, 1)    'limiting brake temperature
 
-                For i = 0 To txtNumSections.Text
+                For i = 0 To CInt(txtNumSections.Text)
                     ReDim Preserve Vsf(i)
                     ReDim Preserve Vro(i)
                     ReDim Preserve Vmin(i)
@@ -1675,6 +1928,7 @@ Public Class frmMain
                     Vro(i) = (0.952663 + 0.0000831 * Radius(i) - 0.00454 * Angle(i) - 0.0000022 * W - 0.08554 * Grade(i) - rolloverthreshold) / (0.00696)
                     Vmin(i) = Math.Min(Vsf(i), Vro(i))
                 Next
+
                 Vfinmin = Vmin.Min
                 If Vfinmin <= "0" Then
                     Vfinmin = "1"
@@ -1685,7 +1939,7 @@ Public Class frmMain
                     T_lim_s = CInt(T_lim(V, 1))
                     T_f_s = CInt(T_f(V, 1))
                     T_e_s = CInt(T_e(V, 1))
-                    lstOutputView.Items.Add(W & vbTab & vbTab & V & vbTab & vbTab & T_f_s & vbTab & vbTab & T_e_s & vbTab & vbTab & T_lim_s & vbTab & vbTab & CInt(TL * 60 / V) & vbCrLf)
+                    frmHorizontal.lstFinalOutputView.Items.Add(W & vbTab & vbTab & V & vbTab & vbTab & T_f_s & vbTab & vbTab & T_e_s & vbTab & vbTab & T_lim_s & vbTab & vbTab & CInt(TL * 60 / V) & vbCrLf)
                 Else
                     T_0 = CDbl(txtinitemp.Text) 'initial brake temperature
                     T_inf = CDbl(txtambient.Text) 'ambient temperature
@@ -1713,9 +1967,9 @@ Public Class frmMain
                     T_f_s = CInt(T_f(Vi, 1))
                     T_e_s = CInt(T_e(Vi, 1))
 
-                    lstOutputView.Items.Add(W & vbTab & vbTab & Vi & vbTab & vbTab & T_f_s & vbTab & vbTab & T_e_s & vbTab & vbTab & T_lim_s & vbTab & vbTab & CInt(TL * 60 / Vi) & vbCrLf)
-                    End If
-                Next
+                    frmHorizontal.lstFinalOutputView.Items.Add(W & vbTab & vbTab & Vi & vbTab & vbTab & T_f_s & vbTab & vbTab & T_e_s & vbTab & vbTab & T_lim_s & vbTab & vbTab & CInt(TL * 60 / Vi) & vbCrLf)
+                End If
             Next
+        Next
     End Sub
 End Class
