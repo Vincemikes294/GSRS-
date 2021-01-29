@@ -75,8 +75,8 @@ Public Class frmMain
     Public Vmins() As Double
     Public Vfinmin As Integer
     Public Vi As Integer
-    Public Sidefrictionfactor As Integer = 0
-    Public rolloverthreshold As Integer = 0
+    Public Sidefrictionfactor As Integer = 0.51
+    Public rolloverthreshold As Integer = 0.51
     Public Property ExcelReaderFactory As Object
     Public Property ExcelDataReader As Object
     Private Sub cboMaxTemp_SelectedIndexChanged(sender As System.Object, e As System.EventArgs)
@@ -1519,6 +1519,7 @@ Public Class frmMain
     Private Sub butsCurve_Click(sender As Object, e As EventArgs) Handles butsCurve.Click
         frmHorizontalseparate.Show()
         butsCompute.Enabled = False
+        butsCurve.Enabled = False
         butsGradeLength.Enabled = False
         Dim numgradesoutput As Integer
         If IsNumeric(txtsNumberGrades.Text) And txtsNumberGrades.Text <> "" And txtsNumberGrades.Text > "0" And (Integer.TryParse(txtsNumberGrades.Text, numgradesoutput)) = True Then
@@ -1684,8 +1685,8 @@ Public Class frmMain
                     ReDim Preserve Vsfs(i)
                     ReDim Preserve Vros(i)
                     ReDim Preserve Vmins(i)
-                    Vsfs(i) = (0.952663 + 0.0000831 * Radiusc(i) - 0.00454 * Anglec(i) - 0.0000022 * W - 0.08554 * Gradec(i) - Sidefrictionfactor) / (0.00696)
-                    Vros(i) = (0.952663 + 0.0000831 * Radiusc(i) - 0.00454 * Anglec(i) - 0.0000022 * W - 0.08554 * Gradec(i) - rolloverthreshold) / (0.00696)
+                    Vsfs(i) = (1.389 + 0.0000248 * Radiusc(i) - 0.00412 * Anglec(i) - 0.00000218855213242981 * W - 0.0101 * Superelevationc(i) - Sidefrictionfactor) / 0.00641
+                    Vros(i) = (1.8725 + 0.0000177 * Radiusc(i) - 0.005586 * Anglec(i) - 0.00000710754111420689 * W + 0.08255 * Superelevationc(i) - rolloverthreshold) / 0.006257
                     Vmins(i) = Math.Min(Vsfs(i), Vros(i))
                 Next
                 Vfinmin = Vmins.Min
@@ -1764,8 +1765,8 @@ Public Class frmMain
                 ReDim Preserve Vsfs(i)
                 ReDim Preserve Vros(i)
                 ReDim Preserve Vmins(i)
-                Vsfs(i) = (0.952663 + 0.0000831 * Radiusc(i) - 0.00454 * Anglec(i) - 0.0000022 * W - 0.08554 * Gradec(i) - Sidefrictionfactor) / 0.00696
-                Vros(i) = (0.952663 + 0.0000831 * Radiusc(i) - 0.00454 * Anglec(i) - 0.0000022 * W - 0.08554 * Gradec(i) - rolloverthreshold) / 0.00696
+                Vsfs(i) = (1.389 + 0.0000248 * Radiusc(i) - 0.00412 * Anglec(i) - 0.00000218855213242981 * W - 0.0101 * Superelevationc(i) - Sidefrictionfactor) / 0.00641
+                Vros(i) = (1.8725 + 0.0000177 * Radiusc(i) - 0.005586 * Anglec(i) - 0.00000710754111420689 * W + 0.08255 * Superelevationc(i) - rolloverthreshold) / 0.006257
                 Vmins(i) = Math.Min(Vsfs(i), Vros(i))
             Next
 
@@ -1924,8 +1925,8 @@ Public Class frmMain
                     ReDim Preserve Vsf(i)
                     ReDim Preserve Vro(i)
                     ReDim Preserve Vmin(i)
-                    Vsf(i) = (0.952663 + 0.0000831 * Radius(i) - 0.00454 * Angle(i) - 0.0000022 * W - 0.08554 * Grade(i) - Sidefrictionfactor) / (0.00696)
-                    Vro(i) = (0.952663 + 0.0000831 * Radius(i) - 0.00454 * Angle(i) - 0.0000022 * W - 0.08554 * Grade(i) - rolloverthreshold) / (0.00696)
+                    Vsf(i) = (1.389 + 0.0000248 * Radius(i) - 0.00412 * Angle(i) - 0.00000218855213242981 * W - 0.0101 * Superelevation(i) - Sidefrictionfactor) / 0.00641
+                    Vro(i) = (1.8725 + 0.0000177 * Radius(i) - 0.005586 * Angle(i) - 0.00000710754111420689 * W + 0.08255 * Superelevation(i) - rolloverthreshold) / 0.006257
                     Vmin(i) = Math.Min(Vsf(i), Vro(i))
                 Next
 
