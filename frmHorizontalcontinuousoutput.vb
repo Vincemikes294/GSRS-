@@ -1,5 +1,6 @@
 ﻿Public Class frmHorizontal
     Private Sub butFilter_Click(sender As Object, e As EventArgs) Handles butFilter.Click
+        frmMain.butCurve.Enabled = False
         Dim header As String = lstFinalOutputView.Items(0)
         Dim T_max = frmMain.cboMaxTemp.Text
         Dim data As New List(Of DataValue)
@@ -92,15 +93,15 @@
             System.IO.File.WriteAllText(SaveFileDialog1.FileName, sb.ToString())
         End If
     End Sub
+    Private Sub frmHorizontal_Closed(sender As Object, e As EventArgs) Handles Me.Closed
+        frmMain.butCurve.Enabled = True
+    End Sub
 
-    Private Sub butReset_Click(sender As Object, e As EventArgs) Handles butReset.Click
+    Private Sub frmHorizontal_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+
+    End Sub
+
+    Private Sub butReset_Click(sender As Object, e As EventArgs) Handles butClear.Click
         lstFinalOutputView.Items.Clear()
-    End Sub
-    Private Sub butLoad_Click(sender As Object, e As EventArgs)
-
-    End Sub
-
-    Private Sub lstFinalOutputView_SelectedIndexChanged(sender As Object, e As EventArgs) Handles lstFinalOutputView.SelectedIndexChanged
-
     End Sub
 End Class

@@ -79,7 +79,6 @@ Partial Class frmMain
         Me.txtsinitemp = New System.Windows.Forms.TextBox()
         Me.Label8 = New System.Windows.Forms.Label()
         Me.Label9 = New System.Windows.Forms.Label()
-        Me.Label10 = New System.Windows.Forms.Label()
         Me.lstsGradeLength = New System.Windows.Forms.ListBox()
         Me.butsImport = New System.Windows.Forms.Button()
         Me.GroupBox11 = New System.Windows.Forms.GroupBox()
@@ -101,6 +100,7 @@ Partial Class frmMain
         Me.ToolTip1 = New System.Windows.Forms.ToolTip(Me.components)
         Me.VisualStyler1 = New SkinSoft.VisualStyler.VisualStyler(Me.components)
         Me.butlogout = New System.Windows.Forms.Button()
+        Me.Label10 = New System.Windows.Forms.Label()
         Me.GroupBox1.SuspendLayout()
         Me.GroupBox2.SuspendLayout()
         Me.GroupContinuousSlope.SuspendLayout()
@@ -353,11 +353,11 @@ Partial Class frmMain
         'Label6
         '
         Me.Label6.AutoSize = True
-        Me.Label6.Location = New System.Drawing.Point(9, 332)
+        Me.Label6.Location = New System.Drawing.Point(0, 332)
         Me.Label6.Name = "Label6"
-        Me.Label6.Size = New System.Drawing.Size(404, 17)
+        Me.Label6.Size = New System.Drawing.Size(473, 17)
         Me.Label6.TabIndex = 30
-        Me.Label6.Text = "Grade, Length, Radius, Super-elevation and Angle of Segment"
+        Me.Label6.Text = "Grade, Length, Radius, Super-elevation and Angle of Radius of segments"
         '
         'butImport
         '
@@ -366,7 +366,8 @@ Partial Class frmMain
         Me.butImport.Size = New System.Drawing.Size(85, 31)
         Me.butImport.TabIndex = 28
         Me.butImport.Text = "Import"
-        Me.ToolTip1.SetToolTip(Me.butImport, "Import Grade and length of segment data from text or excel file")
+        Me.ToolTip1.SetToolTip(Me.butImport, "Import Grade, length and super-elevation of segment,  and Radius and Angle of Rad" &
+        "ius from excel file")
         Me.butImport.UseVisualStyleBackColor = True
         '
         'GroupBox6
@@ -616,10 +617,10 @@ Partial Class frmMain
         '
         'GroupBox9
         '
+        Me.GroupBox9.Controls.Add(Me.Label10)
         Me.GroupBox9.Controls.Add(Me.lblnPath)
         Me.GroupBox9.Controls.Add(Me.butsClear)
         Me.GroupBox9.Controls.Add(Me.GroupBox10)
-        Me.GroupBox9.Controls.Add(Me.Label10)
         Me.GroupBox9.Controls.Add(Me.lstsGradeLength)
         Me.GroupBox9.Controls.Add(Me.butsImport)
         Me.GroupBox9.Controls.Add(Me.GroupBox11)
@@ -697,15 +698,6 @@ Partial Class frmMain
         Me.Label9.TabIndex = 16
         Me.Label9.Text = "Please enter ambient temperature (F)"
         '
-        'Label10
-        '
-        Me.Label10.AutoSize = True
-        Me.Label10.Location = New System.Drawing.Point(9, 346)
-        Me.Label10.Name = "Label10"
-        Me.Label10.Size = New System.Drawing.Size(404, 17)
-        Me.Label10.TabIndex = 30
-        Me.Label10.Text = "Grade, Length, Radius, Super-elevation and Angle of Segment"
-        '
         'lstsGradeLength
         '
         Me.lstsGradeLength.FormattingEnabled = True
@@ -723,7 +715,8 @@ Partial Class frmMain
         Me.butsImport.Size = New System.Drawing.Size(87, 31)
         Me.butsImport.TabIndex = 28
         Me.butsImport.Text = "Import"
-        Me.ToolTip1.SetToolTip(Me.butsImport, "Import Grade and length of segment data from text or excel file")
+        Me.ToolTip1.SetToolTip(Me.butsImport, "Import Grade, length and super-elevation of segment,  and Radius and Angle of Rad" &
+        "ius from excel file")
         Me.butsImport.UseVisualStyleBackColor = True
         '
         'GroupBox11
@@ -894,6 +887,15 @@ Partial Class frmMain
         Me.butlogout.Text = "log out"
         Me.butlogout.UseVisualStyleBackColor = True
         '
+        'Label10
+        '
+        Me.Label10.AutoSize = True
+        Me.Label10.Location = New System.Drawing.Point(-3, 348)
+        Me.Label10.Name = "Label10"
+        Me.Label10.Size = New System.Drawing.Size(473, 17)
+        Me.Label10.TabIndex = 36
+        Me.Label10.Text = "Grade, Length, Radius, Super-elevation and Angle of Radius of segments"
+        '
         'frmMain
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
@@ -983,7 +985,6 @@ Partial Class frmMain
     Friend WithEvents txtsinitemp As System.Windows.Forms.TextBox
     Friend WithEvents Label8 As System.Windows.Forms.Label
     Friend WithEvents Label9 As System.Windows.Forms.Label
-    Friend WithEvents Label10 As System.Windows.Forms.Label
     Friend WithEvents butsImport As System.Windows.Forms.Button
     Friend WithEvents GroupBox11 As System.Windows.Forms.GroupBox
     Friend WithEvents txtsGroupNumber As System.Windows.Forms.TextBox
@@ -1015,4 +1016,5 @@ Partial Class frmMain
     Friend WithEvents butlogout As Button
     Friend WithEvents butCurve As Button
     Friend WithEvents butsCurve As Button
+    Friend WithEvents Label10 As Label
 End Class

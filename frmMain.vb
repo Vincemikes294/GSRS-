@@ -1,4 +1,5 @@
 ﻿Option Explicit On
+Imports System.ComponentModel
 Imports System.IO
 Public Class frmMain
     Public T_max As Double
@@ -67,16 +68,17 @@ Public Class frmMain
     Public Grades_maxinput As String
     Public Sections_max As String
     Public Sections_maxinput As String
-    Public Vsf() As Double
-    Public Vro() As Double
-    Public Vmin() As Double
-    Public Vsfs() As Double
-    Public Vros() As Double
-    Public Vmins() As Double
-    Public Vfinmin As Integer
+    Public Vsf() As Integer
+    Public Vro() As Integer
+    Public Vmin() As Integer
+    Public Vsfs() As Integer
+    Public Vros() As Integer
+    Public Vmins() As Integer
     Public Vi As Integer
-    Public Sidefrictionfactor As Integer = 0.51
-    Public rolloverthreshold As Integer = 0.51
+    Public skidding As Double
+    Public rollover As Double
+    Public Sidefrictionfactor As Integer = 0
+    Public rolloverthreshold As Integer = 0
     Public Property ExcelReaderFactory As Object
     Public Property ExcelDataReader As Object
     Private Sub cboMaxTemp_SelectedIndexChanged(sender As System.Object, e As System.EventArgs)
@@ -347,9 +349,9 @@ Public Class frmMain
 
 
                 Vs = V
-                T_lim_s = CInt(T_lim(V, 1))
-                T_f_s = CInt(T_f(V, 1))
-                T_e_s = CInt(T_e(V, 1))
+                T_lim_s = CInt(T_lim(Vs, 1))
+                T_f_s = CInt(T_f(Vs, 1))
+                T_e_s = CInt(T_e(Vs, 1))
 
 
                 lstOutputView.Items.Add(W & vbTab & vbTab & Vs & vbTab & vbTab & T_f_s & vbTab & vbTab & T_e_s & vbTab & vbTab & T_lim_s & vbTab & vbTab & CInt(TL * 60 / Vs) & vbCrLf)
@@ -691,8 +693,8 @@ Public Class frmMain
 
         ' Configure the dialog to show both text and excel files
         ' Set its title and set the filename field blank for the moment.
-        MyFileDialog.Filter = "Text Files(*.txt)|*.txt|(*.xlsx)|*.xlsx"
-        MyFileDialog.Title = " Open a Text or excel file"
+        MyFileDialog.Filter = "(*.xlsx)|*.xlsx"
+        MyFileDialog.Title = " Open an excel file"
         MyFileDialog.FileName = ""
         ' Show the dialog and see if the user pressed ok.
 
@@ -703,47 +705,11 @@ Public Class frmMain
 
                 Dim strFile As String = MyFileDialog.FileName
                 Dim textextension As String
-                Dim reader As StreamReader
                 Dim testFile As System.IO.FileInfo
                 Try
                     ' Setup a file stream reader to read the text file.
 
                     textextension = Path.GetExtension(strFile)
-                    If textextension = ".txt" Then
-                        reader = New StreamReader(New FileStream(strFile, FileMode.Open, FileAccess.Read))
-                        testFile = My.Computer.FileSystem.GetFileInfo(strFile)
-                        lblPath.Text = testFile.FullName
-
-                        ' While there is data to be read, read each line into a rich edit box control.
-
-                        While reader.Peek > -1
-
-                            RichTextBox1.Text &= reader.ReadLine() & vbCrLf
-
-                        End While
-
-                        lstGradeLength.Items.Add("Grade (in Radians)" & vbTab & "   Length (in Miles)" & vbTab & vbTab & "Radius (in Feet)" & vbTab & vbTab & "Super-elevation (in Decimal)" & vbTab & vbTab & "Angle (in Degrees)")
-
-                        Dim m As Integer
-                        For m = 1 To CInt(UBound(RichTextBox1.Lines))
-                            ReDim Preserve Grade(m)
-                            ReDim Preserve Length(m)
-                            ReDim Preserve Radius(m)
-                            ReDim Preserve Superelevation(m)
-                            ReDim Preserve Angle(m)
-
-                            Grade(m) = RichTextBox1.Lines(m - 1).Split(" ").First
-                            Length(m) = RichTextBox1.Lines(m - 1).Split(" "c)(1)
-                            Radius(m) = RichTextBox1.Lines(m - 1).Split(" "c)(2)
-                            Superelevation(m) = RichTextBox1.Lines(m - 1).Split(" "c)(3)
-                            Angle(m) = RichTextBox1.Lines(m - 1).Split(" "c)(4)
-
-                            lstGradeLength.Items.Add(Grade(m) & vbTab & vbTab & vbTab & Length(m) & vbTab & vbTab & vbTab & Radius(m) & vbTab & vbTab & vbTab & Superelevation(m) & vbTab & vbTab & vbTab & Angle(m) & vbCrLf)
-                            butGradeLength.Enabled = False
-                        Next
-                        txtNumSections.Text = UBound(RichTextBox1.Lines)
-                    End If
-
                     If textextension = ".xlsx" Then
                         Dim oExcel As Object = CreateObject("Excel.Application")
                         Dim oBook As Object = oExcel.Workbooks.Open(strFile)
@@ -1114,7 +1080,6 @@ Public Class frmMain
             butCompute.Enabled = False
         End If
     End Sub
-
     Private Sub lstGradeLength_SelectedIndexChanged(sender As Object, e As EventArgs) Handles lstGradeLength.SelectedIndexChanged
         If txtNumSections.Text <> "" And lstGradeLength.Items.Count <> 0 Then
             butCompute.Enabled = True
@@ -1123,14 +1088,6 @@ Public Class frmMain
 
         End If
     End Sub
-    Private Sub butTempProfile_EnabledChanged(sender As Object, e As EventArgs) Handles butTempProfile.EnabledChanged
-
-    End Sub
-
-    Private Sub butTempProfile_KeyPress(sender As Object, e As KeyPressEventArgs) Handles butTempProfile.KeyPress
-
-    End Sub
-
     Private Sub butTempProfile_MouseHover(sender As Object, e As EventArgs) Handles butTempProfile.MouseHover
         If txtNumSections.Text <> "" And txtambient.Text <> "" And txtMaxSpeed.Text <> "" And txtMaxWeight.Text <> "" And txtinitemp.Text <> "" And cboMaxTemp.Text <> "" And lstGradeLength.Items.Count <> 0 Then
             butTempProfile.Enabled = True
@@ -1155,33 +1112,6 @@ Public Class frmMain
             T_max = 530
 
         End If
-    End Sub
-    Private Sub txtMaxWeight_TextChanged(sender As Object, e As EventArgs) Handles txtMaxWeight.TextChanged
-
-    End Sub
-    Private Sub txtsMaxWeight_TextChanged(sender As Object, e As EventArgs) Handles txtsMaxWeight.TextChanged
-
-    End Sub
-    Private Sub txtMaxSpeed_TextChanged(sender As Object, e As EventArgs) Handles txtMaxSpeed.TextChanged
-
-    End Sub
-    Private Sub txtsMaxSpeed_TextChanged(sender As Object, e As EventArgs) Handles txtsMaxSpeed.TextChanged
-
-    End Sub
-    Private Sub txtinitemp_TextChanged(sender As Object, e As EventArgs) Handles txtinitemp.TextChanged
-
-    End Sub
-    Private Sub txtsinitemp_TextChanged(sender As Object, e As EventArgs) Handles txtsinitemp.TextChanged
-
-    End Sub
-    Private Sub txtambient_TextChanged(sender As Object, e As EventArgs) Handles txtambient.TextChanged
-
-    End Sub
-    Private Sub txtsiniambient_TextChanged(sender As Object, e As EventArgs) Handles txtsiniambient.TextChanged
-
-    End Sub
-    Private Sub GroupBox4_Enter(sender As Object, e As EventArgs) Handles GroupBox4.Enter
-
     End Sub
     Private Sub btnNext_Click(sender As Object, e As EventArgs) Handles btnNext.Click
         Group_Number = Group_Number + 1
@@ -1378,16 +1308,14 @@ Public Class frmMain
         Function ReadLine() As String
         Function Peek() As Integer
     End Interface
-    Private Sub GroupBox11_Enter(sender As Object, e As EventArgs) Handles GroupBox11.Enter
 
-    End Sub
     Private Sub butsImport_Click(sender As Object, e As EventArgs) Handles butsImport.Click
         Dim MyFileDialog As New System.Windows.Forms.OpenFileDialog
 
         ' Configure the dialog to show only text and excel files
         ' Set its title and set the filename field blank for the moment.
-        MyFileDialog.Filter = "Text Files(*.txt)|*.txt|(*.xlsx)|*.xlsx"
-        MyFileDialog.Title = "Open a Text or excel file"
+        MyFileDialog.Filter = "(*.xlsx)|*.xlsx"
+        MyFileDialog.Title = "Open an excel file"
         MyFileDialog.FileName = ""
         ' Show the dialog and see if the user pressed ok.
 
@@ -1398,45 +1326,11 @@ Public Class frmMain
 
                 Dim strFile As String = MyFileDialog.FileName
                 Dim textextension As String
-                Dim reader As StreamReader
                 Dim testFile As System.IO.FileInfo
                 Try
                     ' Setup a file stream reader to read the text and excel files.
 
                     textextension = Path.GetExtension(strFile)
-                    If textextension = ".txt" Then
-                        reader = New StreamReader(New FileStream(strFile, FileMode.Open, FileAccess.Read))
-                        testFile = My.Computer.FileSystem.GetFileInfo(strFile)
-                        lblnPath.Text = testFile.FullName
-
-                        ' While there is data to be read, read each line into a rich edit box control.
-
-                        While reader.Peek > -1
-
-                            RichTextBox2.Text &= reader.ReadLine() & vbCrLf
-
-                        End While
-
-                        lstsGradeLength.Items.Add("Grade (in Radians)" & vbTab & "   Length (in Miles)" & vbTab & vbTab & "Radius (in Feet)" & vbTab & vbTab & "Super-elevation (in Decimal)" & vbTab & vbTab & "Angle (in Degrees)")
-
-                        Dim m As Integer
-                        For m = 1 To CInt(UBound(RichTextBox2.Lines))
-                            ReDim Preserve Gradec(m)
-                            ReDim Preserve Lengthc(m)
-                            ReDim Preserve Radiusc(m)
-                            ReDim Preserve Superelevationc(m)
-                            ReDim Preserve Anglec(m)
-                            Gradec(m) = RichTextBox2.Lines(m - 1).Split(" ").First
-                            Lengthc(m) = RichTextBox2.Lines(m - 1).Split(" "c)(1)
-                            Radiusc(m) = RichTextBox2.Lines(m - 1).Split(" "c)(2)
-                            Superelevationc(m) = RichTextBox2.Lines(m - 1).Split(" "c)(3)
-                            Anglec(m) = RichTextBox2.Lines(m - 1).Split(" "c)(4)
-                            lstsGradeLength.Items.Add(Gradec(m) & vbTab & vbTab & vbTab & Lengthc(m) & vbTab & vbTab & vbTab & Radiusc(m) & vbTab & vbTab & vbTab & Superelevationc(m) & vbTab & vbTab & vbTab & Anglec(m) & vbCrLf)
-                            butsGradeLength.Enabled = False
-                        Next
-                        txtsNumSections.Text = UBound(RichTextBox2.Lines)
-                    End If
-
                     If textextension = ".xlsx" Then
                         Dim oExcel As Object = CreateObject("Excel.Application")
                         Dim oBook As Object = oExcel.Workbooks.Open(strFile)
@@ -1447,7 +1341,7 @@ Public Class frmMain
                         Dim cellC As String
                         Dim cellD As String
                         Dim cellE As String
-                        lstsGradeLength.Items.Add("Grade (in Radians)" & vbTab & "   Length (in Miles)" & vbTab & vbTab & "Radius (in Feet)" & vbTab & vbTab & "Super-elevation (in Decimal)" & vbTab & vbTab & "Angle (in Radians)")
+                        lstsGradeLength.Items.Add("Grade (in Radians)" & vbTab & "   Length (in Miles)" & vbTab & vbTab & "Radius (in Feet)" & vbTab & vbTab & "Super-elevation (in Decimal)" & vbTab & vbTab & "Angle (in Degrees)")
                         For i = 0 To AscW(lstsGradeLength.Items.Count.ToString()(i = i + 1)) - 1
 
                             cellA = "A" & Convert.ToString(i + 1)
@@ -1685,15 +1579,26 @@ Public Class frmMain
                     ReDim Preserve Vsfs(i)
                     ReDim Preserve Vros(i)
                     ReDim Preserve Vmins(i)
-                    Vsfs(i) = (1.389 + 0.0000248 * Radiusc(i) - 0.00412 * Anglec(i) - 0.00000218855213242981 * W - 0.0101 * Superelevationc(i) - Sidefrictionfactor) / 0.00641
-                    Vros(i) = (1.8725 + 0.0000177 * Radiusc(i) - 0.005586 * Anglec(i) - 0.00000710754111420689 * W + 0.08255 * Superelevationc(i) - rolloverthreshold) / 0.006257
+
+                    skidding = (((0.91544 - 0.00166 * Anglec(i) - 0.000002 * W - 0.054248 * Superelevationc(i) - Sidefrictionfactor) / 0.013939) * Radiusc(i))
+                    rollover = (((1.04136 - 0.004528 * Anglec(i) - 0.000004 * W - 0.338711 * Superelevationc(i) - rolloverthreshold) / 0.014578) * Radiusc(i))
+
+                    If skidding < 0 Or rollover < 0 Then
+                        MsgBox("Error! Check your input variables- Shorten segments and recompute angles",, "Alert!")
+                        Exit Function
+                    Else
+                        Vsfs(i) = CInt(skidding ^ 0.5)
+                        Vros(i) = CInt(rollover ^ 0.5)
+                    End If
+
                     Vmins(i) = Math.Min(Vsfs(i), Vros(i))
+
+                    If Vmins(i) = 0 Then
+                        Vmins(i) = V_max
+                    End If
                 Next
-                Vfinmin = Vmins.Min
-                If Vfinmin <= "0" Then
-                    Vfinmin = "1"
-                End If
-                Vi = Vfinmin
+
+                Vi = CInt(Vmins.Min)
 
                 If V < Vi Then
                     T_lim_s = CInt(T_lim(V, 1))
@@ -1765,18 +1670,26 @@ Public Class frmMain
                 ReDim Preserve Vsfs(i)
                 ReDim Preserve Vros(i)
                 ReDim Preserve Vmins(i)
-                Vsfs(i) = (1.389 + 0.0000248 * Radiusc(i) - 0.00412 * Anglec(i) - 0.00000218855213242981 * W - 0.0101 * Superelevationc(i) - Sidefrictionfactor) / 0.00641
-                Vros(i) = (1.8725 + 0.0000177 * Radiusc(i) - 0.005586 * Anglec(i) - 0.00000710754111420689 * W + 0.08255 * Superelevationc(i) - rolloverthreshold) / 0.006257
+
+                skidding = CInt(((0.91544 - 0.00166 * Anglec(i) - 0.000002 * W - 0.054248 * Superelevationc(i) - Sidefrictionfactor) / 0.013939) * Radiusc(i))
+                rollover = CInt(((1.04136 - 0.004528 * Anglec(i) - 0.000004 * W - 0.338711 * Superelevationc(i) - rolloverthreshold) / 0.014578) * Radiusc(i))
+
+                If skidding < 0 Or rollover < 0 Then
+                    MsgBox("Error! Check your input variables- Shorten segments and recompute angles",, "Alert!")
+                    Exit Function
+                Else
+                    Vsfs(i) = CInt(skidding ^ 0.5)
+                    Vros(i) = CInt(rollover ^ 0.5)
+                End If
+
                 Vmins(i) = Math.Min(Vsfs(i), Vros(i))
+
+                If Vmins(i) = 0 Then
+                    Vmins(i) = V_max
+                End If
             Next
 
-            Vfinmin = Vmins.Min
-
-            If Vfinmin <= "0" Then
-                Vfinmin = "1"
-            End If
-
-            Vi = Vfinmin
+            Vi = CInt(Vmins.Min)
 
             If V < Vi Then
                 frmHorizontalseparate.lstFinalOutputView.Items.Add(Space & Group_Number & vbTab & vbTab & W & vbTab & vbTab & Space & V & vbTab & vbTab & Space & vbTab & Ts_f & vbTab & Space & vbTab & Ts_e & vbTab & Space & T_lims & vbTab & vbTab & Space & CInt(TLnew * 60 / V) & vbCrLf)
@@ -1925,17 +1838,26 @@ Public Class frmMain
                     ReDim Preserve Vsf(i)
                     ReDim Preserve Vro(i)
                     ReDim Preserve Vmin(i)
-                    Vsf(i) = (1.389 + 0.0000248 * Radius(i) - 0.00412 * Angle(i) - 0.00000218855213242981 * W - 0.0101 * Superelevation(i) - Sidefrictionfactor) / 0.00641
-                    Vro(i) = (1.8725 + 0.0000177 * Radius(i) - 0.005586 * Angle(i) - 0.00000710754111420689 * W + 0.08255 * Superelevation(i) - rolloverthreshold) / 0.006257
+
+                    skidding = CInt(((0.91544 - 0.00166 * Angle(i) - 0.000002 * W - 0.054248 * Superelevation(i) - Sidefrictionfactor) / 0.013939) * Radius(i))
+                    rollover = CInt(((1.04136 - 0.004528 * Angle(i) - 0.000004 * W - 0.338711 * Superelevation(i) - rolloverthreshold) / 0.014578) * Radius(i))
+
+                    If skidding < 0 Or rollover < 0 Then
+                        MsgBox("Error! Check your input variables- Shorten segments and recompute angles!",, "Alert!")
+                        Exit Sub
+                    Else
+                        Vsf(i) = (skidding ^ 0.5)
+                        Vro(i) = (rollover ^ 0.5)
+                    End If
+
                     Vmin(i) = Math.Min(Vsf(i), Vro(i))
+
+                    If Vmin(i) = 0 Then
+                        Vmin(i) = V_max
+                    End If
                 Next
 
-                Vfinmin = Vmin.Min
-                If Vfinmin <= "0" Then
-                    Vfinmin = "1"
-                End If
-                Vi = Vfinmin
-
+                Vi = CInt(Vmin.Min)
                 If V < Vi Then
                     T_lim_s = CInt(T_lim(V, 1))
                     T_f_s = CInt(T_f(V, 1))
@@ -1963,11 +1885,9 @@ Public Class frmMain
 
                     ReDim T_lim(Vi, 1)
                     T_lim(Vi, 1) = T_f(Vi, 1) + T_e(Vi, 1)    'limiting brake temperature
-
                     T_lim_s = CInt(T_lim(Vi, 1))
                     T_f_s = CInt(T_f(Vi, 1))
                     T_e_s = CInt(T_e(Vi, 1))
-
                     frmHorizontal.lstFinalOutputView.Items.Add(W & vbTab & vbTab & Vi & vbTab & vbTab & T_f_s & vbTab & vbTab & T_e_s & vbTab & vbTab & T_lim_s & vbTab & vbTab & CInt(TL * 60 / Vi) & vbCrLf)
                 End If
             Next

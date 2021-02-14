@@ -24,7 +24,7 @@ Partial Class frmHorizontal
     Private Sub InitializeComponent()
         Me.components = New System.ComponentModel.Container()
         Me.lstFinalOutputView = New System.Windows.Forms.ListBox()
-        Me.butReset = New System.Windows.Forms.Button()
+        Me.butClear = New System.Windows.Forms.Button()
         Me.butFilter = New System.Windows.Forms.Button()
         Me.butSave = New System.Windows.Forms.Button()
         Me.ToolTip1 = New System.Windows.Forms.ToolTip(Me.components)
@@ -40,15 +40,15 @@ Partial Class frmHorizontal
         Me.lstFinalOutputView.Size = New System.Drawing.Size(415, 340)
         Me.lstFinalOutputView.TabIndex = 26
         '
-        'butReset
+        'butClear
         '
-        Me.butReset.Location = New System.Drawing.Point(328, 375)
-        Me.butReset.Name = "butReset"
-        Me.butReset.Size = New System.Drawing.Size(72, 35)
-        Me.butReset.TabIndex = 31
-        Me.butReset.Text = "Clear"
-        Me.ToolTip1.SetToolTip(Me.butReset, "Clear listbox")
-        Me.butReset.UseVisualStyleBackColor = True
+        Me.butClear.Location = New System.Drawing.Point(328, 375)
+        Me.butClear.Name = "butClear"
+        Me.butClear.Size = New System.Drawing.Size(72, 35)
+        Me.butClear.TabIndex = 31
+        Me.butClear.Text = "Clear"
+        Me.ToolTip1.SetToolTip(Me.butClear, "Clear listbox")
+        Me.butClear.UseVisualStyleBackColor = True
         '
         'butFilter
         '
@@ -76,7 +76,7 @@ Partial Class frmHorizontal
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(439, 431)
         Me.Controls.Add(Me.butSave)
-        Me.Controls.Add(Me.butReset)
+        Me.Controls.Add(Me.butClear)
         Me.Controls.Add(Me.butFilter)
         Me.Controls.Add(Me.lstFinalOutputView)
         Me.Name = "frmHorizontal"
@@ -86,7 +86,7 @@ Partial Class frmHorizontal
     End Sub
 
     Friend WithEvents lstFinalOutputView As ListBox
-    Friend WithEvents butReset As Button
+    Friend WithEvents butClear As Button
     Friend WithEvents butFilter As Button
     Friend WithEvents butSave As Button
     Friend WithEvents ToolTip1 As ToolTip

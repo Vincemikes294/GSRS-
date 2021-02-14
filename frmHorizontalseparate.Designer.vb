@@ -55,7 +55,7 @@ Partial Class frmHorizontalseparate
         '
         'butReset
         '
-        Me.butReset.Location = New System.Drawing.Point(183, 372)
+        Me.butReset.Location = New System.Drawing.Point(195, 372)
         Me.butReset.Name = "butReset"
         Me.butReset.Size = New System.Drawing.Size(72, 35)
         Me.butReset.TabIndex = 34

@@ -1,8 +1,9 @@
-﻿Public Class frmTempProfile
+﻿Imports System.ComponentModel
+
+Public Class frmTempProfile
     Private Sub Label1_Click(sender As Object, e As EventArgs) Handles Label1.Click
 
     End Sub
-
     Private Sub Button3_Click(sender As Object, e As EventArgs) Handles buttempCompute.Click
         Dim W As String
         Dim W_Input As String
@@ -11,8 +12,7 @@
         Dim T_0 As String
         Dim T_0_input As String
         Dim T_inf As String
-        Dim levels As Integer
-        Dim TotalLength As Integer
+        Dim Length As Integer
         Dim T_e(,) As Double
         Dim HP_eng As Double
         Dim K2 As Double
@@ -23,6 +23,7 @@
         Dim HP_b As Double
         Dim i As Double
         Dim j As Integer
+        Dim TLtotal As Double
         Dim TL As Double() = {0.0}
         Dim T_f(,) As Double
         Dim T_f_s As Integer
@@ -31,7 +32,6 @@
         Dim T_lim(,) As Double
         Dim Vs As Integer
         Dim k As Integer
-
 
         lstTempProfile.Items.Clear()
         If IsNumeric(txttempWeight.Text) And txttempWeight.Text <> "" And txttempWeight.Text > "0" Then
@@ -56,7 +56,6 @@
             V = CDbl(V_Input)
             txtTempSpeed.Text = V
         End If
-
         If IsNumeric(txtinibraketemp.Text) Then
             If txtinibraketemp.Text >= 90 Then
                 T_0 = txtinibraketemp.Text
@@ -80,39 +79,25 @@
             End If
         End If
 
-
         'Computations
-
         lstTempProfile.Items.Add("Weight (lb)" & "     Speed (mph)" & "    Distance (miles) " & "    Grade (%)" & vbTab & "   T_Desc (F) " & vbTab & "     T_Emerg (F)" & vbTab & "    T_Final (F)" & vbCrLf)
-        For k = 1 To frmMain.txtNumSections.Text
-            TotalLength += frmMain.Length(k)
+
+        For i = 1 To CInt(frmMain.txtNumSections.Text)
+            TLtotal += frmMain.Length(i)
         Next
-        levels = TotalLength
-
-
 
         For j = 1 To CInt(frmMain.txtNumSections.Text)
             ReDim Preserve TL(j)
             TL(j) = TL(j - 1) + frmMain.Length(j)
         Next
 
-
-
         TL(0) = 0
         j = 0
 
         Do Until j = CInt(frmMain.txtNumSections.Text)
             j = j + 1
-            For i = 0 To levels Step 0.5
-
-
-                If TL(j - 1) < i And i <= TL(j) Then
-
-
-
-                    'Computations
-                    'T_0_input = txtinibraketemp.Text 'initial brake temperature
-                    ' T_inf = frmMain.T_inf 'ambient temperature
+            For i = 0 To TLtotal Step 0.5
+                If i <= TL(j) And i > TL(j - 1) Then
 
                     ReDim T_e(V, 1)
                     T_e(V, 1) = (0.000000311) * W * (V ^ 2) 'temperature from emergency stopping
@@ -120,7 +105,6 @@
                     K2 = 1 / (0.1602 + 0.0078 * V) 'Heat transfer parameter
                     K1 = 1.5 * (1.1852 + 0.0331 * V) 'Diffusivity constant
                     F_Drag = 459.35 + 0.132 * (V ^ 2) 'Drag forces
-
 
                     Theta = frmMain.Grade(j)
                     L = 0.5
@@ -131,29 +115,26 @@
                     ReDim T_lim(V, 1)
                     T_lim(V, 1) = T_f(V, 1) + T_e(V, 1)    'limiting brake temperature
 
-
                     Vs = V
-                    T_lim_s = CInt(T_lim(V, 1))
-                    T_f_s = CInt(T_f(V, 1))
-                    T_e_s = CInt(T_e(V, 1))
+                    T_lim_s = CInt(T_lim(Vs, 1))
+                    T_f_s = CInt(T_f(Vs, 1))
+                    T_e_s = CInt(T_e(Vs, 1))
 
                     lstTempProfile.Items.Add(W & vbTab & vbTab & Vs & vbTab & i & vbTab & vbTab & Theta & vbTab & vbTab & T_f_s & vbTab & vbTab & T_e_s & vbTab & vbTab & T_lim_s & vbCrLf)
 
                     frmTemperaturePlot.s.Points.AddXY(i, T_lim_s)
-
-
                 End If
-
             Next
         Loop
         butPlot.Enabled = True
+        buttempCompute.Enabled = False
+        butfilter.Enabled = True
     End Sub
     Private Sub frmTempProfile_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         Me.txttempWeight.Text = frmMain.txtMaxWeight.Text
         Me.txtTempSpeed.Text = frmMain.txtMaxSpeed.Text
         Me.txtinibraketemp.Text = frmMain.txtinitemp.Text
     End Sub
-
     Private Sub buttempSave_Click(sender As Object, e As EventArgs) Handles buttempSave.Click
         Dim SaveFileDialog1 As New SaveFileDialog
         SaveFileDialog1.FileName = ""
@@ -169,7 +150,6 @@
             System.IO.File.WriteAllText(SaveFileDialog1.FileName, sb.ToString())
         End If
     End Sub
-
     Private Sub buttempReset_Click(sender As Object, e As EventArgs) Handles buttempReset.Click
         lstTempProfile.Items.Clear()
         txtTempSpeed.Text = ""
@@ -178,7 +158,6 @@
         butPlot.Enabled = False
         butfilter.Enabled = False
     End Sub
-
     Private Sub butfilter_Click(sender As Object, e As EventArgs) Handles butfilter.Click
         buttempSave.Enabled = True
         Dim header As String = lstTempProfile.Items(0)
@@ -201,7 +180,6 @@
         Next
 
         butPlot.Enabled = False
-
 
     End Sub
     Public Class DataValue
@@ -239,13 +217,13 @@
 
 
     End Class
-
-    Private Sub lstTempProfile_SelectedIndexChanged(sender As Object, e As EventArgs) Handles lstTempProfile.SelectedIndexChanged
-
-    End Sub
-
     Private Sub butPlot_Click(sender As Object, e As EventArgs) Handles butPlot.Click
         butfilter.Enabled = True
+        butPlot.Enabled = False
         frmTemperaturePlot.Show()
+    End Sub
+    Private Sub frmTempProfile_Closing(sender As Object, e As CancelEventArgs) Handles Me.Closing
+        lstTempProfile.Items.Clear()
+        buttempCompute.Enabled = True
     End Sub
 End Class

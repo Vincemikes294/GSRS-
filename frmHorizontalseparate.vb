@@ -23,6 +23,8 @@
         lstFinalOutputView.Items.Clear()
     End Sub
     Private Sub butFilter_Click(sender As Object, e As EventArgs) Handles butFilter.Click
+        a = frmMain.txtsGroupNumber.Text
+        frmMain.butCurve.Enabled = False
         Dim header As String
         Dim data As New List(Of DataValue1)
         Dim results = From dv In data
@@ -226,8 +228,13 @@
             End If
         End If
     End Sub
-
     Private Sub Button1_Click(sender As Object, e As EventArgs) Handles butsReset.Click
         frmMain.butsReset.PerformClick()
+    End Sub
+    Private Sub frmHorizontalseparate_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+
+    End Sub
+    Private Sub frmHorizontalseparate_Closed(sender As Object, e As EventArgs) Handles Me.Closed
+        frmMain.butsCurve.Enabled = True
     End Sub
 End Class

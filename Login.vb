@@ -59,39 +59,40 @@ Public Class frmLogin
                 End If
             Next
 
-            For j = 2 To sheetCount
-                If oSheet.Cells(j, 5).Text = "Administrator" Then
-                    If (adminusername = initialusername Or adminusername = usernames(j)) And (adminpassword = initialpassword Or adminpassword = passwords(j)) Then
-                        oSheet.Cells(j, 3).Value = usernameverify
-                        oSheet.Cells(j, 4).Value = passwordverify
-                        Dim filefinal As IO.FileInfo = My.Computer.FileSystem.GetFileInfo("Usernames.xlsx")
-                        filefinal.IsReadOnly = False
-                        oSheet.SaveAs(Path)
-                        MsgBox("Administrator credentials have been updated",, "Success")
-                        oExcel.Workbooks.Close()
-                        oExcel.Quit()
-                        Me.txtusername.Text = ""
-                        Me.txtpassword.Text = ""
-                        Exit Sub
-                    ElseIf (adminusername <> usernames(j)) And (adminpassword <> passwords(j)) Then
-                        MsgBox("You are Not authorized To reset the login credentials!",, "Alert")
-                        Me.txtusername.Text = ""
-                        Me.txtpassword.Text = ""
-                        Exit Sub
-                    ElseIf (adminusername = usernames(j)) And (adminpassword <> passwords(j)) Then
-                        MsgBox("You are Not authorized To reset the login credentials!",, "Alert")
-                        Me.txtusername.Text = ""
-                        Me.txtpassword.Text = ""
-                        Exit Sub
-                    ElseIf (adminusername <> usernames(j)) And (adminpassword = passwords(j)) Then
-                        MsgBox("You are Not authorized To reset the login credentials!",, "Alert")
-                        Me.txtusername.Text = ""
-                        Me.txtpassword.Text = ""
-                        Exit Sub
+            For Each username As String In usernames
+                For Each password As String In passwords
+                    If oSheet.Cells(j, 5).Text = "Administrator" Then
+                        If (adminusername = initialusername Or adminusername = usernames(j)) And (adminpassword = initialpassword Or adminpassword = passwords(j)) Then
+                            oSheet.Cells(j, 3).Value = usernameverify
+                            oSheet.Cells(j, 4).Value = passwordverify
+                            Dim filefinal As IO.FileInfo = My.Computer.FileSystem.GetFileInfo("Usernames.xlsx")
+                            filefinal.IsReadOnly = False
+                            oSheet.SaveAs(Path)
+                            MsgBox("Administrator credentials have been updated",, "Success")
+                            oExcel.Workbooks.Close()
+                            oExcel.Quit()
+                            Me.txtusername.Text = ""
+                            Me.txtpassword.Text = ""
+                            Exit Sub
+                        ElseIf (adminusername <> usernames(j)) And (adminpassword <> passwords(j)) Then
+                            MsgBox("You are Not authorized To reset the login credentials!",, "Alert")
+                            Me.txtusername.Text = ""
+                            Me.txtpassword.Text = ""
+                            Exit Sub
+                        ElseIf (adminusername = usernames(j)) And (adminpassword <> passwords(j)) Then
+                            MsgBox("You are Not authorized To reset the login credentials!",, "Alert")
+                            Me.txtusername.Text = ""
+                            Me.txtpassword.Text = ""
+                            Exit Sub
+                        ElseIf (adminusername <> usernames(j)) And (adminpassword = passwords(j)) Then
+                            MsgBox("You are Not authorized To reset the login credentials!",, "Alert")
+                            Me.txtusername.Text = ""
+                            Me.txtpassword.Text = ""
+                            Exit Sub
+                        End If
                     End If
-                End If
+                Next
             Next
-
             For j = 2 To sheetCount
                 ReDim Preserve usernames(j)
                 ReDim Preserve passwords(j)
@@ -102,30 +103,32 @@ Public Class frmLogin
                 End If
             Next
 
-            For j = 2 To sheetCount
-                If oSheet.Cells(j, 5).Text = "Regular User" Then
-                    If (adminusername = initialusername Or adminusername = usernames(j)) And (adminpassword = initialpassword Or adminpassword Is passwords(j)) Then
-                        MsgBox("You are Not authorized To reset the login credentials!",, "Alert")
-                        Me.txtusername.Text = ""
-                        Me.txtpassword.Text = ""
-                        Exit Sub
-                    ElseIf (adminusername <> usernames(j)) And (adminpassword <> passwords(j)) Then
-                        MsgBox("You are Not authorized To reset the login credentials!",, "Alert")
-                        Me.txtusername.Text = ""
-                        Me.txtpassword.Text = ""
-                        Exit Sub
-                    ElseIf (adminusername = usernames(j)) And (adminpassword <> passwords(j)) Then
-                        MsgBox("You are Not authorized To reset the login credentials!",, "Alert")
-                        Me.txtusername.Text = ""
-                        Me.txtpassword.Text = ""
-                        Exit Sub
-                    ElseIf (adminusername <> usernames(j)) And (adminpassword = passwords(j)) Then
-                        MsgBox("You are Not authorized To reset the login credentials!",, "Alert")
-                        Me.txtusername.Text = ""
-                        Me.txtpassword.Text = ""
-                        Exit Sub
+            For Each username As String In usernames
+                For Each password As String In passwords
+                    If oSheet.Cells(j, 5).Text = "Regular User" Then
+                        If (adminusername = initialusername Or adminusername = usernames(j)) And (adminpassword = initialpassword Or adminpassword Is passwords(j)) Then
+                            MsgBox("You are Not authorized To reset the login credentials!",, "Alert")
+                            Me.txtusername.Text = ""
+                            Me.txtpassword.Text = ""
+                            Exit Sub
+                        ElseIf (adminusername <> usernames(j)) And (adminpassword <> passwords(j)) Then
+                            MsgBox("You are Not authorized To reset the login credentials!",, "Alert")
+                            Me.txtusername.Text = ""
+                            Me.txtpassword.Text = ""
+                            Exit Sub
+                        ElseIf (adminusername = usernames(j)) And (adminpassword <> passwords(j)) Then
+                            MsgBox("You are Not authorized To reset the login credentials!",, "Alert")
+                            Me.txtusername.Text = ""
+                            Me.txtpassword.Text = ""
+                            Exit Sub
+                        ElseIf (adminusername <> usernames(j)) And (adminpassword = passwords(j)) Then
+                            MsgBox("You are Not authorized To reset the login credentials!",, "Alert")
+                            Me.txtusername.Text = ""
+                            Me.txtpassword.Text = ""
+                            Exit Sub
+                        End If
                     End If
-                End If
+                Next
             Next
         Loop
         Do While String.IsNullOrEmpty(adminusername) = True And String.IsNullOrEmpty(adminpassword) = False
