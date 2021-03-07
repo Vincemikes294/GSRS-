@@ -1580,8 +1580,8 @@ Public Class frmMain
                     ReDim Preserve Vros(i)
                     ReDim Preserve Vmins(i)
 
-                    skidding = (((0.91544 - 0.00166 * Anglec(i) - 0.000002 * W - 0.054248 * Superelevationc(i) - Sidefrictionfactor) / 0.013939) * Radiusc(i))
-                    rollover = (((1.04136 - 0.004528 * Anglec(i) - 0.000004 * W - 0.338711 * Superelevationc(i) - rolloverthreshold) / 0.014578) * Radiusc(i))
+                    skidding = CInt(((0.766 - 0.0002 * Anglec(i) - 0.000002 * W - 0.0264 * Superelevationc(i) + 27.68 * Gradec(i) - Sidefrictionfactor) / 0.01279) * Radiusc(i))
+                    rollover = CInt(((0.779 - 0.0046 * Anglec(i) - 0.000004 * W - 0.078 * Superelevationc(i) + 33.77 * Gradec(i) - rolloverthreshold) / 0.07985) * Radiusc(i))
 
                     If skidding < 0 Or rollover < 0 Then
                         MsgBox("Error! Check your input variables- Shorten segments and recompute angles",, "Alert!")
@@ -1671,8 +1671,9 @@ Public Class frmMain
                 ReDim Preserve Vros(i)
                 ReDim Preserve Vmins(i)
 
-                skidding = CInt(((0.91544 - 0.00166 * Anglec(i) - 0.000002 * W - 0.054248 * Superelevationc(i) - Sidefrictionfactor) / 0.013939) * Radiusc(i))
-                rollover = CInt(((1.04136 - 0.004528 * Anglec(i) - 0.000004 * W - 0.338711 * Superelevationc(i) - rolloverthreshold) / 0.014578) * Radiusc(i))
+                skidding = CInt(((0.766 - 0.0002 * Anglec(i) - 0.000002 * W - 0.0264 * Superelevationc(i) + 27.68 * Gradec(i) - Sidefrictionfactor) / 0.01279) * Radiusc(i))
+                rollover = CInt(((0.779 - 0.0046 * Anglec(i) - 0.000004 * W - 0.078 * Superelevationc(i) + 33.77 * Gradec(i) - rolloverthreshold) / 0.07985) * Radiusc(i))
+
 
                 If skidding < 0 Or rollover < 0 Then
                     MsgBox("Error! Check your input variables- Shorten segments and recompute angles",, "Alert!")
@@ -1839,8 +1840,8 @@ Public Class frmMain
                     ReDim Preserve Vro(i)
                     ReDim Preserve Vmin(i)
 
-                    skidding = CInt(((0.91544 - 0.00166 * Angle(i) - 0.000002 * W - 0.054248 * Superelevation(i) - Sidefrictionfactor) / 0.013939) * Radius(i))
-                    rollover = CInt(((1.04136 - 0.004528 * Angle(i) - 0.000004 * W - 0.338711 * Superelevation(i) - rolloverthreshold) / 0.014578) * Radius(i))
+                    skidding = CInt(((0.766 - 0.0002 * Angle(i) - 0.000002 * W - 0.0264 * Superelevation(i) + 27.68 * Grade(i) - Sidefrictionfactor) / 0.01279) * Radius(i))
+                    rollover = CInt(((0.779 - 0.0046 * Angle(i) - 0.000004 * W - 0.078 * Superelevation(i) + 33.77 * Grade(i) - rolloverthreshold) / 0.07985) * Radius(i))
 
                     If skidding < 0 Or rollover < 0 Then
                         MsgBox("Error! Check your input variables- Shorten segments and recompute angles!",, "Alert!")
