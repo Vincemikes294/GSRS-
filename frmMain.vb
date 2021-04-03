@@ -707,8 +707,7 @@ Public Class frmMain
                 Dim textextension As String
                 Dim testFile As System.IO.FileInfo
                 Try
-                    ' Setup a file stream reader to read the text file.
-
+                    ' Setup a file stream reader to read the excel file.
                     textextension = Path.GetExtension(strFile)
                     If textextension = ".xlsx" Then
                         Dim oExcel As Object = CreateObject("Excel.Application")
@@ -737,10 +736,20 @@ Public Class frmMain
                                 Exit For
                             Else
                                 RichTextBox1.AppendText(cellA & " " & cellB & " " & cellC & " " & cellD & " " & cellE & vbCrLf)
-
                             End If
                         Next
                         oExcel.Quit()
+                    End If
+
+                Catch ex As FileNotFoundException
+                    ' If the file was not found, tell the user.
+                    MessageBox.Show("File was Not found. Please try again.")
+                End Try
+                Try
+                    ' Setup a file stream reader to read the excel file.
+                    textextension = Path.GetExtension(strFile)
+                    If textextension = ".xlsx" Then
+
                         Dim m As Integer
                         For m = 1 To CInt(UBound(RichTextBox1.Lines))
                             ReDim Preserve Grade(m)
@@ -762,15 +771,11 @@ Public Class frmMain
 
                         txtNumSections.Text = lstGradeLength.Items.Count - 1
                     End If
-
-                Catch ex As FileNotFoundException
-
-                    ' If the file was not found, tell the user.
-
-                    MessageBox.Show("File was Not found. Please try again.")
-
+                Catch ex As Exception
+                    ' If the data is in an incorrect format, tell the user.
+                    MessageBox.Show("Data in incorrect format")
+                    lstGradeLength.Items.Clear()
                 End Try
-
             End If
         Else
             txtNumSections.Text = ""
@@ -1580,8 +1585,8 @@ Public Class frmMain
                     ReDim Preserve Vros(i)
                     ReDim Preserve Vmins(i)
 
-                    skidding = CInt(((0.766 - 0.0002 * Anglec(i) - 0.000002 * W - 0.0264 * Superelevationc(i) + 27.68 * Gradec(i) - Sidefrictionfactor) / 0.01279) * Radiusc(i))
-                    rollover = CInt(((0.779 - 0.0046 * Anglec(i) - 0.000004 * W - 0.078 * Superelevationc(i) + 33.77 * Gradec(i) - rolloverthreshold) / 0.07985) * Radiusc(i))
+                    skidding = (((0.91544 - 0.00166 * Anglec(i) - 0.000002 * W - 0.054248 * Superelevationc(i) - Sidefrictionfactor) / 0.013939) * Radiusc(i))
+                    rollover = (((1.04136 - 0.004528 * Anglec(i) - 0.000004 * W - 0.338711 * Superelevationc(i) - rolloverthreshold) / 0.014578) * Radiusc(i))
 
                     If skidding < 0 Or rollover < 0 Then
                         MsgBox("Error! Check your input variables- Shorten segments and recompute angles",, "Alert!")
@@ -1671,9 +1676,8 @@ Public Class frmMain
                 ReDim Preserve Vros(i)
                 ReDim Preserve Vmins(i)
 
-                skidding = CInt(((0.766 - 0.0002 * Anglec(i) - 0.000002 * W - 0.0264 * Superelevationc(i) + 27.68 * Gradec(i) - Sidefrictionfactor) / 0.01279) * Radiusc(i))
-                rollover = CInt(((0.779 - 0.0046 * Anglec(i) - 0.000004 * W - 0.078 * Superelevationc(i) + 33.77 * Gradec(i) - rolloverthreshold) / 0.07985) * Radiusc(i))
-
+                skidding = CInt(((0.91544 - 0.00166 * Anglec(i) - 0.000002 * W - 0.054248 * Superelevationc(i) - Sidefrictionfactor) / 0.013939) * Radiusc(i))
+                rollover = CInt(((1.04136 - 0.004528 * Anglec(i) - 0.000004 * W - 0.338711 * Superelevationc(i) - rolloverthreshold) / 0.014578) * Radiusc(i))
 
                 If skidding < 0 Or rollover < 0 Then
                     MsgBox("Error! Check your input variables- Shorten segments and recompute angles",, "Alert!")
@@ -1840,8 +1844,8 @@ Public Class frmMain
                     ReDim Preserve Vro(i)
                     ReDim Preserve Vmin(i)
 
-                    skidding = CInt(((0.766 - 0.0002 * Angle(i) - 0.000002 * W - 0.0264 * Superelevation(i) + 27.68 * Grade(i) - Sidefrictionfactor) / 0.01279) * Radius(i))
-                    rollover = CInt(((0.779 - 0.0046 * Angle(i) - 0.000004 * W - 0.078 * Superelevation(i) + 33.77 * Grade(i) - rolloverthreshold) / 0.07985) * Radius(i))
+                    skidding = CInt(((0.91544 - 0.00166 * Angle(i) - 0.000002 * W - 0.054248 * Superelevation(i) - Sidefrictionfactor) / 0.013939) * Radius(i))
+                    rollover = CInt(((1.04136 - 0.004528 * Angle(i) - 0.000004 * W - 0.338711 * Superelevation(i) - rolloverthreshold) / 0.014578) * Radius(i))
 
                     If skidding < 0 Or rollover < 0 Then
                         MsgBox("Error! Check your input variables- Shorten segments and recompute angles!",, "Alert!")
