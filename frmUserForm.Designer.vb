@@ -23,7 +23,6 @@ Partial Class frmUserForm
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
         Me.components = New System.ComponentModel.Container()
-        Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(frmUserForm))
         Me.Label1 = New System.Windows.Forms.Label()
         Me.Label2 = New System.Windows.Forms.Label()
         Me.Label3 = New System.Windows.Forms.Label()
@@ -34,13 +33,13 @@ Partial Class frmUserForm
         Me.butDelete = New System.Windows.Forms.Button()
         Me.txtLastName = New System.Windows.Forms.TextBox()
         Me.Label4 = New System.Windows.Forms.Label()
-        Me.butSave = New System.Windows.Forms.Button()
         Me.Label5 = New System.Windows.Forms.Label()
         Me.cboStatus = New System.Windows.Forms.ComboBox()
         Me.lstViewUsers = New System.Windows.Forms.ListView()
-        Me.butLoad = New System.Windows.Forms.Button()
         Me.VisualStyler1 = New SkinSoft.VisualStyler.VisualStyler(Me.components)
         Me.ToolTip1 = New System.Windows.Forms.ToolTip(Me.components)
+        Me.butUpdate = New System.Windows.Forms.Button()
+        Me.butReset = New System.Windows.Forms.Button()
         CType(Me.VisualStyler1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
@@ -100,7 +99,7 @@ Partial Class frmUserForm
         '
         'butAdd
         '
-        Me.butAdd.Location = New System.Drawing.Point(15, 209)
+        Me.butAdd.Location = New System.Drawing.Point(83, 209)
         Me.butAdd.Name = "butAdd"
         Me.butAdd.Size = New System.Drawing.Size(76, 27)
         Me.butAdd.TabIndex = 7
@@ -110,9 +109,9 @@ Partial Class frmUserForm
         '
         'butDelete
         '
-        Me.butDelete.Location = New System.Drawing.Point(122, 209)
+        Me.butDelete.Location = New System.Drawing.Point(261, 209)
         Me.butDelete.Name = "butDelete"
-        Me.butDelete.Size = New System.Drawing.Size(75, 27)
+        Me.butDelete.Size = New System.Drawing.Size(76, 27)
         Me.butDelete.TabIndex = 8
         Me.butDelete.Text = "Delete"
         Me.ToolTip1.SetToolTip(Me.butDelete, "Delete User Data")
@@ -135,16 +134,6 @@ Partial Class frmUserForm
         Me.Label4.Size = New System.Drawing.Size(76, 17)
         Me.Label4.TabIndex = 10
         Me.Label4.Text = "Last Name"
-        '
-        'butSave
-        '
-        Me.butSave.Location = New System.Drawing.Point(239, 209)
-        Me.butSave.Name = "butSave"
-        Me.butSave.Size = New System.Drawing.Size(75, 27)
-        Me.butSave.TabIndex = 12
-        Me.butSave.Text = "Save"
-        Me.ToolTip1.SetToolTip(Me.butSave, "Save User Data")
-        Me.butSave.UseVisualStyleBackColor = True
         '
         'Label5
         '
@@ -174,33 +163,40 @@ Partial Class frmUserForm
         Me.lstViewUsers.TabIndex = 15
         Me.lstViewUsers.UseCompatibleStateImageBehavior = False
         '
-        'butLoad
-        '
-        Me.butLoad.Enabled = False
-        Me.butLoad.Location = New System.Drawing.Point(352, 209)
-        Me.butLoad.Name = "butLoad"
-        Me.butLoad.Size = New System.Drawing.Size(75, 27)
-        Me.butLoad.TabIndex = 16
-        Me.butLoad.Text = "Load"
-        Me.ToolTip1.SetToolTip(Me.butLoad, "Load User Data")
-        Me.butLoad.UseVisualStyleBackColor = True
-        '
         'VisualStyler1
         '
         Me.VisualStyler1.HostForm = Me
-        Me.VisualStyler1.License = CType(resources.GetObject("VisualStyler1.License"), SkinSoft.VisualStyler.Licensing.VisualStylerLicense)
-        Me.VisualStyler1.LoadVisualStyle(Nothing, "OSX (Tiger).vssf")
+        '
+        'butUpdate
+        '
+        Me.butUpdate.Location = New System.Drawing.Point(172, 209)
+        Me.butUpdate.Name = "butUpdate"
+        Me.butUpdate.Size = New System.Drawing.Size(76, 27)
+        Me.butUpdate.TabIndex = 16
+        Me.butUpdate.Text = "Update"
+        Me.ToolTip1.SetToolTip(Me.butUpdate, "Update User data")
+        Me.butUpdate.UseVisualStyleBackColor = True
+        '
+        'butReset
+        '
+        Me.butReset.Location = New System.Drawing.Point(350, 209)
+        Me.butReset.Name = "butReset"
+        Me.butReset.Size = New System.Drawing.Size(76, 27)
+        Me.butReset.TabIndex = 17
+        Me.butReset.Text = "Reset Form"
+        Me.ToolTip1.SetToolTip(Me.butReset, "Add User data")
+        Me.butReset.UseVisualStyleBackColor = True
         '
         'frmUserForm
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(439, 457)
-        Me.Controls.Add(Me.butLoad)
+        Me.Controls.Add(Me.butReset)
+        Me.Controls.Add(Me.butUpdate)
         Me.Controls.Add(Me.lstViewUsers)
         Me.Controls.Add(Me.cboStatus)
         Me.Controls.Add(Me.Label5)
-        Me.Controls.Add(Me.butSave)
         Me.Controls.Add(Me.txtLastName)
         Me.Controls.Add(Me.Label4)
         Me.Controls.Add(Me.butDelete)
@@ -228,11 +224,11 @@ Partial Class frmUserForm
     Friend WithEvents butDelete As Button
     Friend WithEvents txtLastName As TextBox
     Friend WithEvents Label4 As Label
-    Friend WithEvents butSave As Button
     Friend WithEvents Label5 As Label
     Friend WithEvents cboStatus As ComboBox
     Friend WithEvents lstViewUsers As ListView
-    Friend WithEvents butLoad As Button
-    Friend WithEvents VisualStyler1 As SkinSoft.VisualStyler.VisualStyler
     Friend WithEvents ToolTip1 As ToolTip
+    Private WithEvents VisualStyler1 As SkinSoft.VisualStyler.VisualStyler
+    Friend WithEvents butReset As Button
+    Friend WithEvents butUpdate As Button
 End Class

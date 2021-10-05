@@ -1,9 +1,18 @@
 ﻿Imports System.ComponentModel
+Imports System.IO
+Imports Continuous_Slope.GSRS.Net.Common.Scripts
+Imports System.Guid
+Imports Microsoft.Office.Interop
 
 Public Class frmTempProfile
-    Private Sub Label1_Click(sender As Object, e As EventArgs) Handles Label1.Click
 
-    End Sub
+
+    Public TUniqueId As String = ""
+    Public LoggedOnUser As String = ""
+    Public UserFirstName As String = ""
+    Public UserLastName As String = ""
+    Public UserOperation As String = "Save2Table"
+
     Private Sub Button3_Click(sender As Object, e As EventArgs) Handles buttempCompute.Click
         Dim W As String
         Dim W_Input As String
@@ -32,6 +41,7 @@ Public Class frmTempProfile
         Dim T_lim(,) As Double
         Dim Vs As Integer
         Dim k As Integer
+
 
         lstTempProfile.Items.Clear()
         If IsNumeric(txttempWeight.Text) And txttempWeight.Text <> "" And txttempWeight.Text > "0" Then
@@ -136,19 +146,143 @@ Public Class frmTempProfile
         Me.txtinibraketemp.Text = frmMain.txtinitemp.Text
     End Sub
     Private Sub buttempSave_Click(sender As Object, e As EventArgs) Handles buttempSave.Click
-        Dim SaveFileDialog1 As New SaveFileDialog
-        SaveFileDialog1.FileName = ""
-        SaveFileDialog1.Filter = "Text Files(*.txt)|*.txt|(*.xls)|*.xls|All Files (*.*)|*.*"
+        'Dim SaveFileDialog1 As New SaveFileDialog
+        'SaveFileDialog1.FileName = ""
+        'SaveFileDialog1.Filter = "Text Files(*.txt)|*.txt|(*.xls)|*.xls|All Files (*.*)|*.*"
 
-        If SaveFileDialog1.ShowDialog() = DialogResult.OK Then
-            Dim sb As New System.Text.StringBuilder()
+        'If SaveFileDialog1.ShowDialog() = DialogResult.OK Then
+        '    Dim sb As New System.Text.StringBuilder()
 
-            For Each o As Object In lstTempProfile.Items
-                sb.AppendLine(o)
-            Next
+        '    For Each o As Object In lstTempProfile.Items
+        '        sb.AppendLine(o)
+        '    Next
 
-            System.IO.File.WriteAllText(SaveFileDialog1.FileName, sb.ToString())
-        End If
+        '    System.IO.File.WriteAllText(SaveFileDialog1.FileName, sb.ToString())
+        'End If
+
+        Try
+            Dim myHelper As New HelperClass
+            Dim TWeight As String = ""
+            Dim TSpeed As String = ""
+            Dim TDistance As String = ""
+            Dim TGradePct As String = ""
+            Dim TDesc As String = ""
+            Dim TEmerg As String = ""
+            Dim TFinal As String = ""
+
+
+
+            If UserOperation = "Save2Table" Then
+                'Generate new Unique for every save
+                TUniqueId = LoggedOnUser & "-" & System.Guid.NewGuid.ToString()
+                Dim TempProfileTable As New DataTable("TempProfile")
+
+                Dim ListViewItems() As String
+                Dim Delim As String = vbTab
+
+                Dim SlopeColumn As DataColumn = TempProfileTable.Columns.Add("Unique_Id", GetType(String))
+                SlopeColumn.AllowDBNull = False
+                SlopeColumn.Unique = False
+
+                TempProfileTable.Columns.Add("T_Weight", GetType(Double))
+                TempProfileTable.Columns.Add("T_Speed", GetType(Double))
+                TempProfileTable.Columns.Add("T_Distance", GetType(Double))
+                TempProfileTable.Columns.Add("T_Grade_Pct", GetType(Double))
+                TempProfileTable.Columns.Add("T_Desc", GetType(Double))
+                TempProfileTable.Columns.Add("T_Emerg", GetType(Double))
+                TempProfileTable.Columns.Add("T_Final", GetType(Double))
+
+                'Write the list output values to a table
+                For Each o As Object In lstTempProfile.Items
+
+                    Dim ListViewRow As String = o.ToString
+                    ListViewRow = ListViewRow.Replace(vbCrLf, "").Trim()
+
+                    If Not ListViewRow.Contains("Weight") Then
+                        ListViewRow = ListViewRow.Replace(Delim, "|")
+                        ListViewItems = ListViewRow.Split("|")
+                        Dim TempListView As String = ""
+
+                        For LVItem As Integer = 0 To ListViewItems.Length - 1
+                            If ListViewItems(LVItem).Trim <> "" Then
+                                TempListView = TempListView & ListViewItems(LVItem).Trim & "|"
+                            End If
+                        Next
+
+                        ListViewItems = TempListView.Split("|")
+
+                        For LVItem As Integer = 0 To ListViewItems.Length - 1
+                            Select Case LVItem
+                                Case 0
+                                    TWeight = ListViewItems(LVItem)
+                                Case 1
+                                    TSpeed = ListViewItems(LVItem)
+                                Case 2
+                                    TDistance = ListViewItems(LVItem)
+                                Case 3
+                                    TGradePct = ListViewItems(LVItem)
+                                Case 4
+                                    TDesc = ListViewItems(LVItem)
+                                Case 5
+                                    TEmerg = ListViewItems(LVItem)
+                                Case 6
+                                    TFinal = ListViewItems(LVItem)
+                            End Select
+
+                        Next
+                        TempProfileTable.Rows.Add(TUniqueId, TWeight, TSpeed, TDistance, TGradePct, TDesc, TEmerg, TFinal)
+                        TWeight = ""
+                        TSpeed = ""
+                        TDistance = ""
+                        TGradePct = ""
+                        TDesc = ""
+                        TEmerg = ""
+                        TFinal = ""
+
+
+                    End If
+                Next
+                myHelper.InsertTempProfileData(TempProfileTable)
+                UserOperation = "Export2Excel"
+                buttempSave.Text = "Export"
+            ElseIf UserOperation = "Export2Excel" Then
+
+                'Prompt the User to Select the XL
+                Dim SaveFileDialog1 As New SaveFileDialog
+                SaveFileDialog1.FileName = ""
+                SaveFileDialog1.Filter = "Excel Files(*.xls)|*.xlsx"
+                If SaveFileDialog1.ShowDialog() = DialogResult.OK Then
+                    Dim XLFileName As String = SaveFileDialog1.FileName
+                    Dim ExcelApp As Microsoft.Office.Interop.Excel.Application = New Microsoft.Office.Interop.Excel.Application()
+                    Dim xlWorkBook As Microsoft.Office.Interop.Excel.Workbook
+                    Dim xlWorkSheet As Microsoft.Office.Interop.Excel.Worksheet
+
+                    If Not File.Exists(XLFileName) Then
+
+                        xlWorkBook = ExcelApp.Workbooks.Add()
+                        xlWorkSheet = CType(xlWorkBook.Sheets("Sheet1"), Microsoft.Office.Interop.Excel.Worksheet)
+                        xlWorkSheet.Name = "TempProfileData"
+                        xlWorkBook.SaveAs(XLFileName)
+                        xlWorkBook.Close(True)
+                    End If
+
+
+                    If myHelper.GetTempProfileData(TUniqueId, XLFileName) Then
+                        'Delete the records from the table
+                        MessageBox.Show("Data exported to excel file")
+                        UserOperation = "Save2Table"
+                        buttempSave.Text = "Save"
+                    End If
+
+                End If
+
+            End If
+
+
+
+        Catch ex As Exception
+            MessageBox.Show(ex.Message)
+        End Try
     End Sub
     Private Sub buttempReset_Click(sender As Object, e As EventArgs) Handles buttempReset.Click
         lstTempProfile.Items.Clear()

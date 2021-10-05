@@ -1,20 +1,161 @@
-﻿Public Class frmHorizontalseparate
+﻿Option Explicit On
+Imports System.ComponentModel
+Imports System.IO
+Imports Continuous_Slope.GSRS.Net.Common.Scripts
+Imports System.Guid
+Imports Microsoft.Office.Interop
+Public Class frmHorizontalseparate
     Public a As Integer
     Public p As Integer
+
+    'Variables to store Unique File Name - 06.04.21
+    Public SUniqueId As String = ""
+    Public LoggedOnUser As String = ""
+    Public UserFirstName As String = ""
+    Public UserLastName As String = ""
+    Public UserOperation As String = "Save2Table"
+    Public NumberGrades As Integer = 0
+
     Private Sub butSave_Click(sender As Object, e As EventArgs) Handles butSave.Click
-        Dim SaveFileDialog1 As New SaveFileDialog
-        SaveFileDialog1.FileName = ""
-        SaveFileDialog1.Filter = "Text Files(*.txt)|*.txt|(*.xls)|*.xls"
+        'Dim SaveFileDialog1 As New SaveFileDialog
+        'SaveFileDialog1.FileName = ""
+        'SaveFileDialog1.Filter = "Text Files(*.txt)|*.txt|(*.xls)|*.xls"
 
-        If SaveFileDialog1.ShowDialog() = DialogResult.OK Then
-            Dim sb As New System.Text.StringBuilder()
+        'If SaveFileDialog1.ShowDialog() = DialogResult.OK Then
+        '    Dim sb As New System.Text.StringBuilder()
 
-            For Each o As Object In Me.lstFinalOutputView.Items
-                sb.AppendLine(o)
-            Next
+        '    For Each o As Object In Me.lstFinalOutputView.Items
+        '        sb.AppendLine(o)
+        '    Next
 
-            System.IO.File.WriteAllText(SaveFileDialog1.FileName, sb.ToString())
-        End If
+        '    System.IO.File.WriteAllText(SaveFileDialog1.FileName, sb.ToString())
+        'End If
+
+        Try
+            Dim myHelper As New HelperClass
+            Dim GroupNumber As String = ""
+            Dim MaxWeight As String = ""
+            Dim MaxSpeed As String = ""
+            Dim TDesc As String = ""
+            Dim TEmerg As String = ""
+            Dim TFinal As String = ""
+            Dim Time As String = ""
+
+
+            If UserOperation = "Save2Table" Then
+                'Generate new Unique for every save
+                SUniqueId = LoggedOnUser & "-" & System.Guid.NewGuid.ToString()
+                Dim SlopeTable As New DataTable("Slope")
+
+                Dim ListViewItems() As String
+                Dim Delim As String = vbTab
+
+                Dim SlopeColumn As DataColumn = SlopeTable.Columns.Add("Unique_Id", GetType(String))
+                SlopeColumn.AllowDBNull = False
+                SlopeColumn.Unique = False
+
+                SlopeTable.Columns.Add("Number_Grades", GetType(Integer))
+                SlopeTable.Columns.Add("Group_Number", GetType(Integer))
+                SlopeTable.Columns.Add("Max_Weight", GetType(Integer))
+                SlopeTable.Columns.Add("Max_Speed", GetType(Integer))
+                SlopeTable.Columns.Add("T_Desc", GetType(Integer))
+                SlopeTable.Columns.Add("T_Emerg", GetType(Integer))
+                SlopeTable.Columns.Add("T_Final", GetType(Integer))
+                SlopeTable.Columns.Add("Time", GetType(Integer))
+
+                'Write the list output values to a table
+                For Each o As Object In lstFinalOutputView.Items
+                    'sb.AppendLine(o)
+
+                    Dim ListViewRow As String = o.ToString
+                    ListViewRow = ListViewRow.Replace(vbCrLf, "").Trim()
+
+                    If Not ListViewRow.Contains("Max Weight") Then
+                        ListViewRow = ListViewRow.Replace(Delim, "|")
+                        ListViewItems = ListViewRow.Split("|")
+                        Dim TempListView As String = ""
+
+                        For LVItem As Integer = 0 To ListViewItems.Length - 1
+                            If ListViewItems(LVItem).Trim <> "" Then
+                                TempListView = TempListView & ListViewItems(LVItem).Trim & "|"
+                            End If
+                        Next
+
+                        ListViewItems = TempListView.Split("|")
+
+                        For LVItem As Integer = 0 To ListViewItems.Length - 1
+                            Select Case LVItem
+                                Case 0
+                                    GroupNumber = ListViewItems(LVItem)
+                                Case 1
+                                    MaxWeight = ListViewItems(LVItem)
+                                Case 2
+                                    MaxSpeed = ListViewItems(LVItem)
+                                Case 3
+                                    TDesc = ListViewItems(LVItem)
+                                Case 4
+                                    TEmerg = ListViewItems(LVItem)
+                                Case 5
+                                    TFinal = ListViewItems(LVItem)
+                                Case 6
+                                    Time = ListViewItems(LVItem)
+                            End Select
+
+                        Next
+                        SlopeTable.Rows.Add(SUniqueId, NumberGrades, GroupNumber, MaxWeight, MaxSpeed, TDesc, TEmerg, TFinal, Time)
+                        GroupNumber = ""
+                        MaxWeight = ""
+                        MaxSpeed = ""
+                        TDesc = ""
+                        TEmerg = ""
+                        TFinal = ""
+                        Time = ""
+
+                    End If
+                Next
+                myHelper.InsertSlopeData(SlopeTable, "SeparateSlope")
+                UserOperation = "Export2Excel"
+                butSave.Text = "Export"
+            ElseIf UserOperation = "Export2Excel" Then
+
+                'Prompt the User to Select the XL
+                Dim SaveFileDialog1 As New SaveFileDialog
+                SaveFileDialog1.FileName = ""
+                SaveFileDialog1.Filter = "Excel Files(*.xls)|*.xlsx"
+                If SaveFileDialog1.ShowDialog() = DialogResult.OK Then
+                    Dim XLFileName As String = SaveFileDialog1.FileName
+                    Dim ExcelApp As Microsoft.Office.Interop.Excel.Application = New Microsoft.Office.Interop.Excel.Application()
+                    Dim xlWorkBook As Microsoft.Office.Interop.Excel.Workbook
+                    Dim xlWorkSheet As Microsoft.Office.Interop.Excel.Worksheet
+
+                    If Not File.Exists(XLFileName) Then
+
+                        xlWorkBook = ExcelApp.Workbooks.Add()
+                        xlWorkSheet = CType(xlWorkBook.Sheets("Sheet1"), Microsoft.Office.Interop.Excel.Worksheet)
+                        xlWorkSheet.Name = "SlopeData"
+                        xlWorkBook.SaveAs(XLFileName)
+                        xlWorkBook.Close(True)
+                    End If
+
+
+                    If myHelper.GetSlopeData("SeparateSlope", SUniqueId, XLFileName) Then
+                        'Delete the records from the table
+                        MessageBox.Show("Data exported to excel file")
+                        UserOperation = "Save2Table"
+                        butSave.Text = "Save"
+                    End If
+
+                End If
+
+            End If
+
+
+
+        Catch ex As Exception
+            MessageBox.Show(ex.Message)
+        End Try
+
+
     End Sub
     Private Sub butReset_Click(sender As Object, e As EventArgs) Handles butReset.Click
         lstFinalOutputView.Items.Clear()
@@ -230,9 +371,6 @@
     End Sub
     Private Sub Button1_Click(sender As Object, e As EventArgs) Handles butsReset.Click
         frmMain.butsReset.PerformClick()
-    End Sub
-    Private Sub frmHorizontalseparate_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-
     End Sub
     Private Sub frmHorizontalseparate_Closed(sender As Object, e As EventArgs) Handles Me.Closed
         frmMain.butsCurve.Enabled = True

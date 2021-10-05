@@ -1,6 +1,9 @@
 ﻿Option Explicit On
 Imports System.ComponentModel
 Imports System.IO
+Imports Continuous_Slope.GSRS.Net.Common.Scripts
+Imports System.Guid
+Imports Microsoft.Office.Interop
 Public Class frmMain
     Public T_max As Double
     Public Shared Grade() As Double
@@ -81,6 +84,16 @@ Public Class frmMain
     Public rolloverthreshold As Integer = 0
     Public Property ExcelReaderFactory As Object
     Public Property ExcelDataReader As Object
+
+    'Variables to store Unique File Name - 05.27.21
+    Public LoggedOnUser As String = ""
+    Public UserFirstName As String = ""
+    Public UserLastName As String = ""
+    Public UserOperation As String = "Save2Table"
+
+    Public CUniqueId As String = ""
+    Public SUniqueId As String = ""
+
     Private Sub cboMaxTemp_SelectedIndexChanged(sender As System.Object, e As System.EventArgs)
         If cboMaxTemp.Text = "500" Then
             T_max = 500
@@ -309,10 +322,18 @@ Public Class frmMain
             T_max = CDbl(T_max_input)
             cboMaxTemp.Text = T_max
         End If
-        Me.lstOutputView.Items.Add("Max Weight (lb) " & "    Max Speed (mph) " & "     T_Desc (F) " & "           T_Emerg (F) " & "        T_Final (F)" & "                Time (min) " & vbCrLf & vbCrLf)
+        'Me.lstOutputView.Items.Add("Max Weight (lb) " & "    Max Speed (mph) " & "     T_Desc (F) " & "           T_Emerg (F) " & "        T_Final (F)" & "                Time (min) " & vbCrLf & vbCrLf)
+        'Me.lstOutputView.Items.Add("Max Weight (lb)" & vbTab & vbTab & "Max Speed (mph)" & vbTab & vbTab & "T_Desc (F)" & vbTab & vbTab & "T_Emerg (F)" & vbTab & vbTab & "T_Final (F)" & vbTab & vbTab & "Time (min)" & vbCrLf & vbCrLf)
+        Me.lstOutputView.Items.Add("Max Weight (lb)" & vbTab & "Max Speed (mph)" & vbTab & "T_Desc (F)" & vbTab & "T_Emerg (F)" & vbTab & "T_Final (F)" & vbTab & "Time (min)" & vbCrLf & vbCrLf)
 
         'Computations
+
         j_max = W_max / 5000
+
+        'This check is to allow only less than 7 segments
+        'If CInt(txtNumSections.Text) <= 7 Then
+
+        'End If
 
         For Me.i = 1 To CInt(txtNumSections.Text)
             TL += Length(i)
@@ -329,7 +350,7 @@ Public Class frmMain
                 ReDim T_e(V, 1)
                 T_e(V, 1) = (0.000000311) * W * (V ^ 2) 'temperature from emergency stopping
                 HP_eng = 63.3 'Engine brake force
-                K2 = 1 / (0.1602 + 0.0078 * V) 'Heat transfer parameter
+                K2 = 1 / (-0.9078 + 0.0621 * V) 'Heat transfer parameter
                 K1 = 1.5 * (1.1852 + 0.0331 * V) 'Diffusivity constant
                 F_drag = 459.35 + 0.132 * (V ^ 2) 'Drag forces
 
@@ -355,8 +376,11 @@ Public Class frmMain
 
 
                 lstOutputView.Items.Add(W & vbTab & vbTab & Vs & vbTab & vbTab & T_f_s & vbTab & vbTab & T_e_s & vbTab & vbTab & T_lim_s & vbTab & vbTab & CInt(TL * 60 / Vs) & vbCrLf)
+                'lstOutputView.Items.Add(W & vbTab & Vs & vbTab & vbTab & T_f_s & vbTab & vbTab & T_e_s & vbTab & vbTab & T_lim_s & vbTab & vbTab & CInt(TL * 60 / Vs) & vbCrLf)
+
             Next
         Next
+
         If txtNumSections.Text <> "" And lstGradeLength.Items.Count <> 0 Then
             butTempProfile.Enabled = True
         Else
@@ -379,20 +403,121 @@ Public Class frmMain
 
     End Sub
     Private Sub butSave_Click_1(sender As System.Object, e As System.EventArgs) Handles butSave.Click
-        Dim SaveFileDialog1 As New SaveFileDialog
-        SaveFileDialog1.FileName = ""
-        SaveFileDialog1.Filter = "Text Files(*.txt)|*.txt|(*.xls)|*.xls"
+        Try
+            Dim myHelper As New HelperClass
+            Dim MaxWeight As String = ""
+            Dim MaxSpeed As String = ""
+            Dim TDesc As String = ""
+            Dim TEmerg As String = ""
+            Dim TFinal As String = ""
+            Dim Time As String = ""
 
-        If SaveFileDialog1.ShowDialog() = DialogResult.OK Then
-            Dim sb As New System.Text.StringBuilder()
+            If UserOperation = "Save2Table" Then
+                'Generate new Unique for every save
+                CUniqueId = LoggedOnUser & "-" & System.Guid.NewGuid.ToString()
 
-            For Each o As Object In lstOutputView.Items
-                sb.AppendLine(o)
-            Next
+                Dim SlopeTable As New DataTable("Slope")
 
-            System.IO.File.WriteAllText(SaveFileDialog1.FileName, sb.ToString())
-        End If
+                Dim ListViewItems() As String
+                Dim Delim As String = vbTab & vbTab
+
+                Dim SlopeColumn As DataColumn = SlopeTable.Columns.Add("Unique_Id", GetType(String))
+                SlopeColumn.AllowDBNull = False
+                SlopeColumn.Unique = False
+
+                SlopeTable.Columns.Add("Max_Weight", GetType(Integer))
+                SlopeTable.Columns.Add("Max_Speed", GetType(Integer))
+                SlopeTable.Columns.Add("T_Desc", GetType(Integer))
+                SlopeTable.Columns.Add("T_Emerg", GetType(Integer))
+                SlopeTable.Columns.Add("T_Final", GetType(Integer))
+                SlopeTable.Columns.Add("Time", GetType(Integer))
+
+                'Write the list output values to a table
+                For Each o As Object In lstOutputView.Items
+                    'sb.AppendLine(o)
+
+                    Dim ListViewRow As String = o
+                    ListViewRow = ListViewRow.Replace(vbCrLf, "").Trim()
+                    'Debug.WriteLine(ListViewRow)
+
+
+                    If Not ListViewRow.Contains("Max Weight") Then
+                        ListViewRow = ListViewRow.Replace(Delim, "|")
+                        ListViewItems = ListViewRow.Split("|")
+                        For LVItem As Integer = 0 To ListViewItems.Length - 1
+
+                            Select Case LVItem
+                                Case 0
+                                    MaxWeight = ListViewItems(LVItem)
+                                Case 1
+                                    MaxSpeed = ListViewItems(LVItem)
+                                Case 2
+                                    TDesc = ListViewItems(LVItem)
+                                Case 3
+                                    TEmerg = ListViewItems(LVItem)
+                                Case 4
+                                    TFinal = ListViewItems(LVItem)
+                                Case 5
+                                    Time = ListViewItems(LVItem)
+
+                            End Select
+
+                        Next
+                        SlopeTable.Rows.Add(CUniqueId, MaxWeight, MaxSpeed, TDesc, TEmerg, TFinal, Time)
+                        MaxWeight = ""
+                        MaxSpeed = ""
+                        TDesc = ""
+                        TEmerg = ""
+                        TFinal = ""
+                        Time = ""
+
+                    End If
+                Next
+                If myHelper.InsertSlopeData(SlopeTable, "ContinuousSlope") Then
+                    UserOperation = "Export2Excel"
+                    butSave.Text = "Export"
+                End If
+            ElseIf UserOperation = "Export2Excel" Then
+                'Prompt the User to Select the XL
+                Dim SaveFileDialog1 As New SaveFileDialog
+                SaveFileDialog1.FileName = ""
+                SaveFileDialog1.Filter = "Excel Files(*.xls)|*.xlsx"
+                If SaveFileDialog1.ShowDialog() = DialogResult.OK Then
+                    Dim XLFileName As String = SaveFileDialog1.FileName
+                    Dim ExcelApp As Microsoft.Office.Interop.Excel.Application = New Microsoft.Office.Interop.Excel.Application()
+                    Dim xlWorkBook As Microsoft.Office.Interop.Excel.Workbook
+                    Dim xlWorkSheet As Microsoft.Office.Interop.Excel.Worksheet
+
+                    If Not File.Exists(XLFileName) Then
+
+                        xlWorkBook = ExcelApp.Workbooks.Add()
+                        xlWorkSheet = CType(xlWorkBook.Sheets("Sheet1"), Microsoft.Office.Interop.Excel.Worksheet)
+                        xlWorkSheet.Name = "SlopeData"
+                        xlWorkBook.SaveAs(XLFileName)
+                        xlWorkBook.Close(True)
+                    End If
+
+
+                    If myHelper.GetSlopeData("ContinuousSlope", CUniqueId, XLFileName) Then
+                        'Delete the records from the table
+                        MessageBox.Show("Data exported to excel file")
+                        UserOperation = "Save2Table"
+                        butSave.Text = "Save"
+                    End If
+
+                End If
+
+
+            End If
+
+
+
+        Catch ex As Exception
+
+        End Try
     End Sub
+
+
     Private Sub butFilter_Click_1(sender As System.Object, e As System.EventArgs) Handles butFilter.Click
         Dim header As String = lstOutputView.Items(0)
 
@@ -440,7 +565,61 @@ Public Class frmMain
             End If
         Next
 
+        'Try
+        '    Dim myHelper As New HelperClass
+        '    Dim MaxWeight As String = ""
+        '    Dim MaxSpeed As String = ""
+        '    Dim TDesc As String = ""
+        '    Dim TEmerg As String = ""
+        '    Dim TFinal As String = ""
+        '    Dim Time As String = ""
+        '    Dim SlopeTable As New DataTable("Slope")
 
+
+        '    Dim SlopeColumn As DataColumn = SlopeTable.Columns.Add("Unique_Id", GetType(String))
+        '    SlopeColumn.AllowDBNull = False
+        '    SlopeColumn.Unique = False
+
+        '    SlopeTable.Columns.Add("Max_Weight", GetType(Integer))
+        '    SlopeTable.Columns.Add("Max_Speed", GetType(Integer))
+        '    SlopeTable.Columns.Add("T_Desc", GetType(Integer))
+        '    SlopeTable.Columns.Add("T_Emerg", GetType(Integer))
+        '    SlopeTable.Columns.Add("T_Final", GetType(Integer))
+        '    SlopeTable.Columns.Add("Time", GetType(Integer))
+
+        '    'Write the filter list to a table
+
+        '    For Each row In finalresults
+
+        '        lstOutputView.Items.Add(row.ToString)
+
+        '        If row.MaxSpeed = V_max Then
+        '            'Insert the row in to the table
+
+        '            MaxWeight = row.MaxWeight.ToString
+        '            MaxSpeed = row.MaxSpeed.ToString
+        '            TDesc = row.T_Desc.ToString
+        '            TEmerg = row.T_Emerg.ToString
+        '            TFinal = row.T_Final.ToString
+        '            Time = row.Time.ToString
+
+        '            SlopeTable.Rows.Add(UniqueId, MaxWeight, MaxSpeed, TDesc, TEmerg, TFinal, Time)
+        '            MaxWeight = ""
+        '            MaxSpeed = ""
+        '            TDesc = ""
+        '            TEmerg = ""
+        '            TFinal = ""
+        '            Time = ""
+
+        '            myHelper.InsertSlopeData(SlopeTable, "ContinuousSlopeFilter")
+
+        '            Exit For
+        '        End If
+        '    Next
+
+        'Catch ex As Exception
+        '    MessageBox.Show(ex.Message)
+        'End Try
 
     End Sub
     Public Class DataValue
@@ -459,7 +638,7 @@ Public Class frmMain
                     MessageBox.Show("Invalid Input: Value failed to convert to Integer.")
                 End Try
             Else
-                MessageBox.Show("Invalid Input: Not enough values.")
+                MessageBox.Show("Invalid Input:  Not enough values.")
             End If
         End Sub
 
@@ -492,6 +671,8 @@ Public Class frmMain
         Group_Number = "1"
         txtsGroupNumber.Text = Group_Number
         a = txtsGroupNumber.Text
+        'Init the User Operation
+        UserOperation = "Save2Table"
     End Sub
     Private Sub butReset_Click(sender As System.Object, e As System.EventArgs) Handles butReset.Click
         txtNumSections.Text = ""
@@ -522,19 +703,132 @@ Public Class frmMain
     End Sub
 
     Private Sub butsSave_Click(sender As System.Object, e As System.EventArgs) Handles butsSave.Click
-        Dim SaveFileDialog1 As New SaveFileDialog
-        SaveFileDialog1.FileName = ""
-        SaveFileDialog1.Filter = "Text Files(*.txt)|*.txt|(*.xls)|*.xls"
+        Try
+            Dim myHelper As New HelperClass
+            Dim NumberGrades As String = ""
+            Dim GroupNumber As String = ""
+            Dim MaxWeight As String = ""
+            Dim MaxSpeed As String = ""
+            Dim TDesc As String = ""
+            Dim TEmerg As String = ""
+            Dim TFinal As String = ""
+            Dim Time As String = ""
 
-        If SaveFileDialog1.ShowDialog() = DialogResult.OK Then
-            Dim sb As New System.Text.StringBuilder()
 
-            For Each o As Object In lstsOutputView.Items
-                sb.AppendLine(o)
-            Next
+            If UserOperation = "Save2Table" Then
+                'Generate new Unique for every save
+                SUniqueId = LoggedOnUser & "-" & System.Guid.NewGuid.ToString()
+                Dim SlopeTable As New DataTable("Slope")
 
-            System.IO.File.WriteAllText(SaveFileDialog1.FileName, sb.ToString())
-        End If
+                Dim ListViewItems() As String
+                Dim Delim As String = vbTab
+
+                Dim SlopeColumn As DataColumn = SlopeTable.Columns.Add("Unique_Id", GetType(String))
+                SlopeColumn.AllowDBNull = False
+                SlopeColumn.Unique = False
+
+                SlopeTable.Columns.Add("Number_Grades", GetType(Integer))
+                SlopeTable.Columns.Add("Group_Number", GetType(Integer))
+                SlopeTable.Columns.Add("Max_Weight", GetType(Integer))
+                SlopeTable.Columns.Add("Max_Speed", GetType(Integer))
+                SlopeTable.Columns.Add("T_Desc", GetType(Integer))
+                SlopeTable.Columns.Add("T_Emerg", GetType(Integer))
+                SlopeTable.Columns.Add("T_Final", GetType(Integer))
+                SlopeTable.Columns.Add("Time", GetType(Integer))
+
+                'Write the list output values to a table
+                For Each o As Object In lstsOutputView.Items
+                    'sb.AppendLine(o)
+
+                    Dim ListViewRow As String = o.ToString
+                    ListViewRow = ListViewRow.Replace(vbCrLf, "").Trim()
+                    Debug.WriteLine(ListViewRow)
+
+                    If Not ListViewRow.Contains("Max Weight") Then
+                        ListViewRow = ListViewRow.Replace(Delim, "|")
+                        ListViewItems = ListViewRow.Split("|")
+                        Dim TempListView As String = ""
+
+                        For LVItem As Integer = 0 To ListViewItems.Length - 1
+                            If ListViewItems(LVItem).Trim <> "" Then
+                                TempListView = TempListView & ListViewItems(LVItem).Trim & "|"
+                            End If
+                        Next
+
+                        ListViewItems = TempListView.Split("|")
+
+                        For LVItem As Integer = 0 To ListViewItems.Length - 1
+                            Select Case LVItem
+                                Case 0
+                                    GroupNumber = ListViewItems(LVItem)
+                                Case 1
+                                    MaxWeight = ListViewItems(LVItem)
+                                Case 2
+                                    MaxSpeed = ListViewItems(LVItem)
+                                Case 3
+                                    TDesc = ListViewItems(LVItem)
+                                Case 4
+                                    TEmerg = ListViewItems(LVItem)
+                                Case 5
+                                    TFinal = ListViewItems(LVItem)
+                                Case 6
+                                    Time = ListViewItems(LVItem)
+                            End Select
+
+                        Next
+                        NumberGrades = txtsNumSections.Text
+                        SlopeTable.Rows.Add(SUniqueId, NumberGrades, GroupNumber, MaxWeight, MaxSpeed, TDesc, TEmerg, TFinal, Time)
+                        NumberGrades = ""
+                        GroupNumber = ""
+                        MaxWeight = ""
+                        MaxSpeed = ""
+                        TDesc = ""
+                        TEmerg = ""
+                        TFinal = ""
+                        Time = ""
+
+                    End If
+                Next
+                myHelper.InsertSlopeData(SlopeTable, "SeparateSlope")
+                UserOperation = "Export2Excel"
+                butsSave.Text = "Export"
+            ElseIf UserOperation = "Export2Excel" Then
+
+                'Prompt the User to Select the XL
+                Dim SaveFileDialog1 As New SaveFileDialog
+                SaveFileDialog1.FileName = ""
+                SaveFileDialog1.Filter = "Excel Files(*.xls)|*.xlsx"
+                If SaveFileDialog1.ShowDialog() = DialogResult.OK Then
+                    Dim XLFileName As String = SaveFileDialog1.FileName
+                    Dim ExcelApp As Microsoft.Office.Interop.Excel.Application = New Microsoft.Office.Interop.Excel.Application()
+                    Dim xlWorkBook As Microsoft.Office.Interop.Excel.Workbook
+                    Dim xlWorkSheet As Microsoft.Office.Interop.Excel.Worksheet
+
+                    If Not File.Exists(XLFileName) Then
+
+                        xlWorkBook = ExcelApp.Workbooks.Add()
+                        xlWorkSheet = CType(xlWorkBook.Sheets("Sheet1"), Microsoft.Office.Interop.Excel.Worksheet)
+                        xlWorkSheet.Name = "SlopeData"
+                        xlWorkBook.SaveAs(XLFileName)
+                        xlWorkBook.Close(True)
+                    End If
+
+
+                    If myHelper.GetSlopeData("SeparateSlope", SUniqueId, XLFileName) Then
+                        'Delete the records from the table
+                        MessageBox.Show("Data exported to excel file")
+                        UserOperation = "Save2Table"
+                        butsSave.Text = "Save"
+                    End If
+
+                End If
+
+            End If
+
+
+        Catch ex As Exception
+
+        End Try
     End Sub
     Private Sub butsClear_Click(sender As System.Object, e As System.EventArgs) Handles butsClear.Click
         RichTextBox2.Clear()
@@ -707,6 +1001,7 @@ Public Class frmMain
                 Dim textextension As String
                 Dim testFile As System.IO.FileInfo
                 Try
+
                     ' Setup a file stream reader to read the excel file.
                     textextension = Path.GetExtension(strFile)
                     If textextension = ".xlsx" Then
@@ -818,6 +1113,8 @@ Public Class frmMain
 
             lstsOutputView.Items.Add(Space & Group_Number & vbTab & vbTab & W & vbTab & vbTab & Space & V & vbTab & vbTab & Space & vbTab & Ts_f & vbTab & Space & vbTab & Ts_e & vbTab & Space & T_lims & vbTab & vbTab & Space & CInt(TLnew * 60 / V) & vbCrLf)
         Next
+
+
         Me.butsFilter.Enabled = True
     End Function
     Function CalVel(input_info, W_max, i_max, V_max, T_max, T_0, Group_Number)
@@ -1021,6 +1318,209 @@ Public Class frmMain
         End If
 
     End Sub
+    'Private Sub butsFilter_Click(sender As System.Object, e As System.EventArgs) Handles butsFilter.Click
+    '    Dim header As String
+    '    Dim data As New List(Of DataValue1)
+    '    Dim results = From dv In data
+    '    Dim header1 As String
+    '    Dim header2 As String
+    '    Dim data1 As New List(Of DataValue1)
+    '    Dim data2 As New List(Of DataValue1)
+    '    Dim finalresults = From dv In data1
+    '    Dim finalresults2 = From dv In data1
+    '    Dim V_max = CInt(Me.txtsMaxSpeed.Text)
+    '    Dim Max_weight = CInt(Me.txtsMaxWeight.Text)
+    '    If a Mod 2 = 0 Then
+    '        header = lstsOutputView.Items(0)
+
+    '        ' Skip the header row by starting at 1:
+    '        For i As Integer = 1 To lstsOutputView.Items.Count - 1
+    '            data.Add(New DataValue1(lstsOutputView.Items(i)))
+    '        Next
+
+    '        lstsOutputView.Items.Clear()
+    '        lstsOutputView.Items.Add(header)
+
+
+    '        For Each row In results
+    '            If row.T_Final < T_max Then
+    '                lstsOutputView.Items.Add(row.ToString)
+
+    '            End If
+    '        Next
+
+
+    '        header1 = lstsOutputView.Items(0)
+
+    '        ' Skip the header row by starting at 1:
+    '        For i As Integer = 1 To lstsOutputView.Items.Count - 1
+    '            data1.Add(New DataValue1(lstsOutputView.Items(i)))
+    '        Next
+
+    '        finalresults = From dv In data1
+    '                       Order By dv.MaxWeight Descending, dv.MaxSpeed Descending
+    '                       Group dv By dv.MaxWeight Into g = Group
+    '                       Select g.First
+
+
+    '        lstsOutputView.Items.Clear()
+    '        lstsOutputView.Items.Add(header)
+
+
+    '        MsgBox("Select row for maximum weight",, "Seperate Slope")
+    '        header2 = lstsOutputView.Items(0)
+
+    '        ' Skip the header row by starting at 1:
+    '        For i As Integer = 1 To lstsOutputView.Items.Count - 1
+    '            data2.Add(New DataValue1(lstsOutputView.Items(i)))
+    '        Next
+
+    '        finalresults2 = From dv In data2
+    '                        Order By dv.MaxWeight Descending
+    '                        Group dv By dv.MaxWeight Into g = Group
+    '                        Select g.First
+
+    '        lstsOutputView.Items.Clear()
+    '        lstsOutputView.Items.Add(header)
+
+    '        For Each row In finalresults2
+    '            lstsOutputView.Items.Add(row.ToString)
+    '            If row.MaxWeight = Max_weight Then
+    '                txtNewTemp.Text = row.T_Final
+    '            End If
+    '            Exit For
+    '        Next
+    '    End If
+
+    '    If a Mod 2 = 1 Then
+    '        ' Skip the header row by starting at 1:
+
+    '        header = lstsOutputView.Items(0)
+    '        For i As Integer = 1 To lstsOutputView.Items.Count - 1
+    '            data.Add(New DataValue1(lstsOutputView.Items(i)))
+    '        Next
+
+    '        lstsOutputView.Items.Clear()
+    '        lstsOutputView.Items.Add(header)
+
+
+    '        For Each row In results
+    '            If row.T_Final < T_max Then
+    '                lstsOutputView.Items.Add(row.ToString)
+
+    '            End If
+    '        Next
+
+    '        ' Skip the header row by starting at 1:
+    '        For i As Integer = 1 To lstsOutputView.Items.Count - 1
+    '            data1.Add(New DataValue1(lstsOutputView.Items(i)))
+    '        Next
+
+    '        finalresults = From dv In data1
+    '                       Order By dv.MaxWeight Descending, dv.Time Ascending
+    '                       Group dv By dv.MaxWeight Into g = Group
+    '                       Select g.First
+
+    '        lstsOutputView.Items.Clear()
+    '        lstsOutputView.Items.Add(header)
+
+
+    '        For Each row In finalresults
+
+    '            lstsOutputView.Items.Add(row.ToString)
+    '            txtNewTemp.Text = row.T_Final
+
+    '        Next
+    '    End If
+
+
+    '    Dim Answer As Integer
+
+    '    If a Mod 2 = 0 Then
+    '        Answer = MsgBox("Enter segments for downgrade of next braking segment?", vbYesNoCancel, "Alert")
+    '        If Answer = vbYes Then
+    '            btnNext.Enabled = True
+    '            btnNext.Select()
+    '        Else
+    '        End If
+    '    End If
+    '    If a Mod 2 = 1 Then
+    '        Answer = MsgBox("Enter segments for downgrade of next non-braking segment?", vbYesNoCancel, "Alert")
+    '        If Answer = vbYes Then
+    '            btnNext.Enabled = True
+    '            btnNext.Select()
+    '        Else
+
+    '        End If
+    '    End If
+
+    '    For Each row In finalresults
+    '        lstsOutputView.Items.Add(row.ToString)
+    '        If row.MaxSpeed = V_max Then
+    '            Exit For
+    '        End If
+    '    Next
+
+    '    'Try
+    '    '    Dim myHelper As New HelperClass
+    '    '    Dim Group As String = ""
+    '    '    Dim MaxWeight As String = ""
+    '    '    Dim MaxSpeed As String = ""
+    '    '    Dim TDesc As String = ""
+    '    '    Dim TEmerg As String = ""
+    '    '    Dim TFinal As String = ""
+    '    '    Dim Time As String = ""
+    '    '    Dim SlopeTable As New DataTable("Slope")
+
+
+    '    '    Dim SlopeColumn As DataColumn = SlopeTable.Columns.Add("Unique_Id", GetType(String))
+    '    '    SlopeColumn.AllowDBNull = False
+    '    '    SlopeColumn.Unique = False
+
+    '    '    SlopeTable.Columns.Add("Group", GetType(Integer))
+    '    '    SlopeTable.Columns.Add("Max_Weight", GetType(Integer))
+    '    '    SlopeTable.Columns.Add("Max_Speed", GetType(Integer))
+    '    '    SlopeTable.Columns.Add("T_Desc", GetType(Integer))
+    '    '    SlopeTable.Columns.Add("T_Emerg", GetType(Integer))
+    '    '    SlopeTable.Columns.Add("T_Final", GetType(Integer))
+    '    '    SlopeTable.Columns.Add("Time", GetType(Integer))
+
+    '    '    'Write the filter list to a table
+
+    '    '    For Each row In finalresults
+
+    '    '        lstsOutputView.Items.Add(row.ToString)
+
+    '    '        If row.MaxSpeed = V_max Then
+    '    '            'Insert the row in to the table
+    '    '            Group = row.GroupNumber.ToString
+    '    '            MaxWeight = row.MaxWeight.ToString
+    '    '            MaxSpeed = row.MaxSpeed.ToString
+    '    '            TDesc = row.T_Desc.ToString
+    '    '            TEmerg = row.T_Emerg.ToString
+    '    '            TFinal = row.T_Final.ToString
+    '    '            Time = row.Time.ToString
+
+    '    '            SlopeTable.Rows.Add(UniqueId, Group, MaxWeight, MaxSpeed, TDesc, TEmerg, TFinal, Time)
+    '    '            Group = ""
+    '    '            MaxWeight = ""
+    '    '            MaxSpeed = ""
+    '    '            TDesc = ""
+    '    '            TEmerg = ""
+    '    '            TFinal = ""
+    '    '            Time = ""
+
+    '    '            myHelper.InsertSlopeData(SlopeTable, "SeparateSlopeFilter")
+
+    '    '            Exit For
+    '    '        End If
+    '    '    Next
+
+    '    'Catch ex As Exception
+    '    '    MessageBox.Show(ex.Message)
+    '    'End Try
+
+    'End Sub
     Private Sub butsReset_Click(sender As System.Object, e As System.EventArgs) Handles butsReset.Click
         txtsNumberGrades.Text = ""
         txtsGroupNumber.Text = 1
@@ -1057,7 +1557,7 @@ Public Class frmMain
                     MessageBox.Show("Invalid Input: Value failed to convert to Integer.")
                 End Try
             Else
-                MessageBox.Show("Invalid Input:  Not enough values.")
+                MessageBox.Show("Invalid Input:   Not enough values.")
             End If
         End Sub
 
@@ -1076,6 +1576,7 @@ Public Class frmMain
         Public T_Desc As Integer
     End Class
     Private Sub Button1_Click(sender As Object, e As EventArgs) Handles butTempProfile.Click
+        frmTempProfile.LoggedOnUser = LoggedOnUser
         frmTempProfile.Show()
     End Sub
     Private Sub txtNumSections_TextChanged(sender As Object, e As EventArgs) Handles txtNumSections.TextChanged
@@ -1329,6 +1830,7 @@ Public Class frmMain
 
             If File.Exists(MyFileDialog.FileName) Then
 
+
                 Dim strFile As String = MyFileDialog.FileName
                 Dim textextension As String
                 Dim testFile As System.IO.FileInfo
@@ -1416,6 +1918,11 @@ Public Class frmMain
         frmLogin.txtpassword.Text = ""
     End Sub
     Private Sub butsCurve_Click(sender As Object, e As EventArgs) Handles butsCurve.Click
+        frmHorizontalseparate.LoggedOnUser = LoggedOnUser
+        If txtsNumberGrades.Text <> "" Then
+            frmHorizontalseparate.NumberGrades = CInt(txtsNumberGrades.Text)
+        End If
+
         frmHorizontalseparate.Show()
         butsCompute.Enabled = False
         butsCurve.Enabled = False
@@ -1720,6 +2227,7 @@ Public Class frmMain
         Me.butsFilter.Enabled = True
     End Function
     Private Sub butCurve_Click(sender As Object, e As EventArgs) Handles butCurve.Click
+        frmHorizontal.LoggedOnUser = LoggedOnUser
         frmHorizontal.Show()
         butCompute.Enabled = False
         butGradeLength.Enabled = False
@@ -1897,5 +2405,9 @@ Public Class frmMain
                 End If
             Next
         Next
+    End Sub
+
+    Private Sub Label10_Click(sender As Object, e As EventArgs) Handles Label10.Click
+
     End Sub
 End Class

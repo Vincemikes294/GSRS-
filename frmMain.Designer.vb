@@ -72,6 +72,7 @@ Partial Class frmMain
         Me.butsSave = New System.Windows.Forms.Button()
         Me.lstsOutputView = New System.Windows.Forms.ListBox()
         Me.GroupBox9 = New System.Windows.Forms.GroupBox()
+        Me.Label10 = New System.Windows.Forms.Label()
         Me.lblnPath = New System.Windows.Forms.Label()
         Me.butsClear = New System.Windows.Forms.Button()
         Me.GroupBox10 = New System.Windows.Forms.GroupBox()
@@ -100,7 +101,6 @@ Partial Class frmMain
         Me.ToolTip1 = New System.Windows.Forms.ToolTip(Me.components)
         Me.VisualStyler1 = New SkinSoft.VisualStyler.VisualStyler(Me.components)
         Me.butlogout = New System.Windows.Forms.Button()
-        Me.Label10 = New System.Windows.Forms.Label()
         Me.GroupBox1.SuspendLayout()
         Me.GroupBox2.SuspendLayout()
         Me.GroupContinuousSlope.SuspendLayout()
@@ -155,7 +155,7 @@ Partial Class frmMain
         Me.txtMaxSpeed.Location = New System.Drawing.Point(384, 63)
         Me.txtMaxSpeed.Name = "txtMaxSpeed"
         Me.txtMaxSpeed.Size = New System.Drawing.Size(61, 22)
-        Me.txtMaxSpeed.TabIndex = 18
+        Me.txtMaxSpeed.TabIndex = 13
         Me.ToolTip1.SetToolTip(Me.txtMaxSpeed, "Enter maximum descent speed (mph)")
         '
         'txtMaxWeight
@@ -163,7 +163,7 @@ Partial Class frmMain
         Me.txtMaxWeight.Location = New System.Drawing.Point(384, 24)
         Me.txtMaxWeight.Name = "txtMaxWeight"
         Me.txtMaxWeight.Size = New System.Drawing.Size(61, 22)
-        Me.txtMaxWeight.TabIndex = 17
+        Me.txtMaxWeight.TabIndex = 12
         Me.ToolTip1.SetToolTip(Me.txtMaxWeight, "Enter Maximum Weight of truck for downgrade (lb)")
         '
         'Label4
@@ -321,7 +321,7 @@ Partial Class frmMain
         Me.txtinitemp.Location = New System.Drawing.Point(383, 24)
         Me.txtinitemp.Name = "txtinitemp"
         Me.txtinitemp.Size = New System.Drawing.Size(61, 22)
-        Me.txtinitemp.TabIndex = 19
+        Me.txtinitemp.TabIndex = 14
         Me.ToolTip1.SetToolTip(Me.txtinitemp, "Enter initial temperature in F (>= 90 F)")
         '
         'txtambient
@@ -329,7 +329,7 @@ Partial Class frmMain
         Me.txtambient.Location = New System.Drawing.Point(383, 60)
         Me.txtambient.Name = "txtambient"
         Me.txtambient.Size = New System.Drawing.Size(61, 22)
-        Me.txtambient.TabIndex = 18
+        Me.txtambient.TabIndex = 15
         Me.ToolTip1.SetToolTip(Me.txtambient, "Enter 90 (F) for ambient temperature")
         '
         'Label5
@@ -355,9 +355,9 @@ Partial Class frmMain
         Me.Label6.AutoSize = True
         Me.Label6.Location = New System.Drawing.Point(0, 332)
         Me.Label6.Name = "Label6"
-        Me.Label6.Size = New System.Drawing.Size(473, 17)
+        Me.Label6.Size = New System.Drawing.Size(463, 17)
         Me.Label6.TabIndex = 30
-        Me.Label6.Text = "Grade, Length, Radius, Super-elevation and Angle of Radius of segments"
+        Me.Label6.Text = "Grade, Length, Radius, Super-elevation and Deflection Angle of Radius "
         '
         'butImport
         '
@@ -389,9 +389,9 @@ Partial Class frmMain
         'butCurve
         '
         Me.butCurve.Enabled = False
-        Me.butCurve.Location = New System.Drawing.Point(179, 264)
+        Me.butCurve.Location = New System.Drawing.Point(188, 265)
         Me.butCurve.Name = "butCurve"
-        Me.butCurve.Size = New System.Drawing.Size(77, 35)
+        Me.butCurve.Size = New System.Drawing.Size(89, 35)
         Me.butCurve.TabIndex = 32
         Me.butCurve.Text = "Curve"
         Me.ToolTip1.SetToolTip(Me.butCurve, "Click to filter results satifying vehicle skidding and roll-over due to simple ho" &
@@ -400,7 +400,7 @@ Partial Class frmMain
         '
         'RichTextBox1
         '
-        Me.RichTextBox1.Location = New System.Drawing.Point(6, 325)
+        Me.RichTextBox1.Location = New System.Drawing.Point(-47, 371)
         Me.RichTextBox1.Name = "RichTextBox1"
         Me.RichTextBox1.Size = New System.Drawing.Size(167, 122)
         Me.RichTextBox1.TabIndex = 31
@@ -418,9 +418,9 @@ Partial Class frmMain
         '
         'butReset
         '
-        Me.butReset.Location = New System.Drawing.Point(264, 264)
+        Me.butReset.Location = New System.Drawing.Point(279, 265)
         Me.butReset.Name = "butReset"
-        Me.butReset.Size = New System.Drawing.Size(72, 35)
+        Me.butReset.Size = New System.Drawing.Size(89, 35)
         Me.butReset.TabIndex = 28
         Me.butReset.Text = "Reset"
         Me.ToolTip1.SetToolTip(Me.butReset, "Empty all fields and re-input data")
@@ -429,9 +429,9 @@ Partial Class frmMain
         'butFilter
         '
         Me.butFilter.Enabled = False
-        Me.butFilter.Location = New System.Drawing.Point(96, 264)
+        Me.butFilter.Location = New System.Drawing.Point(97, 265)
         Me.butFilter.Name = "butFilter"
-        Me.butFilter.Size = New System.Drawing.Size(77, 35)
+        Me.butFilter.Size = New System.Drawing.Size(89, 35)
         Me.butFilter.TabIndex = 27
         Me.butFilter.Text = "Filter"
         Me.ToolTip1.SetToolTip(Me.butFilter, "Filter data to obtain final output")
@@ -439,9 +439,9 @@ Partial Class frmMain
         '
         'butSave
         '
-        Me.butSave.Location = New System.Drawing.Point(6, 263)
+        Me.butSave.Location = New System.Drawing.Point(6, 265)
         Me.butSave.Name = "butSave"
-        Me.butSave.Size = New System.Drawing.Size(82, 36)
+        Me.butSave.Size = New System.Drawing.Size(89, 36)
         Me.butSave.TabIndex = 26
         Me.butSave.Text = "Save"
         Me.ToolTip1.SetToolTip(Me.butSave, "Save output as text or excel file")
@@ -633,6 +633,15 @@ Partial Class frmMain
         Me.GroupBox9.TabIndex = 24
         Me.GroupBox9.TabStop = False
         Me.GroupBox9.Text = "Input"
+        '
+        'Label10
+        '
+        Me.Label10.AutoSize = True
+        Me.Label10.Location = New System.Drawing.Point(-3, 348)
+        Me.Label10.Name = "Label10"
+        Me.Label10.Size = New System.Drawing.Size(463, 17)
+        Me.Label10.TabIndex = 36
+        Me.Label10.Text = "Grade, Length, Radius, Super-elevation and Deflection Angle of Radius "
         '
         'lblnPath
         '
@@ -875,8 +884,6 @@ Partial Class frmMain
         'VisualStyler1
         '
         Me.VisualStyler1.HostForm = Me
-        Me.VisualStyler1.License = CType(resources.GetObject("VisualStyler1.License"), SkinSoft.VisualStyler.Licensing.VisualStylerLicense)
-        Me.VisualStyler1.LoadVisualStyle(Nothing, "OSX (Tiger).vssf")
         '
         'butlogout
         '
@@ -886,15 +893,6 @@ Partial Class frmMain
         Me.butlogout.TabIndex = 32
         Me.butlogout.Text = "log out"
         Me.butlogout.UseVisualStyleBackColor = True
-        '
-        'Label10
-        '
-        Me.Label10.AutoSize = True
-        Me.Label10.Location = New System.Drawing.Point(-3, 348)
-        Me.Label10.Name = "Label10"
-        Me.Label10.Size = New System.Drawing.Size(473, 17)
-        Me.Label10.TabIndex = 36
-        Me.Label10.Text = "Grade, Length, Radius, Super-elevation and Angle of Radius of segments"
         '
         'frmMain
         '
@@ -907,6 +905,7 @@ Partial Class frmMain
         Me.Controls.Add(Me.GroupBox5)
         Me.Controls.Add(Me.GroupContinuousSlope)
         Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D
+        Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
         Me.Name = "frmMain"
         Me.Text = "                                                                                 " &
     "                                                         GSRS Auto 1.0"
@@ -1012,9 +1011,9 @@ Partial Class frmMain
     Friend WithEvents txtsNumberGrades As TextBox
     Friend WithEvents Label11 As Label
     Friend WithEvents ToolTip1 As ToolTip
-    Friend WithEvents VisualStyler1 As SkinSoft.VisualStyler.VisualStyler
     Friend WithEvents butlogout As Button
     Friend WithEvents butCurve As Button
     Friend WithEvents butsCurve As Button
     Friend WithEvents Label10 As Label
+    Private WithEvents VisualStyler1 As SkinSoft.VisualStyler.VisualStyler
 End Class
